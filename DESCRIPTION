@@ -9,8 +9,8 @@ Authors@R: c(
             role = c('aut', 'cre')
             )
         )
-URL: https://github.com/martivit/MSNAEdu/EduAnalysisTools,
-    https://github.com/martivit/MSNAEdu/EduAnalysisTools/
+URL: https://github.com/martivit/EduAnalysisTools,
+    https://github.com/martivit/EduAnalysisTools/
 Maintainer: Martina Vit <martina@10096.it>
 Description: .
 Depends: R (>= 4.1.0)
