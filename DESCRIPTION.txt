@@ -1,0 +1,43 @@
+Package: MSNAEdu
+Type: Package
+Title: Ease IMPACT's data and database officers woRk
+Version: 0.9.9.9000
+Authors@R: c(
+        person(
+            'Vit', 'Martina',
+            email = 'martina@10096.it',
+            role = c('aut', 'cre')
+            )
+        )
+URL: https://github.com/martivit/MSNAEdu/EduAnalysisTools,
+    https://github.com/martivit/MSNAEdu/EduAnalysisTools/
+Maintainer: Martina Vit <martina@10096.it>
+Description: .
+Depends: R (>= 4.1.0)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    purrr,
+    dplyr,
+    srvyr,
+    readr,
+    readxl,
+    janitor,
+    rlang,
+    tidyr,
+    stringr,
+    tibble,
+    lubridate,
+    stats,
+    glue,
+    lifecycle
+Suggests:
+    rmarkdown,
+    knitr,
+    openxlsx,
+    labelled
+VignetteBuilder: knitr 
+LazyData: true
+License: GPL (>= 3)
+
