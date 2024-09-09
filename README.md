@@ -114,9 +114,11 @@ School-cycle age categorization: Add a column edu_school_cycle with ECE, primary
   loop <- loop |>
   add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file)
 ```
-Level-grade composite indicators: add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners.
+Level-grade composite indicators: Net attendance, early-enrollment, overage learners.
 
-IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC 
+IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC.<br>
+The function reads the classification of levels and grades from the UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx file. If the structure or names do not correspond to what is present in your data, please download a copy, modify it as needed, and load your version at the beginning of the script.
+
 ```
   loop <- loop |>
   add_edu_level_grade_indicators(country_assessment = 'HTI', path_ISCED_file, education_level_grade =  "edu_level_grade", id_col_loop = '_submission__uuid.x',  pnta = "pnta",
