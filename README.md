@@ -79,8 +79,8 @@ source ('scripts-example/Education/src/functions/00_edu_function.R')
 ```
 ##### Load MSNA data and define ISCED UNESCO pathfile
 ```
-## loop MSNA
-## main MSNA
+# loop MSNA
+# main MSNA
 path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
 ```
 
