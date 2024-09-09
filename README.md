@@ -15,10 +15,10 @@
 ### Analysis Overview
 
 The analysis should be conducted at the individual level and can be divided into two main categories:<br>
-1. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
-2. <span style="color:blue">**Children not accessing education – Out-of-school (OSC)**</span>: Focus on identifying the main barriers preventing their access.<br><br>
+A. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
+B. <span style="color:blue">**Children not accessing education – Out-of-school (OSC)**</span>: Focus on identifying the main barriers preventing their access.<br><br>
 
-#### **1. Analysis of Children Accessing Education**
+#### **A. Analysis of Children Accessing Education**
 Two key dimensions are essential for this analysis: access to education and the impact of significant events on education during the school year.<br>
 
 - **Access to education**: Analyse the percentage of children aged 5 to 17 who attended school or any early childhood education program at any time during the 2023-2024 school year.
@@ -56,7 +56,7 @@ For children in the **primary school-age** category (and similarly for older age
 
 **All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
 
-#### **2. Analysis of Children Not Accessing Education, OoS**
+#### **B. Analysis of Children Not Accessing Education, OoS**
 Two key dimensions are essential for this analysis: the out-of-school rate and the barriers preventing access to education.
 
 - **Out-of-School Rate**: Analyse the percentage of school-aged children who are not attending any level of education.
@@ -70,7 +70,7 @@ Following the same logic, the school-age categories and disaggregation need to b
 
 ## Analysis Implementation
 
-#### 1. Install functions and load Data
+### 1. Install functions and load Data
 ##### Install Humind, Education branch in Humind.data and analysistool packages
 ```
 if(!require(devtools)) install.packages("devtools")
@@ -97,7 +97,7 @@ source ('scripts-example/Education/src/functions/00_edu_function.R')
 path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
 ```
 
-#### 2. Add Education Indicators
+### 2. Add Education Indicators
 Please adjust the variable names according to the country-specific MSNA.
 
 ##### Education indicators from Humind 
@@ -167,7 +167,7 @@ loop <- loop |> filter(edu_ind_schooling_age_d == 1)
 ```
 write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
 ```
-#### 3. Indicator analysis
+### 3. Indicator analysis
 
 #### Education LOA: List of analysis
 
