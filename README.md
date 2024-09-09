@@ -35,32 +35,33 @@ For **5-year-old** children, analysis should focus on the already mentioned acce
 
 -	*ECE Access*: Participation rate in organized learning (one year before the official primary entry age). This refers to the percentage of children attending an early childhood education program or primary school.
 
--	Early Enrolment in Primary Grades: The percentage of children one year before the official primary school entry age attending primary school.
+-	*Early Enrolment in Primary Grades*: The percentage of children one year before the official primary school entry age attending primary school.
 
 For children in the **primary school-age** category (and similarly for older age groups), access and disruption can be analysed along with:
 
--	Net Attendance Rates: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
+-	*Net Attendance Rates*: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
 
--	Over-Age Attendance: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
+-	*Over-Age Attendance*: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
 
+**All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
 
-### Indicators for Children in School
-- **ECE Access**: Percentage of children attending early childhood education.
-- **Early Enrolment in Primary Grades**: Percentage of children attending primary school before the official age.
-- **Net Attendance Rates**: The percentage of school-aged children currently attending.
-- **Over-Age Attendance**: Children attending school who are two years older than the intended age for their grade.
+#### **2. Analysis of Children Not Accessing Education, OoS**
+Two key dimensions are essential for this analysis: the out-of-school rate and the barriers preventing access to education.
 
-### Children Not Accessing Education
-Key dimensions:
-- **Out-of-School Rate**: Percentage of children not attending school.
-- **Barriers to Education**: Identify the main barriers preventing access.
+- **Out-of-School Rate**: Analyse the percentage of school-aged children who are not attending any level of education.
+
+- **Barriers to Education**: Identify the main barriers preventing children from attending school.
+
+Following the same logic, the school-age categories and disaggregation need to be applied, measuring these indicators for each of the school-age categories.
+
+**All the mentioned dimensions and indicators should always be disaggregated by gender, and, where possible, by population group and administrative level**
+
 
 ## Analysis Implementation
 
-### 1. Install Necessary Packages (Example Code)
-
+### 1. Install functions and load Data
+#### Install Humind and Education branch in Humind.data
 ```
-# Example of how to install the necessary packages
 if(!require(devtools)) install.packages("devtools")
 devtools::install_github("impact-initiatives-hppu/humind")
 devtools::install_github("impact-initiatives-hppu/humind.data", ref = "education")
@@ -70,39 +71,48 @@ library(humind.data)
 
 source ('scripts-example/Education/src/functions/00_edu_helper.R')
 source ('scripts-example/Education/src/functions/00_edu_function.R')
-
 ```
-
-### 2. Load MSNA Data and Add Education Indicators (Example Code)
-
+#### Additional education functions for level-grade indicator
 ```
-# Example of loading datasets and adding education indicators
+source ('scripts-example/Education/src/functions/00_edu_helper.R')
+source ('scripts-example/Education/src/functions/00_edu_function.R')
+```
+#### Load MSNA data and define ISCED UNESCO pathfile
+```
+## loop MSNA
+## main MSNA
 path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-HTI_file <- 'scripts-example/Education/input/HTI2401-MSNA-DEPARTEMENTS-Clean-dataset.xlsx'
+```
 
-main  <- read_xlsx(HTI_file,
-                   guess_max = 50000,
-                   na = c("NA","#N/A",""," ","N/A"),
-                   sheet = 'Clean Data')
+### 2. Add Education Indicators
 
-loop <- read_xlsx(HTI_file,
-                  guess_max = 50000,
-                  na = c("NA","#N/A",""," ","N/A"),
-                  sheet = 'ind_loop')
+```
+ # Education from Humind
+  add_loop_edu_ind_age_corrected(main = main,id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', survey_start_date = 'start', school_year_start_month = 9, ind_age = 'ind_age') |>
+  add_loop_edu_access_d( ind_access = 'edu_access') |>
+  add_loop_edu_disrupted_d (occupation = 'edu_disrupted_occupation', hazards = 'edu_disrupted_hazards', displaced = 'edu_disrupted_displaced', teacher = 'edu_disrupted_teacher')|>
 
-loop <- loop |>
-  add_loop_edu_ind_age_corrected(main = main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', 
-                                 survey_start_date = 'start', school_year_start_month = 9, ind_age = 'ind_age') |>
-  add_loop_edu_access_d(ind_access = 'edu_access') |>
-  add_loop_edu_disrupted_d(occupation = 'edu_disrupted_occupation', hazards = 'edu_disrupted_hazards', 
-                           displaced = 'edu_disrupted_displaced', teacher = 'edu_disrupted_teacher')
+  # from 00_edu_function.R
 
-# Example of harmonizing variables
-loop <- loop |>
-  add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file) |>
-  add_edu_level_grade_indicators(country_assessment = 'HTI', path_ISCED_file, education_level_grade = "edu_level_grade", 
-                                 id_col_loop = '_submission__uuid.x', pnta = "pnta", dnk = "dnk") |>
-  add_loop_edu_barrier_d(barrier = "edu_barrier", barrier_other = "other_edu_barrier")
+  # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
+  add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file)|>
+
+  # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
+  # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
+  add_edu_level_grade_indicators(country_assessment = 'HTI', path_ISCED_file, education_level_grade =  "edu_level_grade", id_col_loop = '_submission__uuid.x',  pnta = "pnta",
+                                 dnk = "dnk")|>
+
+  #harmonized variable to use the loa_edu
+  add_loop_edu_barrier_d( barrier = "edu_barrier", barrier_other = "other_edu_barrier")|>
+
+  # OPTIONAL, non-core indicators, remove if not present in the MSNA
+  #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
+  #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
+
+
+  # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
+  merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid',
+                          admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  )
 ```
 
 ### 3. Filter for School-Age Children (Example Code)
