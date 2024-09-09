@@ -1,8 +1,3 @@
----
-title: "Analysis Guidance: Education Indicators (Example)"
-output: html_document
-date: "2024-09-09"
----
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
