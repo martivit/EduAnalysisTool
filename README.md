@@ -70,7 +70,7 @@ Following the same logic, the school-age categories and disaggregation need to b
 
 ## Analysis Implementation
 
-### 1. Install functions and load Data
+#### 1. Install functions and load Data
 ##### Install Humind, Education branch in Humind.data and analysistool packages
 ```
 if(!require(devtools)) install.packages("devtools")
@@ -97,7 +97,7 @@ source ('scripts-example/Education/src/functions/00_edu_function.R')
 path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
 ```
 
-### 2. Add Education Indicators
+#### 2. Add Education Indicators
 Please adjust the variable names according to the country-specific MSNA.
 
 ##### Education indicators from Humind 
@@ -167,7 +167,7 @@ loop <- loop |> filter(edu_ind_schooling_age_d == 1)
 ```
 write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
 ```
-### 3. Indicator analysis
+#### 3. Indicator analysis
 
 #### Education LOA: List of analysis
 
