@@ -153,3 +153,45 @@ loop <- loop |> filter(edu_ind_schooling_age_d == 1)
 # Example of exporting the final data to Excel
 write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
 ```
+### 3. Indicator analysis
+
+#### Education LOA: List of analysis
+
+The education list of analysis is saved here: scripts-example/Education/input/edu_analysistools_loa.csv
+
+Please modify the column **group_var** to reflect the desired disaggregation variable. School-age cycle, *edu_school_cycle_d*, and gender, *ind_gender*, are already included.
+
+#### Analysis
+1) Load the loop_edu_complete and the education_loa
+2) Verify the consistency of the LOA with the edu_loop. Loop over the analysis_var in loa and check if it exists in the column names of loop
+
+```
+filtered_vars <- list()
+loa_filtered <- loa %>%
+  dplyr::filter({
+    purrr::map_lgl(analysis_var, function(var) {
+      if (var %in% colnames(loop)) {
+        TRUE  # Keep the variable if it exists in loop
+      } else {
+        filtered_vars <<- append(filtered_vars, var)  # Track the filtered variable
+        FALSE  # Filter out the variable if it doesn't exist in loop
+      }
+    })
+  })
+
+if (length(filtered_vars) > 0) {
+  message("Filtered out the following analysis_var as they are not present in loop columns:")
+  print(filtered_vars)
+}
+```
+Analysis
+```
+design_loop <- loop |>
+  as_survey_design(weights = weight)
+
+results_loop_weigthed <- create_analysis(
+  design_loop,
+  loa = loa_filtered,
+  sm_separator =  ".")
+```
+
