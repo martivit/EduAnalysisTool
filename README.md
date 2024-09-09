@@ -60,14 +60,16 @@ Following the same logic, the school-age categories and disaggregation need to b
 ## Analysis Implementation
 
 ### 1. Install functions and load Data
-##### Install Humind and Education branch in Humind.data
+##### Install Humind, Education branch in Humind.data and analysistool packages
 ```
 if(!require(devtools)) install.packages("devtools")
 devtools::install_github("impact-initiatives-hppu/humind")
 devtools::install_github("impact-initiatives-hppu/humind.data", ref = "education")
+devtools::install_github("impact-initiatives/analysistools")
 
 library(humind) 
 library(humind.data)
+library(analysistools)
 
 source ('scripts-example/Education/src/functions/00_edu_helper.R')
 source ('scripts-example/Education/src/functions/00_edu_function.R')
@@ -137,13 +139,13 @@ OPTIONAL non-core indicators, non-formal and community modality
   add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )
 ```
 
-Merge loop with main to retrieve weight and strata info: admin, population group etc etc
+Merge the loop with the main script to retrieve weight and strata information, such as admin levels, population groups, etc.
 ```
   loop <- loop |>
   merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  )
 ```
 
-Filter for School-Age Children (Example Code)
+Filter for School-Age Children
 
 ```
 loop <- loop |> filter(edu_ind_schooling_age_d == 1)
@@ -152,7 +154,6 @@ loop <- loop |> filter(edu_ind_schooling_age_d == 1)
 ##### Export recorded loop dataframe to excel
 
 ```
-# Example of exporting the final data to Excel
 write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
 ```
 ### 3. Indicator analysis
@@ -164,8 +165,8 @@ The education list of analysis is saved here: scripts-example/Education/input/ed
 Please modify the column **group_var** to reflect the desired disaggregation variable. School-age cycle, *edu_school_cycle_d*, and gender, *ind_gender*, are already included.
 
 #### Analysis
-1) Load the loop_edu_complete and the education_loa
-2) Verify the consistency of the LOA with the edu_loop. Loop over the analysis_var in loa and check if it exists in the column names of loop
+1) Load the loop the education_loa
+2) Verify the consistency of the LOA with the loop. Loop over the analysis_var in loa and check if it exists in the column names of loop
 
 ```
 filtered_vars <- list()
@@ -186,7 +187,7 @@ if (length(filtered_vars) > 0) {
   print(filtered_vars)
 }
 ```
-Analysis
+Analysis using the analysistools::create_analysis() function from the **impact-initiatives/analysistools** package https://github.com/impact-initiatives/analysistools/blob/main/R/create_analysis.R
 ```
 design_loop <- loop |>
   as_survey_design(weights = weight)
