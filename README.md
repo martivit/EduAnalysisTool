@@ -33,7 +33,7 @@ Further distinctions, such as lower-secondary and upper-secondary levels, may be
 Breaking down the important dimension by school-age category:<br>
 For **5-year-old** children, analysis should focus on the already mentioned access, disruption, and additionally Early Childhood Education indicators:
 
--	<u>ECE Access</u>: Participation rate in organized learning (one year before the official primary entry age). This refers to the percentage of children attending an early childhood education program or primary school.
+-	*ECE Access*: Participation rate in organized learning (one year before the official primary entry age). This refers to the percentage of children attending an early childhood education program or primary school.
 
 -	Early Enrolment in Primary Grades: The percentage of children one year before the official primary school entry age attending primary school.
 
