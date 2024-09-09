@@ -60,7 +60,7 @@ Following the same logic, the school-age categories and disaggregation need to b
 ## Analysis Implementation
 
 ### 1. Install functions and load Data
-#### Install Humind and Education branch in Humind.data
+##### Install Humind and Education branch in Humind.data
 ```
 if(!require(devtools)) install.packages("devtools")
 devtools::install_github("impact-initiatives-hppu/humind")
@@ -72,12 +72,12 @@ library(humind.data)
 source ('scripts-example/Education/src/functions/00_edu_helper.R')
 source ('scripts-example/Education/src/functions/00_edu_function.R')
 ```
-#### Additional education functions for level-grade indicator
+##### Additional education functions for level-grade indicator
 ```
 source ('scripts-example/Education/src/functions/00_edu_helper.R')
 source ('scripts-example/Education/src/functions/00_edu_function.R')
 ```
-#### Load MSNA data and define ISCED UNESCO pathfile
+##### Load MSNA data and define ISCED UNESCO pathfile
 ```
 ## loop MSNA
 ## main MSNA
@@ -85,50 +85,71 @@ path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSN
 ```
 
 ### 2. Add Education Indicators
+Please adjust the variable names according to the country-specific MSNA.
+
+##### Education indicators from Humind 
+Correct the age according to the start of the school year
+```
+ loop <- loop |>
+  add_loop_edu_ind_age_corrected(main = main,id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', survey_start_date = 'start', school_year_start_month = 9, ind_age = 'ind_age')
+ ``` 
+Access 
+ 
+ ```
+  loop <- loop |>
+  add_loop_edu_access_d( ind_access = 'edu_access')
+  
+   ```
+Education disruption
+
+  ```
+  loop <- loop |>
+  add_loop_edu_disrupted_d (occupation = 'edu_disrupted_occupation', hazards = 'edu_disrupted_hazards', displaced = 'edu_disrupted_displaced', teacher = 'edu_disrupted_teacher')
+```
+##### Additional education functions, from Humind.data
+
+School-cycle age categorization: Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
 
 ```
- # Education from Humind
-  add_loop_edu_ind_age_corrected(main = main,id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', survey_start_date = 'start', school_year_start_month = 9, ind_age = 'ind_age') |>
-  add_loop_edu_access_d( ind_access = 'edu_access') |>
-  add_loop_edu_disrupted_d (occupation = 'edu_disrupted_occupation', hazards = 'edu_disrupted_hazards', displaced = 'edu_disrupted_displaced', teacher = 'edu_disrupted_teacher')|>
+  loop <- loop |>
+  add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file)
+```
+Level-grade composite indicators: add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners.
 
-  # from 00_edu_function.R
-
-  # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
-  add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file)|>
-
-  # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
-  # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
+IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC 
+```
+  loop <- loop |>
   add_edu_level_grade_indicators(country_assessment = 'HTI', path_ISCED_file, education_level_grade =  "edu_level_grade", id_col_loop = '_submission__uuid.x',  pnta = "pnta",
-                                 dnk = "dnk")|>
-
-  #harmonized variable to use the loa_edu
-  add_loop_edu_barrier_d( barrier = "edu_barrier", barrier_other = "other_edu_barrier")|>
-
-  # OPTIONAL, non-core indicators, remove if not present in the MSNA
-  #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
-  #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
-
-
-  # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
-  merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid',
-                          admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  )
+                                 dnk = "dnk")
 ```
-
-### 3. Filter for School-Age Children (Example Code)
+Additional variable harmonization 
 
 ```
-# Example of filtering to keep only school-age children
+  loop <- loop |>
+  add_loop_edu_barrier_d( barrier = "edu_barrier", barrier_other = "other_edu_barrier")
+```
+OPTIONAL non-core indicators, non-formal and community modality
+```
+  loop <- loop |>
+  add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
+  add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )
+```
+
+Merge loop with main to retrieve weight and strata info: admin, population group etc etc
+```
+  loop <- loop |>
+  merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  )
+```
+
+Filter for School-Age Children (Example Code)
+
+```
 loop <- loop |> filter(edu_ind_schooling_age_d == 1)
 ```
 
-### 4. Export Results to Excel (Example Code)
+##### Export recorded loop dataframe to excel
 
 ```
 # Example of exporting the final data to Excel
 write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
 ```
-
-## Final Thoughts
-
-All these steps combine to provide a comprehensive analysis of education indicators, broken down by access, disruption, and barriers to education. For more details on `humind.data` functions, check the [documentation](https://github.com/impact-initiatives-hppu/humind).
