@@ -1,0 +1,65 @@
+analysis_var,analysis_type,indicator,group_var,tree_profile,comment,Overall,5yo,level1,level2,level3
+edu_ind_access_d,prop_select_one,% children 5 to 18 y.o. who attended school or any early childhood education program at any time during the 2023-2024 school year,,1.1,Attendance in formal school,yes,yes,yes,yes,yes
+edu_attending_level0_level1_and_level1_minus_one_age_d,prop_select_one,% of children (one year before the official primary school entry age) who are attending an early childhood education programme or primary school,,1.2,Level + Grade,no,yes,no,no,no
+edu_attending_level1_and_level1_minus_one_age_d,prop_select_one,% of children in the relevant age group (one year before the official primary school entry age) who are attending primary school,,1.2,Level + Grade,no,yes,no,no,no
+edu_attending_level123_and_level1_age_d,prop_select_one,"% of school-aged children of primary school age currently attending primary, lower or upper secondary school",,1.2,Level + Grade,no,no,yes,no,no
+edu_attending_level23_and_level2_age_d,prop_select_one,% of school-aged children of lower secondary school age currently attending lower secondary school or higher,,1.2,Level + Grade,no,no,no,yes,no
+edu_attending_level3_and_level3_age_d,prop_select_one,% of school-aged children of upper secondary school age currently attending upper secondary school or higher,,1.2,Level + Grade,no,no,no,no,yes
+edu_level1_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: primary,,1.2,Level + Grade,no,no,yes,no,no
+edu_level2_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: lower secondary,,1.2,Level + Grade,no,no,no,yes,no
+edu_disrupted_teacher_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to teacher's absence,,1.3,Disruptions?,yes,yes,yes,yes,yes
+edu_disrupted_occupation_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by armed groups,,1.3,Disruptions?,yes,yes,yes,yes,yes
+edu_disrupted_hazards_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to natural hazards,,1.3,Disruptions?,yes,yes,yes,yes,yes
+edu_disrupted_displaced_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by displaced persons - Binary,,1.3,Disruptions?,yes,yes,yes,yes,yes
+edu_barrier_d,prop_select_one,"% children 5 to 18 y.o. not attending school or any early childhood education program at any time during the 2023-2024 school year, by main reason",,1.4,Barriers of access ,yes,yes,yes,yes,yes
+edu_other_yn_d,prop_select_one,% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year,,2.1,non-formal,yes,yes,yes,yes,yes
+edu_other_type_d,prop_select_one,"% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year, by type of program attended",,2.2,non-formal,yes,yes,yes,yes,yes
+edu_community_modality_d,prop_select_one,% households with children 5 to 18 y.o. by best ways to improve education in the community,,3.1,community modality,yes,yes,yes,yes,yes
+edu_ind_access_d,prop_select_one,% children 5 to 18 y.o. who attended school or any early childhood education program at any time during the 2023-2024 school year,edu_school_cycle_d,1.1,Attendance in formal school,,,,,
+edu_attending_level0_level1_and_level1_minus_one_age_d,prop_select_one,% of children (one year before the official primary school entry age) who are attending an early childhood education programme or primary school,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_attending_level1_and_level1_minus_one_age_d,prop_select_one,% of children in the relevant age group (one year before the official primary school entry age) who are attending primary school,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_attending_level123_and_level1_age_d,prop_select_one,"% of school-aged children of primary school age currently attending primary, lower or upper secondary school",edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_attending_level23_and_level2_age_d,prop_select_one,% of school-aged children of lower secondary school age currently attending lower secondary school or higher,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_attending_level3_and_level3_age_d,prop_select_one,% of school-aged children of upper secondary school age currently attending upper secondary school or higher,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_level1_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: primary,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_level2_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: lower secondary,edu_school_cycle_d,1.2,Level + Grade,,,,,
+edu_disrupted_teacher_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to teacher's absence,edu_school_cycle_d,1.3,Disruptions?,,,,,
+edu_disrupted_occupation_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by armed groups,edu_school_cycle_d,1.3,Disruptions?,,,,,
+edu_disrupted_hazards_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to natural hazards,edu_school_cycle_d,1.3,Disruptions?,,,,,
+edu_disrupted_displaced_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by displaced persons - Binary,edu_school_cycle_d,1.3,Disruptions?,,,,,
+edu_barrier_d,prop_select_one,"% children 5 to 18 y.o. not attending school or any early childhood education program at any time during the 2023-2024 school year, by main reason",edu_school_cycle_d,1.4,Barriers of access ,,,,,
+edu_other_yn_d,prop_select_one,% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year,edu_school_cycle_d,2.1,non-formal,,,,,
+edu_other_type_d,prop_select_one,"% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year, by type of program attended",edu_school_cycle_d,2.2,non-formal,,,,,
+edu_community_modality_d,prop_select_one,% households with children 5 to 18 y.o. by best ways to improve education in the community,edu_school_cycle_d,3.1,community modality,,,,,
+edu_ind_access_d,prop_select_one,% children 5 to 18 y.o. who attended school or any early childhood education program at any time during the 2023-2024 school year,ind_gender,1.1,Attendance in formal school,,,,,
+edu_attending_level0_level1_and_level1_minus_one_age_d,prop_select_one,% of children (one year before the official primary school entry age) who are attending an early childhood education programme or primary school,ind_gender,1.2,Level + Grade,,,,,
+edu_attending_level1_and_level1_minus_one_age_d,prop_select_one,% of children in the relevant age group (one year before the official primary school entry age) who are attending primary school,ind_gender,1.2,Level + Grade,,,,,
+edu_attending_level123_and_level1_age_d,prop_select_one,"% of school-aged children of primary school age currently attending primary, lower or upper secondary school",ind_gender,1.2,Level + Grade,,,,,
+edu_attending_level23_and_level2_age_d,prop_select_one,% of school-aged children of lower secondary school age currently attending lower secondary school or higher,ind_gender,1.2,Level + Grade,,,,,
+edu_attending_level3_and_level3_age_d,prop_select_one,% of school-aged children of upper secondary school age currently attending upper secondary school or higher,ind_gender,1.2,Level + Grade,,,,,
+edu_level1_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: primary,ind_gender,1.2,Level + Grade,,,,,
+edu_level2_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: lower secondary,ind_gender,1.2,Level + Grade,,,,,
+edu_disrupted_teacher_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to teacher's absence,ind_gender,1.3,Disruptions?,,,,,
+edu_disrupted_occupation_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by armed groups,ind_gender,1.3,Disruptions?,,,,,
+edu_disrupted_hazards_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to natural hazards,ind_gender,1.3,Disruptions?,,,,,
+edu_disrupted_displaced_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by displaced persons - Binary,ind_gender,1.3,Disruptions?,,,,,
+edu_barrier_d,prop_select_one,"% children 5 to 18 y.o. not attending school or any early childhood education program at any time during the 2023-2024 school year, by main reason",ind_gender,1.4,Barriers of access ,,,,,
+edu_other_yn_d,prop_select_one,% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year,ind_gender,2.1,non-formal,,,,,
+edu_other_type_d,prop_select_one,"% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year, by type of program attended",ind_gender,2.2,non-formal,,,,,
+edu_community_modality_d,prop_select_one,% households with children 5 to 18 y.o. by best ways to improve education in the community,ind_gender,3.1,community modality,,,,,
+edu_ind_access_d,prop_select_one,% children 5 to 18 y.o. who attended school or any early childhood education program at any time during the 2023-2024 school year,stratum,1.1,Attendance in formal school,,,,,
+edu_attending_level0_level1_and_level1_minus_one_age_d,prop_select_one,% of children (one year before the official primary school entry age) who are attending an early childhood education programme or primary school,stratum,1.2,Level + Grade,,,,,
+edu_attending_level1_and_level1_minus_one_age_d,prop_select_one,% of children in the relevant age group (one year before the official primary school entry age) who are attending primary school,stratum,1.2,Level + Grade,,,,,
+edu_attending_level123_and_level1_age_d,prop_select_one,"% of school-aged children of primary school age currently attending primary, lower or upper secondary school",stratum,1.2,Level + Grade,,,,,
+edu_attending_level23_and_level2_age_d,prop_select_one,% of school-aged children of lower secondary school age currently attending lower secondary school or higher,stratum,1.2,Level + Grade,,,,,
+edu_attending_level3_and_level3_age_d,prop_select_one,% of school-aged children of upper secondary school age currently attending upper secondary school or higher,stratum,1.2,Level + Grade,,,,,
+edu_level1_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: primary,stratum,1.2,Level + Grade,,,,,
+edu_level2_overage_learners_d,prop_select_one,% of school-aged children attending school who are at least 2 years above the intended age for grade: lower secondary,stratum,1.2,Level + Grade,,,,,
+edu_disrupted_teacher_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to teacher's absence,stratum,1.3,Disruptions?,,,,,
+edu_disrupted_occupation_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by armed groups,stratum,1.3,Disruptions?,,,,,
+edu_disrupted_hazards_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to natural hazards,stratum,1.3,Disruptions?,,,,,
+edu_disrupted_displaced_d,prop_select_one,% of children 5 to 18 y.o. whose education was disrupted due to the school being occupied by displaced persons - Binary,stratum,1.3,Disruptions?,,,,,
+edu_barrier_d,prop_select_one,"% children 5 to 18 y.o. not attending school or any early childhood education program at any time during the 2023-2024 school year, by main reason",stratum,1.4,Barriers of access ,,,,,
+edu_other_yn_d,prop_select_one,% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year,stratum,2.1,non-formal,,,,,
+edu_other_type_d,prop_select_one,"% children 5 to 18 y.o. accessing education outside of formal schools during the 2023-2024 school year, by type of program attended",stratum,2.2,non-formal,,,,,
+edu_community_modality_d,prop_select_one,% households with children 5 to 18 y.o. by best ways to improve education in the community,stratum,3.1,community modality,,,,,

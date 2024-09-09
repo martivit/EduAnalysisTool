@@ -1,0 +1,229 @@
+# Needed tidyverse packages
+library(dplyr)
+
+library(readxl)
+library(openxlsx)
+library(writexl)
+library(tidyr)
+library(stringr)
+library(tidyverse)
+library(tibble)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(ggtext)
+
+
+##----------------------------------------------------------------------------------------------------------
+read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
+  file_school_cycle <- path_ISCED_file  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
+
+  #file_school_cycle <- "inst/extdata/edu_ISCED/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
+  country <- country_assessment
+  df <- readxl::read_excel(file_school_cycle, sheet = "Compiled_Levels_Grades")
+
+  # Convert the country input and dataframe columns to lowercase for case-insensitive comparison
+  country_input_lower <- tolower(country)
+
+  # Check if the country exists in the dataframe
+  if(sum(tolower(df$`country code`) == country_input_lower | tolower(df$country) == country_input_lower) == 0){
+    warning(sprintf("The country '%s' does not exist in the dataset.", country_input))
+    return(NULL)
+  }
+
+  # Filter data for the specified country by code or name, case-insensitive
+  country_df <- dplyr::filter(df, tolower(`country code`) == country_input_lower | tolower(country) == country_input_lower)
+
+  # DataFrame 1: level code, Learning Level, starting age, duration
+  summary_info_school <- country_df %>%
+    dplyr::group_by(`level code`, `learning level`) %>%
+    dplyr::summarise(starting_age = min(`theoretical start age`),
+                     duration = dplyr::n(),
+                     .groups = 'drop')
+
+  # Adjust for level0 duration if both level0 and level1 exist
+  if ("level0" %in% summary_info_school$`level code` && "level1" %in% summary_info_school$`level code`) {
+    starting_age_level0 <- summary_info_school$starting_age[summary_info_school$`level code` == "level0"]
+    starting_age_level1 <- summary_info_school$starting_age[summary_info_school$`level code` == "level1"]
+    duration_level0 <- starting_age_level1 - starting_age_level0
+
+    summary_info_school <- summary_info_school %>%
+      mutate(duration = ifelse(`level code` == "level0", duration_level0, duration))
+  }
+
+  # DataFrame 2: level code, Learning Level, Year/Grade, Theoretical Start age, limit age
+  levels_grades_ages <- country_df %>%
+    dplyr::select(`level code`, `learning level`, `year-grade`, `theoretical start age`,  `name -- for kobo`)
+
+  levels_grades_ages <- levels_grades_ages %>%
+    rename(
+      level_code = `level code`,
+      name_level = `learning level`,
+      starting_age = `theoretical start age`,
+      name_level_grade = `name -- for kobo`,
+      grade = `year-grade`
+    )
+
+  summary_info_school <- summary_info_school %>%
+    rename(
+      level_code = `level code`,
+      name_level = `learning level`
+    )
+
+  return(list(summary_info_school = summary_info_school, levels_grades_ages = levels_grades_ages))
+}
+##------
+
+
+
+#------------------------------------------------ Function to Ensure Continuous Age Ranges Between Levels
+validate_age_continuity_and_levels <- function(school_level_infos, required_levels) {
+  all_levels_df <- bind_rows(school_level_infos, .id = "level")
+  # Check for missing levels
+  existing_levels <- unique(all_levels_df$level)
+  missing_levels <- setdiff(required_levels, existing_levels)
+  if (length(missing_levels) > 0) {
+    stop(sprintf("Missing required educational levels: %s", paste(missing_levels, collapse=", ")), call. = FALSE)
+  }
+  # Sorting might be necessary depending on your data
+  all_levels_df <- all_levels_df %>% arrange(starting_age)
+  # Continue with the continuity check
+  for (i in 2:nrow(all_levels_df)) {
+    if (all_levels_df$starting_age[i] != all_levels_df$ending_age[i-1] + 1) {
+      stop(sprintf("Age range discontinuity between levels: %s ends at %d, but %s starts at %d, check the name_level for name_consistency, too",
+                   all_levels_df$level[i-1], all_levels_df$ending_age[i-1],
+                   all_levels_df$level[i], all_levels_df$starting_age[i]), call. = FALSE)
+    }
+  }
+  return(TRUE)
+}#--------------------------------------------------------------------------------------------------------
+
+
+
+#------------------------------------------------ Function to Ensure Continuous Age Ranges within Levels
+validate_grade_continuity_within_levels <- function(levels_grades_ages) {
+  # Check for and correct any NA or "" column names.
+  names(levels_grades_ages) <- ifelse(names(levels_grades_ages) == "" | is.na(names(levels_grades_ages)), paste0("V", 1:ncol(levels_grades_ages)), names(levels_grades_ages))
+
+  levels_grades_ages <- levels_grades_ages %>%
+    arrange(level_code, starting_age) %>%
+    mutate(starting_age = as.numeric(starting_age))  # Ensure starting_age is numeric for comparison.
+
+  unique_levels <- unique(levels_grades_ages$level_code)
+
+  for (level in unique_levels) {
+    if (level == "level0") {
+      next  # Skip level0 as requested.
+    }
+    grades_in_level <- filter(levels_grades_ages, level_code == level)
+    # If there's only one grade in the level, skip the checks.
+    if (nrow(grades_in_level) < 2) {
+      next
+    }
+
+    # Direct comparison for grades with the same starting_age within a level.
+    for (i in 1:(nrow(grades_in_level) - 1)) {
+      for (j in (i + 1):nrow(grades_in_level)) {
+        if (grades_in_level$starting_age[i] == grades_in_level$starting_age[j]) {
+          stop(sprintf("Error: Grades '%s' and '%s' within level %s have the same starting age of %d.",
+                       grades_in_level$name_level_grade[i], grades_in_level$name_level_grade[j], level, grades_in_level$starting_age[i]), call. = FALSE)
+        }
+      }
+    }
+
+    # Check for non-consecutive starting ages.
+    for (i in 2:nrow(grades_in_level)) {
+      if (grades_in_level$starting_age[i] != grades_in_level$starting_age[i-1] + 1) {
+        stop(sprintf("Continuity error between '%s' and '%s' in level %s: starting ages are not consecutive.",
+                     grades_in_level$name_level_grade[i-1], grades_in_level$name_level_grade[i], level), call. = FALSE)
+      }
+    }
+  }
+
+  return(TRUE)
+}#--------------------------------------------------------------------------------------------------------
+
+
+
+#------------------------------------------------ Function to Ensure consistency between level codes and names
+validate_level_code_name_consistency <- function(school_level_infos) {
+  # Ensure the input is a dataframe
+  if (!is.data.frame(school_level_infos)) {
+    stop("The input must be a dataframe.")
+  }
+
+  # Check if the dataframe has the required columns
+  if (!all(c("level_code", "name_level") %in% names(school_level_infos))) {
+    stop("Dataframe must contain the columns: 'level_code' and 'name_level'.")
+  }
+
+  # Checking for inconsistent name_level within the same level_code
+  inconsistent_levels <- school_level_infos %>%
+    group_by(level_code) %>%
+    summarise(unique_names = n_distinct(name_level)) %>%
+    filter(unique_names > 1)
+
+  if (nrow(inconsistent_levels) > 0) {
+    inconsistent_detail <- school_level_infos %>%
+      group_by(level_code) %>%
+      summarise(name_levels = toString(unique(name_level))) %>%
+      filter(level_code %in% inconsistent_levels$level_code)
+
+    print(inconsistent_detail)
+    stop("Validation failed due to inconsistencies in level_code and name_level associations.", call. = FALSE)
+  } else {
+    message("All level_code values are consistently associated with a single name_level. Validation passed.")
+  }
+}#--------------------------------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------------------------------
+merge_main_info_in_loop <- function(loop,
+                                    main,
+                                    id_col_loop = 'uuid', id_col_main = 'uuid',
+                                    admin1 = 'admin1',
+                                    admin2 = NULL,
+                                    admin3 = NULL,
+                                    stratum = NULL,
+                                    additional_stratum = NULL,
+                                    weight = NULL,
+                                    add_col1 = NULL,
+                                    add_col2 = NULL,
+                                    add_col3 = NULL,
+                                    add_col4 = NULL,
+                                    add_col5 = NULL,
+                                    add_col6 = NULL,
+                                    add_col7 = NULL,
+                                    add_col8 = NULL) {
+  # Create a vector of columns to check and merge from 'main'
+  cols_to_merge <- c(admin1, admin2, admin3, stratum, additional_stratum, weight, add_col1, add_col2, add_col3, add_col4, add_col5, add_col6, add_col7, add_col8)
+
+  # Filter out NULL values
+  cols_to_merge <- cols_to_merge[!is.null(cols_to_merge)]
+
+  # Check if all non-NULL columns exist in 'main'
+  missing_cols <- setdiff(cols_to_merge, colnames(main))
+  if (length(missing_cols) > 0) {
+    stop(paste("The following columns are missing in 'main':", paste(missing_cols, collapse = ", ")))
+  }
+
+  # Remove columns from 'loop' that will be merged from 'main' to avoid duplication
+  existing_cols_in_loop <- intersect(cols_to_merge, colnames(loop))
+
+  # Remove only those columns from 'loop' that actually exist
+  if (length(existing_cols_in_loop) > 0) {
+    loop <- loop %>% select(-all_of(existing_cols_in_loop))
+  }
+
+  # Select necessary columns from 'main' for merging
+  main_selected <- main %>% select(all_of(c(id_col_main, cols_to_merge)))
+
+  # Perform the merge
+  if (id_col_loop == id_col_main) {
+    merged_loop <- loop %>% left_join(main_selected, by = id_col_loop)
+  } else {
+    join_by <- setNames(id_col_main, id_col_loop)
+    merged_loop <- loop %>% left_join(main_selected, by = join_by)
+  }
+
+  return(merged_loop)
+}#--------------------------------------------------------------------------------------------------------
