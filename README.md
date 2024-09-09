@@ -10,14 +10,15 @@ The analysis should be conducted at the individual level and can be divided into
 #### **1. Analysis of Children Accessing Education**
 Two key dimensions are essential for this analysis: access to education and the impact of significant events on education during the school year.<br><br>
 
--	**Access to education**: Analyse the percentage of children aged 5 to 17 who attended school or any early childhood education program at any time during the 2023-2024 school year.<br>
--	**Education disruption**: Assess whether any significant events disrupted education during the school year, with a focus on factors such as:<br>
-<ul>
-  <li>Natural hazards (e.g., floods, cyclones, droughts, wildfires, earthquakes)</li>
-  <li>Teacher absences</li>
-  <li>Schools being used as shelters for displaced persons</li>
-  <li>Schools occupied by armed forces or non-state armed groups (if applicable in your MSNA)</li>
-</ul>
+- **Access to education**: Analyse the percentage of children aged 5 to 17 who attended school or any early childhood education program at any time during the 2023-2024 school year.
+
+- **Education disruption**: Assess whether any significant events disrupted education during the school year, with a focus on factors such as:
+
+  - Natural hazards (e.g., floods, cyclones, droughts, wildfires, earthquakes)
+  - Teacher absences
+  - Schools being used as shelters for displaced persons
+  - Schools occupied by armed forces or non-state armed groups (if applicable in your MSNA)
+
 
 
 Disruption types include:
