@@ -3,12 +3,12 @@
 ## Content of the Analysis structure 
 ### Analysis Overview
 
-The analysis should be conducted at the individual level and can be divided into two main categories:<br><br>
+The analysis should be conducted at the individual level and can be divided into two main categories:<br>
 1. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
 2. <span style="color:blue">**Children not accessing education – Out-of-school (OSC)**</span>: Focus on identifying the main barriers preventing their access.<br><br>
 
 #### **1. Analysis of Children Accessing Education**
-Two key dimensions are essential for this analysis: access to education and the impact of significant events on education during the school year.<br><br>
+Two key dimensions are essential for this analysis: access to education and the impact of significant events on education during the school year.<br>
 
 - **Access to education**: Analyse the percentage of children aged 5 to 17 who attended school or any early childhood education program at any time during the 2023-2024 school year.
 
@@ -19,18 +19,30 @@ Two key dimensions are essential for this analysis: access to education and the 
   - Schools being used as shelters for displaced persons
   - Schools occupied by armed forces or non-state armed groups (if applicable in your MSNA)
 
+##### Sub-School-Age Categories Analysis
+The analysis should account for sub-school-age categories to capture more detailed insights into access to education. These categories can be broken down as follows:<br>
 
+-	**5-year-olds**: Typically one year before the official primary school entry age. Analysis should include access to early childhood education and early enrolment in primary grades (see below).
 
-Disruption types include:
-- Natural hazards
-- Teacher absences
-- Schools used as shelters or occupied by armed forces
+-	**Primary School Age**: Children who fall within the age range for primary school. Key areas of analysis include access to education, net attendance rates, and over-age attendance (see below).
 
-### Sub-School-Age Categories Analysis
-Break down children into:
-- **5-year-olds**: Early childhood education access.
-- **Primary school age**: Attendance rates and over-age attendance.
-- **Secondary school age**: Similar analysis, further breaking down into lower- and upper-secondary levels.
+-	**Secondary School Age**: Children within the age range for secondary education. The focus here should be on access, attendance rates, and over-age attendance, with further breakdowns into lower-secondary and upper-secondary levels as appropriate.
+
+Further distinctions, such as lower-secondary and upper-secondary levels, may be made depending on the specific context and school structure.
+
+Breaking down the important dimension by school-age category:<br>
+For **5-year-old** children, analysis should focus on the already mentioned access, disruption, and additionally Early Childhood Education indicators:
+
+-	<u>ECE Access</u>: Participation rate in organized learning (one year before the official primary entry age). This refers to the percentage of children attending an early childhood education program or primary school.
+
+-	Early Enrolment in Primary Grades: The percentage of children one year before the official primary school entry age attending primary school.
+
+For children in the **primary school-age** category (and similarly for older age groups), access and disruption can be analysed along with:
+
+-	Net Attendance Rates: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
+
+-	Over-Age Attendance: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
+
 
 ### Indicators for Children in School
 - **ECE Access**: Percentage of children attending early childhood education.
