@@ -1,9 +1,3 @@
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# This section is not for running but serves as an example setup.
-```
-
 # ANALYSIS GUIDANCE (Example)
 
 ## Analysis Overview
