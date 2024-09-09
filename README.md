@@ -1,5 +1,15 @@
 # ANALYSIS GUIDANCE, EDUCATION FOCUSED OUTPUT
 
+# Table of Contents
+1. [Analysis Overview](#analysis-overview)
+   - [Analysis of Children Accessing Education](#1-analysis-of-children-accessing-education)
+     - [Sub-School-Age Categories Analysis](#sub-school-age-categories-analysis)
+   - [Analysis of Children Not Accessing Education](#2-analysis-of-children-not-accessing-education-oos)
+2. [Analysis Implementation](#analysis-implementation)   
+   - [Install functions and load Data](#install-functions-and-load-data)
+   - [Add Education Indicators](#add-education-indicators)
+   - [Indicator analysis](#indicator-analysis)
+
 ## Content of the Analysis structure 
 ### Analysis Overview
 
