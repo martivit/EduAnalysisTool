@@ -12,9 +12,4 @@ create_variable_mapping <- function(questions, new_variable_names) {
   return(variable_mapping)
 }
 
-# Example usage
-questions <- c("variable name of the education_access indicator in your kobo? It has to answer to the question: Did (name) attend school or any early childhood education program at any time during the 2023-2024 school year?")
-new_variable_names <- c("education_access")
-
-mapping <- create_variable_mapping(questions, new_variable_names)
 
