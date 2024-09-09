@@ -1,6 +1,7 @@
 # ANALYSIS GUIDANCE, EDUCATION FOCUSED OUTPUT
 
-# Table of Contents
+**Table of Contents**
+
 1. [Analysis Overview](#analysis-overview)
    - [Analysis of Children Accessing Education](#1-analysis-of-children-accessing-education)
      - [Sub-School-Age Categories Analysis](#sub-school-age-categories-analysis)
