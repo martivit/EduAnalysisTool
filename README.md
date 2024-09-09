@@ -1,10 +1,11 @@
-# ANALYSIS GUIDANCE (Example)
+# ANALYSIS GUIDANCE, EDUCATION FOCUSED OUTPUT
 
-## Analysis Overview
+## Content of the Analysis structure 
+### Analysis Overview
 
-The analysis focuses on two main categories:
-1. Children accessing education
-2. Children not accessing education (Out-of-school)
+The analysis should be conducted at the individual level and can be divided into two main categories:<br><br>
+1. <span style="color:blue">**Children accessing education**</span>: Focus on their profiles and the challenges they face while attending school.<br>
+2. <span style="color:blue">**Children not accessing education – Out-of-school (OSC)**</span>: Focus on identifying the main barriers preventing their access.
 
 ### Children Accessing Education
 This analysis revolves around two dimensions:
@@ -67,8 +68,6 @@ loop <- read_xlsx(HTI_file,
                   guess_max = 50000,
                   na = c("NA","#N/A",""," ","N/A"),
                   sheet = 'ind_loop')
-
-
 
 loop <- loop |>
   add_loop_edu_ind_age_corrected(main = main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', 
