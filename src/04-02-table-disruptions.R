@@ -8,10 +8,12 @@ source("R/create_education_xlsx_table.R")
 education_results_table_labelled <- readRDS("outputs/labeled_results_table.RDS")
 loa <- readxl::read_excel("inputs/edu_analysistools_loa.xlsx", sheet = "Sheet1")
 loa_access <- loa %>% 
+  mutate(group_var = str_replace_all(group_var, ",", " %/% "),
+         group_var = str_squish(group_var)) %>% 
   filter(access)
 
 education_results_table_labelled <- education_results_table_labelled %>% 
-  right_join(unique(loa_access %>% select(analysis_var, access))) 
+  right_join(unique(loa_access %>% select(analysis_var, group_var, access))) 
 # filter results
 filtered_education_results_table_labelled <- education_results_table_labelled %>% 
   filter(analysis_var_value == "1" ) %>% 
