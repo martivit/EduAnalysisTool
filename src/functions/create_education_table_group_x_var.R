@@ -32,9 +32,9 @@ create_education_table_group_x_var <- function(filtered_results,
                 values_from = c("stat", "n_total"), names_glue = "{`label_group_var_value %/% 2`} %/% {label_analysis_var} %/% {label_analysis_var_value} %/% {.value}",
     ) %>%
     select("label_group_var", "label_group_var_value",
-           starts_with("Overal"),
-           starts_with("Female"),
-           starts_with("Male")) 
+           starts_with(label_overall),
+           starts_with(label_female),
+           starts_with(label_male)) 
 }
 
 
