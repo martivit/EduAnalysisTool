@@ -3,8 +3,8 @@ library(gt)
 library(openxlsx)
 
 # Get results
-education_results_table_labelled <- readRDS("outputs/labeled_results_table.RDS")
-loa <- readxl::read_excel("inputs/edu_analysistools_loa.xlsx", sheet = "Sheet1")
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+loa <- readxl::read_excel("input_tool/edu_analysistools_loa.xlsx", sheet = "Sheet1")
 
 loa_level1 <- loa %>% 
   mutate(group_var = str_replace_all(group_var, ",", " %/% "),
@@ -20,7 +20,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   select(-level1)
 
 # gt_helper 
-data_helper_t4 <- readxl::read_excel("inputs/edu_table_helper.xlsx", sheet = "level1")
+data_helper_t4 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "level1")
 
 data_helper_t4 <- data_helper_t4 %>% as.list() %>% map(na.omit) %>% map(c)
 
@@ -49,5 +49,5 @@ writeFormula(wb, "Table_of_content",
                sheet = "level1", row = 1, col = 1,
                text = "level1"
              ))
-openxlsx::saveWorkbook(wb, "outputs/education_results.xlsx", overwrite = T)
+openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
 

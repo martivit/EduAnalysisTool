@@ -2,11 +2,11 @@ library(tidyverse)
 library(gt)
 library(openxlsx)
 
-source("R/create_education_table_group_x_var.R")
-source("R/create_education_xlsx_table.R")
+source("src/functions/create_education_table_group_x_var.R")
+source("src/functions/create_education_xlsx_table.R")
 # Get results
-education_results_table_labelled <- readRDS("outputs/labeled_results_table.RDS")
-loa <- readxl::read_excel("inputs/edu_analysistools_loa.xlsx", sheet = "Sheet1")
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+loa <- readxl::read_excel("input_tool/edu_analysistools_loa.xlsx", sheet = "Sheet1")
 loa_access <- loa %>% 
   mutate(group_var = str_replace_all(group_var, ",", " %/% "),
          group_var = str_squish(group_var)) %>% 
@@ -20,7 +20,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   select(-access)
 
 # gt_helper 
-data_helper_t1 <- readxl::read_excel("inputs/edu_table_helper.xlsx", sheet = "access")
+data_helper_t1 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "access")
 
 data_helper_t1 <- data_helper_t1 %>% as.list() %>% map(na.omit) %>% map(c)
 

@@ -3,8 +3,8 @@ library(gt)
 library(openxlsx)
 
 # Get results
-education_results_table_labelled <- readRDS("outputs/labeled_results_table.RDS")
-loa <- readxl::read_excel("inputs/edu_analysistools_loa.xlsx", sheet = "Sheet1")
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+loa <- readxl::read_excel("input_tool/edu_analysistools_loa.xlsx", sheet = "Sheet1")
 
 loa_ece <- loa %>%
   mutate(group_var = str_replace_all(group_var, ",", " %/% "),
@@ -20,7 +20,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   select(-ece)
 
 # gt_helper 
-data_helper_t3 <- readxl::read_excel("inputs/edu_table_helper.xlsx", sheet = "ece")
+data_helper_t3 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "ece")
 
 data_helper_t3 <- data_helper_t3 %>% as.list() %>% map(na.omit) %>% map(c)
 

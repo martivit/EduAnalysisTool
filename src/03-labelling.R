@@ -1,12 +1,12 @@
 library(tidyverse)
 library(presentresults)
 
-education_results_loop <- readRDS("outputs/grouped_other_education_results_loop.RDS")
+education_results_loop <- readRDS("output/grouped_other_education_results_loop.RDS")
 
-kobo_survey <- readxl::read_excel("inputs/MSNA2024_KOBO_tool_V10.xlsx", sheet = "survey")
-kobo_choices <- readxl::read_excel("inputs/MSNA2024_KOBO_tool_V10.xlsx", sheet = "choices")
+kobo_survey <- readxl::read_excel("input_data/HTI_kobo.xlsx", sheet = "survey")
+kobo_choices <- readxl::read_excel("input_data/HTI_kobo.xlsx", sheet = "choices")
 
-update_survey <- readxl::read_excel("inputs/msni_loa.xlsx", sheet = "update_survey") 
+update_survey <- readxl::read_excel("input_tool/edu_indicator_labelling.xlsx", sheet = "update_survey") 
 update_survey <- update_survey %>% 
   filter(if_any(everything(), ~ !is.na(.))) |> 
   rename(`label::English` = `label::english`)
@@ -15,7 +15,7 @@ overall_survey <- tibble::tibble(type = "select_one overall",
                              name = "overall",
                              `label::English` = "Overall")
 
-update_choices <- readxl::read_excel("inputs/msni_loa.xlsx", sheet = "update_choices")
+update_choices <- readxl::read_excel("input_tool/edu_indicator_labelling.xlsx", sheet = "update_choices")
 update_choices <- update_choices %>% 
   filter(if_any(everything(), ~ !is.na(.))) |> 
   rename(`label::English` = `label::english`)
@@ -64,5 +64,5 @@ education_results_table_labelled <- add_label_columns_to_results_table(
   label_dictionary
 )
 nrow(education_results_table_labelled ) == nrow(education_results_loop)
-education_results_table_labelled %>% saveRDS("outputs/labeled_results_table.RDS")
+education_results_table_labelled %>% saveRDS("output/labeled_results_table.RDS")
 

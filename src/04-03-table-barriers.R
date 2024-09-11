@@ -2,11 +2,11 @@ library(tidyverse)
 library(gt)
 library(openxlsx)
 
-source("R/create_education_table_group_x_var.R")
+source("src/functions/create_education_table_group_x_var.R")
 
 # Get results
-education_results_table_labelled <- readRDS("outputs/labeled_results_table.RDS")
-loa <- readxl::read_excel("inputs/edu_analysistools_loa.xlsx", sheet = "Sheet1")
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+loa <- readxl::read_excel("input_tool/edu_analysistools_loa.xlsx", sheet = "Sheet1")
 loa_out_of_school <- loa %>% 
   filter(out_of_school)
 education_results_table_labelled <- education_results_table_labelled %>% 
@@ -19,7 +19,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
 
 
 # gt_helper 
-data_helper_t2 <- readxl::read_excel("inputs/edu_table_helper.xlsx", sheet = "out_of_school")
+data_helper_t2 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "out_of_school")
 
 data_helper_t2 <- data_helper_t2 %>% as.list() %>% map(na.omit) %>% map(c)
 data_helper_t2$profile_columns[[2]] <- "Cannot afford education-related costs \\(e.g. tuition, supplies, transportation)"
