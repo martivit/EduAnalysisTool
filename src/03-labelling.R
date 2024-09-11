@@ -9,20 +9,20 @@ kobo_choices <- readxl::read_excel("input_data/HTI_kobo.xlsx", sheet = "choices"
 update_survey <- readxl::read_excel("input_tool/edu_indicator_labelling.xlsx", sheet = "update_survey") 
 update_survey <- update_survey %>% 
   filter(if_any(everything(), ~ !is.na(.))) |> 
-  rename(`label::English` = `label::english`)
+  rename(`label::french` = `label::french`)
 
 overall_survey <- tibble::tibble(type = "select_one overall",
                              name = "overall",
-                             `label::English` = "Overall")
+                             `label::french` = "Overall")
 
 update_choices <- readxl::read_excel("input_tool/edu_indicator_labelling.xlsx", sheet = "update_choices")
 update_choices <- update_choices %>% 
   filter(if_any(everything(), ~ !is.na(.))) |> 
-  rename(`label::English` = `label::english`)
+  rename(`label::French` = `label::french`)
 
 overall_choices <- tibble::tibble(list_name = "overall",
                              name = "overall",
-                             `label::English` = "Overall")
+                             `label::french` = "Overall")
 
 updated_survey <- bind_rows(kobo_survey, update_survey, overall_survey)
 
@@ -35,7 +35,7 @@ education_results_loop$analysis_key %>% duplicated() %>% sum()
 review_kobo_labels_results <- review_kobo_labels(updated_survey,
                                                  updated_choices,
                                                  results_table = education_results_loop, 
-                                                 label_column = "label::English")
+                                                 label_column = "label::french")
 review_kobo_labels_results
 
 duplicated_listname_label <- review_kobo_labels_results |> 
@@ -43,21 +43,21 @@ duplicated_listname_label <- review_kobo_labels_results |>
 
 kobo_choices_fixed <- updated_choices |>
   group_by(list_name)  |> 
-  mutate(`label::English` = case_when(
-    list_name %in% duplicated_listname_label$list_name ~ paste(`label::English`, row_number()),
-    TRUE ~ `label::English`
+  mutate(`label::french` = case_when(
+    list_name %in% duplicated_listname_label$list_name ~ paste(`label::french`, row_number()),
+    TRUE ~ `label::french`
   ))  |> 
   ungroup()
 
 review_kobo_labels_results <- review_kobo_labels(updated_survey,
                                                  kobo_choices_fixed,
                                                  results_table = education_results_loop, 
-                                                 label_column = "label::English")
+                                                 label_column = "label::french")
 
 label_dictionary <- create_label_dictionary(updated_survey, 
                                             kobo_choices_fixed, 
                                             results_table = education_results_loop, 
-                                            label_column = "label::English")
+                                            label_column = "label::french")
 
 education_results_table_labelled <- add_label_columns_to_results_table(
   education_results_loop,
