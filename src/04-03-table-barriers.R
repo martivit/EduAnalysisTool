@@ -19,14 +19,13 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
 
 
 # gt_helper 
-data_helper_t2 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "out_of_school")
+data_helper_t2 <- readxl::read_excel("input_tool/edu_table_helper_FR.xlsx", sheet = "out_of_school")
 
 data_helper_t2 <- data_helper_t2 %>% as.list() %>% map(na.omit) %>% map(c)
-data_helper_t2$profile_columns[[2]] <- "Cannot afford education-related costs \\(e.g. tuition, supplies, transportation)"
 x2 <- filtered_education_results_table_labelled %>% 
-  create_education_table_group_x_var(data_helper_t2$overall_gender[1],
-                                     data_helper_t2$overall_gender[2],
-                                     data_helper_t2$overall_gender[3]) 
+  create_education_table_group_x_var(label_overall = "Ensemble",
+                                     label_female = "Féminin / femme",
+                                     label_male = "Masculin / homme") 
 
 
 t2 <- x2 |> 

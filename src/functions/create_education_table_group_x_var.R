@@ -21,7 +21,7 @@ create_education_table_group_x_var <- function(filtered_results,
                                 names_sep = " %/% ", 
                                 too_few = "align_start") %>% 
     mutate(`label_group_var_value %/% 2` = ifelse(is.na(`label_group_var_value %/% 2`), 
-                                                  "Overall", 
+                                                  label_overall, 
                                                   `label_group_var_value %/% 2`)) %>% 
     select(-"label_group_var %/% 2") %>%
     rename(label_group_var = `label_group_var %/% 1`,
