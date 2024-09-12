@@ -75,7 +75,7 @@ loop <- loop |>
 
   # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
   merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid',
-                          admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  ) |>
+                          admin1 = 'admin1',  admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  ) |>
   # keep only school-age children
   filter (edu_ind_schooling_age_d  == 1 )
 
