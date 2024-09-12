@@ -20,7 +20,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   select(-ece)
 
 # gt_helper 
-data_helper_t3 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "ece")
+data_helper_t3 <- readxl::read_excel("input_tool/edu_table_helper_FR.xlsx", sheet = "ece")
 
 data_helper_t3 <- data_helper_t3 %>% as.list() %>% map(na.omit) %>% map(c)
 
@@ -34,7 +34,9 @@ ece_other <- filtered_education_results_table_labelled %>%
          label_group_var_value = str_remove_all(label_group_var_value, "ECE( %/% )*"))
 all_ece <- rbind(ece_only, ece_other)
 x3 <- all_ece |> 
-  create_education_table_group_x_var() 
+  create_education_table_group_x_var(label_overall = "Ensemble",
+                                     label_female = "Féminin / femme",
+                                     label_male = "Masculin / homme") 
 
 t3 <- x3 |> 
   create_education_gt_table(data_helper = data_helper_t3)

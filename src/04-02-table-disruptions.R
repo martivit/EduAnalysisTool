@@ -20,12 +20,14 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   select(-access)
 
 # gt_helper 
-data_helper_t1 <- readxl::read_excel("input_tool/edu_table_helper.xlsx", sheet = "access")
+data_helper_t1 <- readxl::read_excel("input_tool/edu_table_helper_FR.xlsx", sheet = "access")
 
 data_helper_t1 <- data_helper_t1 %>% as.list() %>% map(na.omit) %>% map(c)
 
 wider_table <- filtered_education_results_table_labelled %>% 
-  create_education_table_group_x_var() 
+  create_education_table_group_x_var(label_overall = "Ensemble",
+                                     label_female = "Féminin / femme",
+                                     label_male = "Masculin / homme") 
 
 t1 <- wider_table |> 
   create_education_gt_table(data_helper = data_helper_t1)
