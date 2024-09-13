@@ -6,10 +6,13 @@
    - [Analysis of Children Accessing Education](#1-analysis-of-children-accessing-education)
      - [Sub-School-Age Categories Analysis](#sub-school-age-categories-analysis)
    - [Analysis of Children Not Accessing Education](#2-analysis-of-children-not-accessing-education-oos)
-2. [Analysis Implementation](#analysis-implementation)   
+2. [Analysis Implementation](#analysis-implementation)  
+   - [Requirements](0#-Clone/download-this-github-repository)
    - [Install functions and load Data](#1-Install-functions-and-load-Data)
-   - [Add Education Indicators](#2-add-education-indicators)
-   - [Indicator analysis](#3-indicator-analysis)
+   - [Add Education Indicators](#2-Data-preparation)
+   - [Indicator analysis](#3-Add-Education-Indicators)
+   - [Import Labels](#4-Label-Data)
+   - [Final output: Tables and Graphs](#5-Create-Tables-and-Graphs)
 
 ## Content of the Analysis structure 
 ### Analysis Overview
@@ -103,6 +106,7 @@ source('src/04-03-make-table-barriers.R')
 source('src/04-04-make-ece-table.R')
 source('src/04-05-make-level-table.R')
 ```
+
 ### 2. Data preparation
 
 ##### Input Data Paths
@@ -139,8 +143,7 @@ country_assessment = 'HTI'
 language_assessment = 'French'
 etc ...
 ```
-
-### 3. Add Education Indicators: add_education_indicators()
+### 3. Add Education Indicators
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
 - Access 
@@ -170,7 +173,7 @@ add_education_indicators(country_assessment = country_assessment, data_file = da
 ```
 The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
-### 3. Run Education Analysis: run_education_analysis()
+### 3. Run Education Analysis
 
 This function runs the analysis based on the data with the added indicators. It includes generating summary statistics and applying filters based on predefined variables and thresholds.
 
@@ -183,7 +186,7 @@ run_education_analysis(loa_path, number_displayed_barrier = number_displayed_bar
 ```
 The output is saved here: *output/grouped_other_education_results_loop.RDS*
 
-### 4. Label Data: change_label()
+### 4. Label Data
 
 After running the analysis, this function ensures that the correct labels are applied to the indicators for easy interpretation. It converts technical names into user-friendly labels according to the KOBO survey and choices and the edu_indicator_labeling.xlsx
 This labeling step is crucial for aligning the analysis output with the desired format for reporting and visualization, ensuring consistency across the dataset and tables.
@@ -236,7 +239,7 @@ create_level_education_table( level_table = 'level1',
                               loa_file =loa_path,  data_helper_file = data_helper_table, path_ISCED_file = path_ISCED_file,  gender_var = ind_gender, language = language_assessment)
 ```
 
-### 6. Final Output and Workbook Creation
+#### Final Output and Workbook Creation
 
 A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
 
