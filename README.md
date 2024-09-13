@@ -70,142 +70,174 @@ Following the same logic, the school-age categories and disaggregation need to b
 
 ## Analysis Implementation
 
-### 1. Install functions and load Data
-##### Install Humind, Education branch in Humind.data and analysistool packages
+### 0. Clone/download this github repository 
+
+This repository is designed to process and analyze educational data from various sources. It provides a systematic approach to adding indicators, running analyses, and generating tables for different educational metrics. The script is modular and can be adapted for different countries, datasets, and languages.
+
+The Main.R script and repository are organized to follow a systematic approach to process and analyze educational data. The structure is divided into several steps, each corresponding to specific functions or scripts that move the data from clean input to final analysis and output.
+
+### 1. Install packages and source needed functions and Data Preparation
+
 ```
 if(!require(devtools)) install.packages("devtools")
 devtools::install_github("impact-initiatives-hppu/humind")
-devtools::install_github("impact-initiatives-hppu/humind.data", ref = "education")
 devtools::install_github("impact-initiatives/analysistools")
+devtools::install_github("impact-initiatives/presentresults")
 
 library(humind) 
-library(humind.data)
 library(analysistools)
+library(presentresults)
+```
+##### Additional functions 
+```
+source ('src/functions/00_edu_helper.R')
+source ('src/functions/00_edu_function.R')
+source("src/functions/create_education_table_group_x_var.R")
+source("src/functions/create_education_xlsx_table.R")
 
-source ('scripts-example/Education/src/functions/00_edu_helper.R')
-source ('scripts-example/Education/src/functions/00_edu_function.R')
+source('src/01-add_education_indicators.R')
+source('src/02-education_analysis.R')
+source('src/03-education_labeling.R')
+source('src/04-02-make-table-disruptions.R')
+source('src/04-03-make-table-barriers.R')
+source('src/04-04-make-ece-table.R')
+source('src/04-05-make-level-table.R')
 ```
-##### Additional education functions for level-grade indicator
-```
-source ('scripts-example/Education/src/functions/00_edu_helper.R')
-source ('scripts-example/Education/src/functions/00_edu_function.R')
-```
-##### Load MSNA data and define ISCED UNESCO pathfile
-```
-# loop MSNA
-# main MSNA
-path_ISCED_file = 'scripts-example/Education/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-```
+### 2. Data preparation
 
-### 2. Add Education Indicators
-Please adjust the variable names according to the country-specific MSNA.
+##### Input Data Paths
 
-##### Education indicators from Humind 
-Correct the age according to the start of the school year
+Define paths to all input data files, including cleaned datasets, ISCED mappings, and KOBO surveys
 ```
- loop <- loop |>
-  add_loop_edu_ind_age_corrected(main = main,id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', survey_start_date = 'start', school_year_start_month = 9, ind_age = 'ind_age')
- ``` 
-Access 
- 
- ```
-  loop <- loop |>
-  add_loop_edu_access_d( ind_access = 'edu_access')
-  
-   ```
-Education disruption
+path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
+data_file <- 'input_data/data.xlsx'
+label_main_sheet <-'Clean Data'
+label_edu_sheet <- 'ind_loop'
 
-  ```
-  loop <- loop |>
-  add_loop_edu_disrupted_d (occupation = 'edu_disrupted_occupation', hazards = 'edu_disrupted_hazards', displaced = 'edu_disrupted_displaced', teacher = 'edu_disrupted_teacher')
+kobo_path <- "input_data/kobo.xlsx"
+label_survey_sheet <-'survey'
+label_choices_sheet <- 'choices'
+kobo_language_label <- "label::french"
 ```
-##### Additional education functions, from Humind.data
+#### Input data tools
 
-School-cycle age categorization: Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
+The education list of analysis is saved here: input_tool/edu_analysistools_loa.xlsx
 
+Please modify the column group_var to reflect the desired disaggregation variable. School-age cycle, edu_school_cycle_d, and gender, ind_gender, are already included.
 ```
-  loop <- loop |>
-  add_edu_school_cycle(country_assessment = 'HTI', path_ISCED_file)
-```
-Level-grade composite indicators: Net attendance, early-enrollment, overage learners.
+loa_path = "input_tool/edu_analysistools_loa.xlsx" 
+suffix <- ifelse(language_assessment == 'French', "_FR", "_EN")
 
-IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC.<br>
-The function reads the classification of levels and grades from the UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx file. If the structure or names do not correspond to what is present in your data, please download a copy, modify it as needed, and load your version at the beginning of the script.
+data_helper_table <- paste0("input_tool/edu_table_helper", suffix, ".xlsx")
+labelling_tool_path <- "input_tool/edu_indicator_labelling.xlsx"
+```
+#### Variables Definition
 
+At the beginning of the Main.R script, specify the variable names according to the context of the analysis (country, data format, etc.)
 ```
-  loop <- loop |>
-  add_edu_level_grade_indicators(country_assessment = 'HTI', path_ISCED_file, education_level_grade =  "edu_level_grade", id_col_loop = '_submission__uuid.x',  pnta = "pnta",
-                                 dnk = "dnk")
-```
-Additional variable harmonization 
-
-```
-  loop <- loop |>
-  add_loop_edu_barrier_d( barrier = "edu_barrier", barrier_other = "other_edu_barrier")
-```
-OPTIONAL non-core indicators, non-formal and community modality
-```
-  loop <- loop |>
-  add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
-  add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )
+country_assessment = 'HTI'
+language_assessment = 'French'
+etc ...
 ```
 
-Merge the loop with the main script to retrieve weight and strata information, such as admin levels, population groups, etc.
+### 2. Add Education Indicators: add_education_indicators()
+The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
+
+- Access 
+
+- Education disruption
+
+- School-cycle age categorization: Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
+
+- Level-grade composite indicators: Net attendance, early-enrollment, overage learners.
+
+- OPTIONAL non-core indicators, non-formal and community modality
+
+- Merge the loop with the main script to retrieve weight and strata information, such as admin levels, population groups, etc.
+
+- Filter for School-Age Children
+
+
+The function is defined in **01-add_education_indicators.R**. 
+
+It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and additional education functions defined in 00_edu_function.R
 ```
-  loop <- loop |>
-  merge_main_info_in_loop( main, id_col_loop = '_submission__uuid.x', id_col_main = '_uuid', admin1 = 'admin1', admin3 = 'admin3',  add_col1 = 'setting', add_col2 = 'depl_situation_menage'  )
+add_education_indicators(country_assessment = country_assessment, data_file = data_file, path_ISCED_file = path_ISCED_file,
+                        main_sheet = label_main_sheet,loop_sheet = label_edu_sheet,
+                        id_col_loop = id_col_loop, id_col_main = id_col_main,survey_start_date = survey_start_date,school_year_start_month = school_year_start_month,ind_age = ind_age,pnta = pnta,dnk = dnk,
+                        ind_access = ind_access,occupation = occupation,hazards = hazards,displaced = displaced,teacher = teacher,education_level_grade = education_level_grade,barrier = barrier,barrier_other = barrier_other,
+                        admin1 = admin1,admin3 = admin3, add_col1 = add_col1, add_col2 = add_col2)
 ```
+The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
-Filter for School-Age Children
+### 3. Run Education Analysis: run_education_analysis()
 
-```
-loop <- loop |> filter(edu_ind_schooling_age_d == 1)
-```
+This function runs the analysis based on the data with the added indicators. It includes generating summary statistics and applying filters based on predefined variables and thresholds.
 
-##### Export recorded loop dataframe to excel
+It is defined in **02-education_analysis.R**
 
-```
-write.xlsx(loop, 'scripts-example/Education/output/loop_edu_complete.xlsx')
-```
-### 3. Indicator analysis
-
-#### Education LOA: List of analysis
-
-The education list of analysis is saved here: scripts-example/Education/input/edu_analysistools_loa.csv
-
-Please modify the column **group_var** to reflect the desired disaggregation variable. School-age cycle, *edu_school_cycle_d*, and gender, *ind_gender*, are already included.
-
-#### Analysis
-1) Load the loop the education_loa
-2) Verify the consistency of the LOA with the loop. Loop over the analysis_var in loa and check if it exists in the column names of loop
+It uses analysistools::create_analysis() function from the **impact-initiatives/analysistools** package https://github.com/impact-initiatives/analysistools/blob/main/R/create_analysis.R
 
 ```
-filtered_vars <- list()
-loa_filtered <- loa %>%
-  dplyr::filter({
-    purrr::map_lgl(analysis_var, function(var) {
-      if (var %in% colnames(loop)) {
-        TRUE  # Keep the variable if it exists in loop
-      } else {
-        filtered_vars <<- append(filtered_vars, var)  # Track the filtered variable
-        FALSE  # Filter out the variable if it doesn't exist in loop
-      }
-    })
-  })
-
-if (length(filtered_vars) > 0) {
-  message("Filtered out the following analysis_var as they are not present in loop columns:")
-  print(filtered_vars)
-}
+run_education_analysis(loa_path, number_displayed_barrier = number_displayed_barrier)
 ```
-Analysis using the analysistools::create_analysis() function from the **impact-initiatives/analysistools** package https://github.com/impact-initiatives/analysistools/blob/main/R/create_analysis.R
-```
-design_loop <- loop |>
-  as_survey_design(weights = weight)
+The output is saved here: *output/grouped_other_education_results_loop.RDS*
 
-results_loop_weigthed <- create_analysis(
-  design_loop,
-  loa = loa_filtered,
-  sm_separator =  ".")
+### 4. Label Data: change_label()
+
+After running the analysis, this function ensures that the correct labels are applied to the indicators for easy interpretation. It converts technical names into user-friendly labels according to the KOBO survey and choices and the edu_indicator_labeling.xlsx
+This labeling step is crucial for aligning the analysis output with the desired format for reporting and visualization, ensuring consistency across the dataset and tables.
+
+
+The function is defined here: **03-education_labeling.R**.
+
+```
+change_label (kobo_path = kobo_path, label_survey_sheet = label_survey_sheet, label_choices_sheet = label_choices_sheet, labeling_path = labelling_tool_path, 
+              language = language_assessment, label_column_kobo = kobo_language_label) 
+```
+### 5. Create Tables and Graphs
+First create workbook for tables
+```
+wb <- openxlsx::createWorkbook("education_results")
+addWorksheet(wb, "Table_of_content")
+writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
 ```
 
+#### Create **Analysis of Children Accessing Education** table: create_access_education_table()
+
+Defined in **04-02-make-table-disruptions.R**. It generates a table showing data on disruptions to education (e.g., due to teacher absence, school occupation, hazards).
+```
+create_access_education_table( loa_file =loa_path,  data_helper_file = data_helper_table, language = language_assessment)
+```
+
+#### Create **Analysis of Children Not Accessing Education, OoS** table: create_out_of_school_education_table()
+
+Defined in **04-03-make-table-barriers.R**. 
+
+IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.  
+```
+create_out_of_school_education_table( loa_file =loa_path,  data_helper_file = data_helper_table, language = language_assessment)
+```
+
+#### Create **Early childhood education and early enrolment** table: create_ece_table()
+
+Defined in **04-04-make-ece-table.R**. It generates a table specifically for Early Childhood Education (ECE) data.
+```
+create_ece_table (loa_file =loa_path,  data_helper_file = data_helper_table, gender_var = ind_gender, language = language_assessment) 
+```
+
+#### Create **School Attendance Profile** table: create_level_education_table()
+
+To repeat according to the number of levels (except ECE) in the country's school system
+
+Defined in **04-05-make-level-table.R**.
+```
+create_level_education_table( level_table = 'level1',
+                              loa_file =loa_path,  data_helper_file = data_helper_table, path_ISCED_file = path_ISCED_file,  gender_var = ind_gender, language = language_assessment)
+```
+
+### 6.cFinal Output and Workbook Creation
+
+A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
+
+It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
