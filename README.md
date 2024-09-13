@@ -7,7 +7,7 @@
      - [Sub-School-Age Categories Analysis](#sub-school-age-categories-analysis)
    - [Analysis of Children Not Accessing Education](#2-analysis-of-children-not-accessing-education-oos)
 2. [Analysis Implementation](#analysis-implementation)  
-   - [Respository structure](#0-Respository-structure)
+   - [Repository structure](#0-Repository-structure)
    - [Install functions and load Data](#1-Install-functions-and-load-Data)
    - [Add Education Indicators](#2-Data-preparation)
    - [Indicator analysis](#3-Add-Education-Indicators)
@@ -73,7 +73,7 @@ Following the same logic, the school-age categories and disaggregation need to b
 
 ## Analysis Implementation
 
-### 0. Respository structure 
+### 0. Repository structure 
 
 This repository is designed to process and analyze educational data from various sources. It provides a systematic approach to adding indicators, running analyses, and generating tables for different educational metrics. The script is modular and can be adapted for different countries, datasets, and languages.
 
