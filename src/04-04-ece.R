@@ -48,6 +48,6 @@ writeFormula(wb, "Table_of_content",
              startRow = 4,
              x = makeHyperlinkString(
                sheet = "ece", row = 1, col = 1,
-               text = "ece"
+               text = data_helper_t3$title
              ))
 

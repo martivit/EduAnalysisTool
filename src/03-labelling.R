@@ -65,6 +65,7 @@ label_dictionary <- create_label_dictionary(updated_survey,
                                             results_table = education_results_loop, 
                                             label_column = "label::french")
 
+
 education_results_table_labelled <- add_label_columns_to_results_table(
   education_results_loop,
   label_dictionary
