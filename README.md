@@ -140,7 +140,7 @@ language_assessment = 'French'
 etc ...
 ```
 
-### 2. Add Education Indicators: add_education_indicators()
+### 3. Add Education Indicators: add_education_indicators()
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
 - Access 
@@ -236,7 +236,7 @@ create_level_education_table( level_table = 'level1',
                               loa_file =loa_path,  data_helper_file = data_helper_table, path_ISCED_file = path_ISCED_file,  gender_var = ind_gender, language = language_assessment)
 ```
 
-### 6.cFinal Output and Workbook Creation
+### 6. Final Output and Workbook Creation
 
 A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
 
