@@ -72,6 +72,7 @@ ind_age = 'ind_age' # individual age variable
 ind_gender = 'ind_gender' # individual gender variable
 pnta = "pnta"
 dnk = "dnk"
+weight_col = 'weights'
 
 
 # indicators
@@ -102,7 +103,7 @@ add_education_indicators(country_assessment = country_assessment, data_file = da
                         admin1 = admin1,admin3 = admin3, add_col1 = add_col1, add_col2 = add_col2)
 
 # 2 -- 02-education_analysis.R
-run_education_analysis(loa_path, number_displayed_barrier = number_displayed_barrier)
+run_education_analysis(loa_path, number_displayed_barrier = number_displayed_barrier, weight_col = weight_col)
 
 # 3 -- 03-education_labeling.R
 change_label (kobo_path = kobo_path, label_survey_sheet = label_survey_sheet, label_choices_sheet = label_choices_sheet, labeling_path = labelling_tool_path, 

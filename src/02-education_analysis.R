@@ -1,5 +1,5 @@
 
-run_education_analysis <- function(loa_path, number_displayed_barrier = 5) {
+run_education_analysis <- function(loa_path, number_displayed_barrier = 5, weight_col = 'weights') {
   
   
   # Read the dataset with indicators and loa
@@ -36,7 +36,7 @@ run_education_analysis <- function(loa_path, number_displayed_barrier = 5) {
   
   # Convert loop to survey design
   design_loop <- loop |>
-    as_survey_design(weights = weight)
+    as_survey_design(weights = weight_col)
   
   
   results_loop_weigthed <- create_analysis(
