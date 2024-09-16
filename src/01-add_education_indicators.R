@@ -16,7 +16,6 @@ add_education_indicators <- function(country_assessment = 'HTI',
                                      teacher = 'edu_disrupted_teacher',
                                      education_level_grade = "edu_level_grade",
                                      barrier = "edu_barrier",
-                                     barrier_other = "other_edu_barrier",
                                      admin1 = 'admin1',
                                      admin2 = NULL,
                                      admin3 = NULL,
@@ -61,7 +60,7 @@ add_education_indicators <- function(country_assessment = 'HTI',
     add_edu_level_grade_indicators(country_assessment = country_assessment, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk) |>
     
     #harmonized variable to use the loa_edu
-    add_loop_edu_barrier_d(barrier = barrier, barrier_other = barrier_other) |>
+    add_loop_edu_barrier_d(barrier = barrier) |>
     
     # OPTIONAL, non-core indicators, remove if not present in the MSNA
     #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
