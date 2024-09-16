@@ -60,22 +60,23 @@ add_education_indicators <- function(country_assessment = 'HTI',
     add_edu_level_grade_indicators(country_assessment = country_assessment, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk) |>
     
     #harmonized variable to use the loa_edu
-    add_loop_edu_barrier_d(barrier = barrier) |>
-    
-    # OPTIONAL, non-core indicators, remove if not present in the MSNA
-    #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
-    #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
-    
-    # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
-    merge_main_info_in_loop(loop = loop, main = main, id_col_loop = id_col_loop, id_col_main = id_col_main,
-                            admin1 = admin1, admin2 = admin2, admin3 = admin3, stratum = stratum, 
-                            additional_stratum = additional_stratum, weight = weight, 
-                            add_col1 = add_col1, add_col2 = add_col2, add_col3 = add_col3, 
-                            add_col4 = add_col4, add_col5 = add_col5, add_col6 = add_col6, 
-                            add_col7 = add_col7, add_col8 = add_col8) |>
-    
-    # keep only school-age children
-    filter(edu_ind_schooling_age_d == 1)
+    add_loop_edu_barrier_d(barrier = barrier)
+  
+  # OPTIONAL, non-core indicators, remove if not present in the MSNA
+  #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
+  #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
+  
+  
+  # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
+  loop <- merge_main_info_in_loop(loop = loop, main = main, id_col_loop = id_col_loop, id_col_main = id_col_main,
+                                  admin1 = admin1, admin2 = admin2, admin3 = admin3, stratum = stratum, 
+                                  additional_stratum = additional_stratum, weight = weight, 
+                                  add_col1 = add_col1, add_col2 = add_col2, add_col3 = add_col3, 
+                                  add_col4 = add_col4, add_col5 = add_col5, add_col6 = add_col6, 
+                                  add_col7 = add_col7, add_col8 = add_col8)
+  
+  # keep only school-age children
+  loop <- loop |> filter(edu_ind_schooling_age_d == 1)
   
   # Save the output to an Excel file
   loop |> write.xlsx('output/loop_edu_recorded.xlsx')
