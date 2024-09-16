@@ -67,7 +67,12 @@ add_education_indicators <- function(country_assessment = 'HTI',
     #add_loop_edu_optional_community_modality_d(edu_community_modality = "edu_community_modality" )|>
     
     # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
-    merge_main_info_in_loop(main, id_col_loop = id_col_loop, id_col_main = id_col_main, admin1 = admin1, admin3 = admin3, add_col1 = add_col1, add_col2 = add_col2) |>
+    merge_main_info_in_loop(loop = loop, main = main, id_col_loop = id_col_loop, id_col_main = id_col_main,
+                            admin1 = admin1, admin2 = admin2, admin3 = admin3, stratum = stratum, 
+                            additional_stratum = additional_stratum, weight = weight, 
+                            add_col1 = add_col1, add_col2 = add_col2, add_col3 = add_col3, 
+                            add_col4 = add_col4, add_col5 = add_col5, add_col6 = add_col6, 
+                            add_col7 = add_col7, add_col8 = add_col8) |>
     
     # keep only school-age children
     filter(edu_ind_schooling_age_d == 1)
