@@ -98,7 +98,7 @@ add_col2 = 'depl_situation_menage'
 add_education_indicators(country_assessment = country_assessment, data_file = data_file, path_ISCED_file = path_ISCED_file,
                         main_sheet = label_main_sheet,loop_sheet = label_edu_sheet,
                         id_col_loop = id_col_loop, id_col_main = id_col_main,survey_start_date = survey_start_date,school_year_start_month = school_year_start_month,ind_age = ind_age,pnta = pnta,dnk = dnk,
-                        ind_access = ind_access,occupation = occupation,hazards = hazards,displaced = displaced,teacher = teacher,education_level_grade = education_level_grade,barrier = barrier,barrier_other = barrier_other,
+                        ind_access = ind_access,occupation = occupation,hazards = hazards,displaced = displaced,teacher = teacher,education_level_grade = education_level_grade,barrier = barrier,
                         admin1 = admin1,admin3 = admin3, add_col1 = add_col1, add_col2 = add_col2)
 
 # 2 -- 02-education_analysis.R
