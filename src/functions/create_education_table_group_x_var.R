@@ -39,8 +39,10 @@ create_education_table_group_x_var <- function(filtered_results,
 
 
 
-create_education_gt_table <- function(wide_table, data_helper) {
+create_education_gt_table <- function(wide_table, data_helper,order_appearing) {
   gt_table <- wide_table %>%
+    arrange(
+      factor(label_group_var_value, levels = order_appearing)) |> 
     group_by(label_group_var) %>%
     gt()
   for (i in data_helper$overall_gender) {
