@@ -21,6 +21,9 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
   filter(out_of_school, analysis_var_value != "0") %>%
   select(-out_of_school)
 
+saveRDS(filtered_education_results_table_labelled, "output/rds_results/barriers_results.rds")
+
+
 # Read data helper and process it
 data_helper_t2 <- readxl::read_excel(data_helper_table, sheet = "out_of_school")
 data_helper_t2 <- data_helper_t2 %>% as.list() %>% map(na.omit) %>% map(c)
@@ -31,9 +34,10 @@ x2 <- filtered_education_results_table_labelled %>%
                                      label_female = label_female,
                                      label_male = label_male)
 
+order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(wider_table$label_group_var_value)) %>% na.omit() %>% unique()
 
 t2 <- x2 |> 
-  create_education_gt_table(data_helper = data_helper_t2)
+  create_education_gt_table(data_helper = data_helper_t2,order_appearing)
 t2
 create_xlsx_education_table(t2, wb, "out_of_school")
 

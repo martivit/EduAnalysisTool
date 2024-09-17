@@ -34,6 +34,8 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
          str_detect(group_var_value, label_level)) %>%
   select(-!!sym(level_table))
 
+saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/",level_table,"_results.rds"))
+
 # Read data helper and process it
 data_helper_t4 <- readxl::read_excel(data_helper_table, sheet = level_table)
 data_helper_t4 <- data_helper_t4 %>% as.list() %>% map(na.omit) %>% map(c)
@@ -60,9 +62,10 @@ x4 <- all_level_table %>%
     label_male = label_male
   )
 
+order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(wider_table$label_group_var_value)) %>% na.omit() %>% unique()
 
 t4 <-  x4 %>%
-  create_education_gt_table(data_helper = data_helper_t4)
+  create_education_gt_table(data_helper = data_helper_t4,order_appearing)
 
 create_xlsx_education_table(t4, wb, level_table)
 

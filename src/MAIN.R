@@ -134,7 +134,7 @@ add_col8 <- NULL
 source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 # 2 ----------------- 02-education_analysis.R ----------------- 
-source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
+# source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R ----------------- 
 source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
@@ -166,6 +166,9 @@ source('src/04-05-make-level-table.R')
 level_table = 'level3'
 source('src/04-05-make-level-table.R')
 
-
-
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
+# openxlsx::openXL("output/education_results.xlsx")
+
+# 9 ----------------- 05-01-make-level-table.R ----------------- 
+source('src/04-05-make-level-table.R')
+
