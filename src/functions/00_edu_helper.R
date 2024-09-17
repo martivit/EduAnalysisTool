@@ -143,6 +143,23 @@ validate_grade_continuity_within_levels <- function(levels_grades_ages) {
   return(TRUE)
 }#--------------------------------------------------------------------------------------------------------
 
+##---------------------------- Function to switch label based on the language of assessment
+change_label_based_on_language <- function(df, label_kobo = 'label::English', language_assessment = "English") {
+  
+  # Select the appropriate label column based on the language of the assessment
+  label_column <- if (language_assessment == "French") "label::french" else "label::english"
+  
+  # Check if the selected label column exists in the dataframe
+  if (!label_column %in% colnames(df)) {
+    stop(paste("The column", label_column, "is not found in the dataframe."))
+  }
+  
+  # Rename the selected label column to the name specified by 'label_kobo'
+  df <- df %>%
+    dplyr::rename(!!label_kobo := !!rlang::sym(label_column))
+  
+  return(df)
+}#--------------------------------------------------------------------------------------------------------
 
 
 #------------------------------------------------ Function to Ensure consistency between level codes and names

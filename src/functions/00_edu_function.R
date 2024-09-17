@@ -316,6 +316,46 @@ add_loop_edu_barrier_d <- function(
 ##------
 
 ##----------------------------------------------------------------------------------------------------------
+add_loop_child_gender_d <- function(
+    df,
+    ind_gender = "ind_gender",
+    language_assessment = 'English'
+){
+  #----- Checks
+  
+  # Check if the variable is in the data frame
+  if_not_in_stop(df, c(ind_gender), "df")
+  
+  # Check if new colnames are in the dataframe and throw a warning if they are
+  child_gender_d <- 'child_gender_d'
+  if (child_gender_d %in% colnames(df)) {
+    rlang::warn(paste0(child_gender_d, " already exists in df. It will be replaced."))
+  }
+  
+  # Determine the labels based on the language of assessment
+  if (language_assessment == 'French') {
+    female_label <- "Féminin / femme"
+    male_label <- "Masculin / homme"
+  } else {
+    female_label <- "Female / woman"
+    male_label <- "Male / man"
+  }
+  
+  # Mutate with case_when to handle the gender classification
+  df <- df %>%
+    dplyr::mutate(
+      !!child_gender_d := dplyr::case_when(
+        !!rlang::sym(ind_gender) %in% c("femme", "Féminin", "feminin", "female", "Female", "woman", "girl", "2") ~ female_label,  
+        !!rlang::sym(ind_gender) %in% c("homme", "Masculin", "masculin", "male", "man", "Male", "boy", "1") ~ male_label,
+        TRUE ~ as.character(!!rlang::sym(ind_gender))  # Otherwise, keep the original character value
+      )
+    )
+  
+  return(df)
+}
+##------
+
+##----------------------------------------------------------------------------------------------------------
 add_loop_edu_optional_nonformal_d <- function(
     loop,
     edu_other_yn = "edu_other_yn",
