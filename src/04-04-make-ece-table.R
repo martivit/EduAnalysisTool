@@ -40,6 +40,9 @@ ece_other <- filtered_education_results_table_labelled %>%
          label_group_var = str_remove_all(label_group_var, "edu_school_cycle_d( %/% )*"), 
          label_group_var_value = str_remove_all(label_group_var_value, "ECE( %/% )*"))
 all_ece <- rbind(ece_only, ece_other)
+
+saveRDS(all_ece, "output/rds_results/ece_results.rds")
+
 x3 <- all_ece |> 
   create_education_table_group_x_var(label_overall = label_overall,
                                      label_female = label_female,
