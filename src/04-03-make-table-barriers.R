@@ -1,9 +1,8 @@
 
 
 label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Féminin / femme" else "Female / woman"
-label_male <- if (language_assessment == "French") "Masculin / homme" else "Male / man"
-
+label_female <- if (language_assessment == "French") "Filles" else "Girls"
+label_male <- if (language_assessment == "French") "Garcons" else "Boys"
 
 # Read the labeled results table and loa
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
@@ -42,7 +41,7 @@ t2
 create_xlsx_education_table(t2, wb, "out_of_school")
 
 writeFormula(wb, "Table_of_content",
-             startRow = 3,
+             startRow = 4,
              x = makeHyperlinkString(
                sheet = "out_of_school", row = 1, col = 1,
                text = data_helper_t2$title

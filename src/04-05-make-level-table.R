@@ -1,8 +1,7 @@
 
 label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Féminin / femme" else "Female / woman"
-label_male <- if (language_assessment == "French") "Masculin / homme" else "Male / man"
-
+label_female <- if (language_assessment == "French") "Filles" else "Girls"
+label_male <- if (language_assessment == "French") "Garcons" else "Boys"
 
 # Read the labeled results table and loa
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
@@ -69,10 +68,10 @@ t4 <-  x4 %>%
 create_xlsx_education_table(t4, wb, level_table)
 
 row_number <- case_when(
-  level_table == "level1" ~ 5,
-  level_table == "level2" ~ 6,
-  level_table == "level3" ~ 7,
-  level_table == "level4" ~ 8,
+  level_table == "level1" ~ 6,
+  level_table == "level2" ~ 7,
+  level_table == "level3" ~ 8,
+  level_table == "level4" ~ 9,
   TRUE ~ NA_real_
 )
 

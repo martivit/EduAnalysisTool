@@ -344,11 +344,11 @@ add_loop_child_gender_d <- function(
   
   # Determine the labels based on the language of assessment
   if (language_assessment == 'French') {
-    female_label <- "Féminin / femme"
-    male_label <- "Masculin / homme"
+    female_label <- "Filles"
+    male_label <- "Garcons"
   } else {
-    female_label <- "Female / woman"
-    male_label <- "Male / man"
+    female_label <- "Girls"
+    male_label <- "Boys"
   }
   
   # Mutate with case_when to handle the gender classification
