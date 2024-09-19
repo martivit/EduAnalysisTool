@@ -185,14 +185,24 @@ add_edu_level_grade_indicators  <- function(roster,
         edu_level1_minus_one_age_d == 0,  # If edu_level1_minus_one_age_d is 0, set to NA
         NA_integer_,
         ifelse(
-          edu_level1_minus_one_age_d == 1 &  is.na(level_code), 0,
-          ifelse(edu_level1_minus_one_age_d == 1 &
-                   (!!sym(true_age_col) == (school_level_infos[['level1']]$starting_age - 1) &
-                      (level_code == 'level0' )),
-                 1, NA_integer_)
+          edu_level1_minus_one_age_d == 1 & is.na(level_code), 0,  # If no level_code and edu_level1_minus_one_age_d is 1, set to 0
+          ifelse(
+            edu_level1_minus_one_age_d == 1 &
+              (!!sym(true_age_col) == (school_level_infos[['level1']]$starting_age - 1) &
+                 level_code == 'level0'),  # If level_code is 'level0', set to 0
+            0,
+            ifelse(
+              edu_level1_minus_one_age_d == 1 &
+                (!!sym(true_age_col) == (school_level_infos[['level1']]$starting_age - 1) &
+                   level_code == 'level1'),  # If level_code is 'level1', set to 1
+              1,
+              NA_integer_  # Default to NA for other cases
+            )
+          )
         )
       )
     )
+  
   
   
   
