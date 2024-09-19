@@ -34,8 +34,6 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
          str_detect(group_var_value, label_level)) %>%
   select(-!!sym(level_table))
 
-saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/",level_table,"_results.rds"))
-
 # Read data helper and process it
 data_helper_t4 <- readxl::read_excel(data_helper_table, sheet = level_table)
 data_helper_t4 <- data_helper_t4 %>% as.list() %>% map(na.omit) %>% map(c)
@@ -54,6 +52,7 @@ level_table_other <- filtered_education_results_table_labelled %>%
 # Combine both parts of the level table
 all_level_table <- rbind(level_table_only, level_table_other)
 
+saveRDS(all_level_table, paste0("output/rds_results/",level_table,"_results.rds"))
 
 x4 <- all_level_table %>%
   create_education_table_group_x_var(

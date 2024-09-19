@@ -131,13 +131,13 @@ add_col5 <- NULL
 add_col6 <- NULL
 add_col7 <- NULL
 add_col8 <- NULL
-source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
+# source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 # 2 ----------------- 02-education_analysis.R ----------------- 
 # source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R ----------------- 
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+# source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables ----------------- 
 wb <- openxlsx::createWorkbook("education_results")
@@ -170,5 +170,26 @@ openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
 # openxlsx::openXL("output/education_results.xlsx")
 
 # 9 ----------------- 05-01-make-level-table.R ----------------- 
-source('src/04-05-make-level-table.R')
+tab_helper <- "access"
+results_filtered <- "output/rds_results/access_disruptions_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
 
+tab_helper <- "out_of_school"
+results_filtered <- "output/rds_results/barriers_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
+
+tab_helper <- "ece"
+results_filtered <- "output/rds_results/ece_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
+
+tab_helper <- "level1"
+results_filtered <- "output/rds_results/level1_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
+
+tab_helper <- "level2"
+results_filtered <- "output/rds_results/level2_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
+
+tab_helper <- "level3"
+results_filtered <- "output/rds_results/level3_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
