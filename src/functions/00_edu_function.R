@@ -1,10 +1,11 @@
 
 ##----------------------------------------------------------------------------------------------------------
-add_edu_school_cycle <- function(roster, country_assessment = 'BFA',path_ISCED_file, edu_ind_age_corrected= 'edu_ind_age_corrected') {
+add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_file, edu_ind_age_corrected = 'edu_ind_age_corrected') {
   # Read school structure information for the specified country
   info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
+  
   summary_info_school <- info_country_school_structure$summary_info_school    # DataFrame 1: level code, Learning Level, starting age, duration
-  levels_grades_ages <-  info_country_school_structure$levels_grades_ages     # DataFrame 2: level code, Learning Level, Year/Grade, Theoretical Start age, limit age
+  levels_grades_ages <- info_country_school_structure$levels_grades_ages     # DataFrame 2: level code, Learning Level, Year/Grade, Theoretical Start age, limit age
   
   # Adjust limit age in levels_grades_ages
   levels_grades_ages <- levels_grades_ages %>%
@@ -15,30 +16,45 @@ add_edu_school_cycle <- function(roster, country_assessment = 'BFA',path_ISCED_f
     mutate(
       ending_age = if_else(
         level_code == max(level_code),  # Check if it's the last level
-        starting_age + duration,       # For the last level
+        starting_age + duration -1 ,       # For the last level
         starting_age + duration - 1     # For all other levels
       )
     )
   
   conditions <- list()
   
+  # Find the starting age for primary education dynamically from the dataframe
+  primary_start_age <- summary_info_school %>%
+    filter(level_code == "level1") %>%  # Dynamically filter for "level1" instead of hardcoding "primary"
+    pull(starting_age) %>%
+    min()  # Get the minimum starting age for level1 (primary)
+  
   # Loop through each row of the summary_info_school to create conditions
   for (i in seq_len(nrow(summary_info_school))) {
     level_info <- summary_info_school[i, ]
     starting_age <- level_info$starting_age
     ending_age <- level_info$ending_age
-    name_level <- if (i == 1) "ECE" else level_info$name_level  # Force "ECE" for the first level
+    name_level <- level_info$name_level  # Dynamically fetch the level name
+    
+    if (level_info$level_code == "level0") {
+      # Special case for ECE (set age to 1 year before primary start)
+      ece_age <- primary_start_age - 1
+      name_with_age_range <- paste0("ECE – ", ece_age, " years old")
+    } else {
+      # Dynamically generate the string with the name and age range for other levels
+      name_with_age_range <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+    }
     
     # Append the condition to the list
     conditions[[length(conditions) + 1]] <- expr(
-      edu_ind_age_corrected >= !!starting_age & edu_ind_age_corrected <= !!ending_age ~ !!name_level
+      edu_ind_age_corrected >= !!starting_age & edu_ind_age_corrected <= !!ending_age ~ !!name_with_age_range
     )
   }
   
   # Add a default condition for any age outside the defined ranges
   conditions[[length(conditions) + 1]] <- expr(TRUE ~ NA_character_)
   
-  # Apply all conditions using case_when in a single mutate to determine the school cycle
+  # Apply all conditions using case_when in a single mutate to determine the school cycle with age range
   roster <- roster %>%
     mutate(edu_school_cycle_d = dplyr::case_when(!!!conditions))
   
@@ -219,24 +235,30 @@ add_edu_level_grade_indicators  <- function(roster,
     attending_col_name <- paste0("edu_attending_level", higher_levels_numeric, "_and_", level, "_age_d")
     age_col_name <- paste0('edu_', level, "_age_d")
     
-    
-    # Assign values to the dynamic column using case_when
+    # Vectorized comparison for level_code using single square brackets
     roster[[attending_col_name]] <- dplyr::case_when(
-      # Condition 1: If edu_level1_minus_one_age_d is 0, set to NA
+      
+      # Condition 1: If the age for this level is 0, assign NA
       roster[[age_col_name]] == 0 ~ NA_integer_,
+     
       
-      # Condition 2: If edu_level1_minus_one_age_d is 1 and level_code is NA, set to 0
+      # Condition 2: If the age for this level is 1 and no level code exists, assign 0
       roster[[age_col_name]] == 1 & is.na(roster$level_code) ~ 0,
+      # Added Condition: If the level_code is "level0", always assign 0
+      roster[[age_col_name]] == 1 & roster$level_code == "level0" ~ 0,
       
-      # Condition 3: If the age is within the range and level_code satisfies the condition, set to 1
-      roster[[true_age_col]] >= starting_age &
-        roster[[true_age_col]] <= ending_age &
-        as.integer(as.factor(roster$level_code)) >= level_numeric[[level]] ~ 1,
+      # Condition 3: If the age is 1 and the level_code is the current level or higher, assign 1
+      roster[[age_col_name]] == 1 &
+        level_numeric[roster$level_code] >= level_numeric[[level]] ~ 1,
       
-      # Default case: Set to NA
-      TRUE ~ 0
+      # Condition 4: If the age is 1 and the level_code is lower than the current level, assign 0
+      roster[[age_col_name]] == 1 &
+        level_numeric[roster$level_code] < level_numeric[[level]] ~ 0
     )
   }
+    
+    
+  
   
   filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
   ## ----- NUM and DEN for: Percentage of school-aged children attending school who are at least 2 years above the intended age for grade: primary/lower secondary
@@ -251,7 +273,7 @@ add_edu_level_grade_indicators  <- function(roster,
   for (level in filtered_levels_overage) {
     overage_level_col_name <- paste0('edu_', level, "_overage_learners_d")
     roster[[overage_level_col_name]] <- ifelse(roster[['level_code']] == level &
-                                                 (roster[[true_age_col]] - roster[['limit_age']]) >= 2, 1, 0)
+                                                 (roster[[true_age_col]] - roster[['limit_age']]) > 0, 1, 0)
   }
   
   roster <- roster %>%

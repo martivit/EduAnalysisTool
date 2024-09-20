@@ -1,7 +1,7 @@
 # Helpers
 label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Féminin / femme" else "Female / woman"
-label_male <- if (language_assessment == "French") "Masculin / homme" else "Male / man"
+label_female <- if (language_assessment == "French") "Filles" else "Girls"
+label_male <- if (language_assessment == "French") "Garcons" else "Boys"
 
 child_gender_label <- "child_gender_d"
 

@@ -244,3 +244,65 @@ merge_main_info_in_loop <- function(loop,
 
   return(merged_loop)
 }#--------------------------------------------------------------------------------------------------------
+
+#------------ labeling -----------------------------------------------------------------------------
+# Function to extract label for a level
+extract_label_for_level <- function(summary_info_school, level_info = NULL, label_level_code = NULL) {
+  # If level_code is provided, filter the corresponding row from summary_info_school
+  if (!is.null(label_level_code)) {
+    level_info <- summary_info_school %>%
+      filter(level_code == label_level_code) %>%
+      slice(1)  # Take the first matching row if duplicates exist
+  }
+  
+  # Ensure that level_info is not empty or NULL
+  if (is.null(level_info) || nrow(level_info) == 0) {
+    stop("You must provide a valid level_info or level_code.")
+  }
+  
+  # Extract the starting and ending ages for the level
+  starting_age <- level_info$starting_age
+  ending_age <- level_info$starting_age + level_info$duration - 1
+  
+  # Extract the name_level dynamically
+  name_level <- level_info$name_level
+  
+  # Special case for ECE (only if level_code == "level0")
+  if (level_info$level_code == "level0") {
+    primary_start_age <- summary_info_school %>%
+      filter(level_code == "level1") %>%
+      pull(starting_age) %>%
+      min()  # Get the minimum starting age for primary
+    
+    ece_age <- primary_start_age - 1
+    label <- paste0("ECE – ", ece_age, " years old")
+  } else {
+    # Generate the label with the name and age range for other levels
+    label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+  }
+  
+  return(label)
+}
+extract_label_for_level_ordering <- function(summary_info_school, level_info) {
+  starting_age <- level_info$starting_age
+  ending_age <- if_else(
+    level_info$level_code == max(summary_info_school$level_code),  # Check if it's the last level
+    level_info$starting_age + level_info$duration,
+    level_info$starting_age + level_info$duration - 1
+  )
+  name_level <- level_info$name_level
+  
+  if (level_info$level_code == "level0") {
+    primary_start_age <- summary_info_school %>%
+      filter(level_code == "level1") %>%
+      pull(starting_age) %>%
+      min()
+    ece_age <- primary_start_age - 1
+    label <- paste0("ECE – ", ece_age, " years old")
+  } else {
+    label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+  }
+  
+  return(label)
+}
+#--------------------------------------------------------------------------------------------------------
