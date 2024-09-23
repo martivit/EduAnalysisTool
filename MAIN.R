@@ -140,13 +140,13 @@ add_col5 <- NULL
 add_col6 <- NULL
 add_col7 <- NULL
 add_col8 <- NULL
-# source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
+source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 # 2 ----------------- 02-education_analysis.R -----------------
-# source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
+source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R -----------------
-# source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables -----------------
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
@@ -167,35 +167,36 @@ row_number_lookup <- c(
 )
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R -----------------
+# To repeat according to the number of tabs in the data_helper
 tab_helper <- "access"
 source("src/04-01-make-table-access-overaged-barriers.R")
 
-# 6 ----------------- 04-02-make-table-access-overage.R -----------------
 tab_helper <- "overaged"
 source("src/04-01-make-table-access-overaged-barriers.R")
 
-# 7 ----------------- 04-03-make-table-barriers.R -----------------
 ## IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.
 tab_helper <- "out_of_school"
 source("src/04-01-make-table-access-overaged-barriers.R")
 
-# 8 ----------------- 04-04-make-ece-table.R -----------------
+# 5 ----------------- 04-02-make-level-table.R -----------------
+# To repeat according to the number of levels in the country's school system
 tab_helper <- "ece"
 source("src/04-02-make-level-table.R")
 
-# 9 ----------------- 04-05-make-level-table.R -----------------
-# To repeat according to the number of levels (except ECE) in the country's school system
 tab_helper <- "level1"
 source("src/04-02-make-level-table.R")
+
 tab_helper <- "level2"
 source("src/04-02-make-level-table.R")
+
 tab_helper <- "level3"
 source("src/04-02-make-level-table.R")
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
 # openxlsx::openXL("output/education_results.xlsx")
 
-# 10 ----------------- 05-01-make-level-table.R -----------------
+# 6 ----------------- 05-01-make-level-table.R -----------------
+# To repeat according to the number of tabs in the data_helper
 tab_helper <- "access"
 results_filtered <- "output/rds_results/access_results.rds"
 source("src/05-01-make-graphs-and-maps-tables.R")
