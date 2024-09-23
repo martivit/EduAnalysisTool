@@ -2,7 +2,13 @@
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
 loa <- readxl::read_excel(loa_path, sheet = "Sheet1")
 
-label_level <- extract_label_for_level(summary_info_school, label_level_code = level_table)
+if(level_table == "ece") {
+  label_level <- extract_label_for_level(summary_info_school, label_level_code = 'level0')
+  
+} else {
+  label_level <- extract_label_for_level(summary_info_school, label_level_code = level_table)
+  
+} 
 
 # Prepare the LOA for the specific level
 loa_level <- loa %>%
@@ -50,11 +56,6 @@ x4 <- all_level_table %>%
     label_male = label_male
   )
 
-# labels_with_ages <- summary_info_school %>%
-#   rowwise() %>%
-#   mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
-#   pull(label)
-
 order_appearing <- c( label_overall, label_level,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
 
 t4 <-  x4 %>%
@@ -63,14 +64,7 @@ t4 <-  x4 %>%
 create_xlsx_education_table(t4, wb, level_table)
 t4
 
-row_number <- case_when(
-  level_table == "level1" ~ 6,
-  level_table == "level2" ~ 7,
-  level_table == "level3" ~ 8,
-  level_table == "level4" ~ 9,
-  TRUE ~ NA_real_
-)
-
+row_number <- row_number_lookup[[level_table]]
 
 # Add a hyperlink to the table of content
 writeFormula(wb, "Table_of_content",

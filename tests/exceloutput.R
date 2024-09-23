@@ -10,5 +10,5 @@ testthat::test_that("excel output are equal", {
   testthat::expect_equal(actual_output, expected_output)
 })
 # 
-openXL(expected_output_excel)
-openXL(actual_output_excel)
+# openXL(expected_output_excel)
+# openXL(actual_output_excel)

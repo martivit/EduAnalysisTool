@@ -158,6 +158,17 @@ wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
 writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
 
+row_number_lookup <- c(
+  "access" = 2,
+  "overaged" = 3,
+  "out_of_school" = 4,
+  "ece" = 5,
+  "level1" = 6,
+  "level2" = 7,
+  "level3" = 8,
+  "level4" = 9
+)
+
 # 5 ----------------- 04-01-make-table-access-disruptions.R ----------------- 
 level_table <- "access"
 source('src/04-01-make-table-access-overaged-barriers.R')
@@ -173,7 +184,9 @@ source('src/04-01-make-table-access-overaged-barriers.R')
 
 
 # 8 ----------------- 04-04-make-ece-table.R ----------------- 
-source('src/04-04-make-ece-table.R')
+level_table = 'ece'
+source('src/04-05-make-level-table.R')
+# source('src/04-04-make-ece-table.R')
 
 
 # 9 ----------------- 04-05-make-level-table.R ----------------- 

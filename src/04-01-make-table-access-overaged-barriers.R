@@ -41,13 +41,7 @@ t1 <- wider_table |>
 t1
 create_xlsx_education_table(t1, wb, level_table)
 
-row_number <- case_when(
-  level_table == "access" ~ 2,
-  level_table == "overaged" ~ 3,
-  level_table == "out_of_school" ~ 4,
-  TRUE ~ NA_real_
-)
-
+row_number <- row_number_lookup[[level_table]]
 
 # Add a hyperlink to the table of content
 writeFormula(wb, "Table_of_content",
