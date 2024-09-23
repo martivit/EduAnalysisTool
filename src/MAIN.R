@@ -21,8 +21,6 @@ library(ggtext)
 library(srvyr)
 library(analysistools)
 library(gt)
-library(visualisationIMPACT)
-library(ggthemes)
 
 
 source ('src/functions/00_edu_helper.R')
@@ -120,6 +118,15 @@ add_col1 = 'urbanity_setting'
 add_col2 = 'forcibly_displaced'
 #stratum = 
 
+label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
+label_female <- if (language_assessment == "French") "Filles" else "Girls"
+label_male <- if (language_assessment == "French") "Garcons" else "Boys"
+label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire Assigné par Âge" else "Age-Assigned School Cycle"
+
+# Read ISCED info
+info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
+summary_info_school <- info_country_school_structure$summary_info_school 
+
 ###################################################################################################
 
 # 1 ----------------- 01-add_education_indicators.R ----------------- 
@@ -133,13 +140,13 @@ add_col5 <- NULL
 add_col6 <- NULL
 add_col7 <- NULL
 add_col8 <- NULL
-source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
+# source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 # 2 ----------------- 02-education_analysis.R ----------------- 
-source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
+# source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R ----------------- 
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+# source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables ----------------- 
 wb <- openxlsx::createWorkbook("education_results")
@@ -171,7 +178,7 @@ level_table = 'level3'
 source('src/04-05-make-level-table.R')
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
-# openxlsx::openXL("output/education_results.xlsx")
+openxlsx::openXL("output/education_results.xlsx")
 
 # 10 ----------------- 05-01-make-level-table.R ----------------- 
 tab_helper <- "access"

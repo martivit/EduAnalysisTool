@@ -1,12 +1,4 @@
-# Helpers
-label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Filles" else "Girls"
-label_male <- if (language_assessment == "French") "Garcons" else "Boys"
-
 child_gender_label <- "child_gender_d"
-
-info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
-summary_info_school <- info_country_school_structure$summary_info_school 
 
 # Read data helper and process it
 data_helper <- readxl::read_excel(data_helper_table, sheet = tab_helper)
@@ -28,7 +20,7 @@ disruptions_results_for_graphs <- disruptions_results %>%
                                             label_analysis_var_value %in% data_helper$profile_columns ~ "Profile - choice type"))
   
 # Turn into factor to control the ordering
-order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(disruptions_results_for_graphs$label_group_var_value_1)) %>% na.omit() %>% unique()
+order_appearing <- c(label_overall, labels_with_ages, unique(disruptions_results_for_graphs$label_group_var_value_1)) %>% na.omit() %>% unique()
 gender_order <- c(label_overall, label_female, label_male)
 
 disruptions_results_for_graphs <- disruptions_results_for_graphs %>%

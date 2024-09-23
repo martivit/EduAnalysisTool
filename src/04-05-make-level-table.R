@@ -1,8 +1,8 @@
-
-label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Filles" else "Girls"
-label_male <- if (language_assessment == "French") "Garcons" else "Boys"
-label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire Assigné par Âge" else "Age-Assigned School Cycle"
+# 
+# label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
+# label_female <- if (language_assessment == "French") "Filles" else "Girls"
+# label_male <- if (language_assessment == "French") "Garcons" else "Boys"
+# label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire Assigné par Âge" else "Age-Assigned School Cycle"
 
 
 # Read the labeled results table and loa
