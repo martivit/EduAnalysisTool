@@ -2,7 +2,6 @@
 # Read the dataset with indicators and loa
 loop <- read_xlsx("output/loop_edu_recorded.xlsx")
 
-
 loop$weight <- 1
 filtered_vars <- list()
 
@@ -34,14 +33,10 @@ loop$overall <- "overall"
 design_loop <- loop |>
   as_survey_design(weights = weight_col)
 
-
 results_loop_weigthed <- create_analysis(
   design_loop,
   loa = loa_filtered,
   sm_separator =  ".")
-
-
-
 
 results_loop_weigthed$results_table %>%  write.csv('output/analysis_key_output.csv')
 results_loop_weigthed %>%
