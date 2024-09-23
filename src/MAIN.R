@@ -185,18 +185,17 @@ source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 8 ----------------- 04-04-make-ece-table.R ----------------- 
 level_table = 'ece'
-source('src/04-05-make-level-table.R')
-# source('src/04-04-make-ece-table.R')
+source('src/04-02-make-level-table.R')
 
 
 # 9 ----------------- 04-05-make-level-table.R ----------------- 
 # To repeat according to the number of levels (except ECE) in the country's school system
 level_table = 'level1'
-source('src/04-05-make-level-table.R')
+source('src/04-02-make-level-table.R')
 level_table = 'level2'
-source('src/04-05-make-level-table.R')
+source('src/04-02-make-level-table.R')
 level_table = 'level3'
-source('src/04-05-make-level-table.R')
+source('src/04-02-make-level-table.R')
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
 # openxlsx::openXL("output/education_results.xlsx")
