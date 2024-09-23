@@ -1,6 +1,5 @@
 
 # Read the dataset with indicators and loa
-loa <- read_xlsx(loa_path, sheet = "Sheet1")
 loop <- read_xlsx("output/loop_edu_recorded.xlsx")
 
 

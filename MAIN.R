@@ -114,6 +114,16 @@ labels_with_ages <- summary_info_school %>%
   mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
   pull(label)
 
+# Read the loa
+loa <- readxl::read_excel(loa_path, sheet = "Sheet1")
+
+# Read data helper and process it
+data_helper_sheets <- readxl::excel_sheets(data_helper_table)
+data_helper <- data_helper_sheets %>% 
+  map(~read_excel(data_helper_table, sheet = .x)) |> 
+  set_names(data_helper_sheets)
+
+
 ##################################################################################################
 
 # 1 ----------------- 01-add_education_indicators.R ----------------- 
@@ -127,15 +137,17 @@ add_col5 <- NULL
 add_col6 <- NULL
 add_col7 <- NULL
 add_col8 <- NULL
-source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
+# source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
 
 # 2 ----------------- 02-education_analysis.R ----------------- 
 # source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
 
 # 3 ----------------- 03-education_labeling.R ----------------- 
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+# source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables ----------------- 
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+
 wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
 writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
@@ -152,29 +164,29 @@ row_number_lookup <- c(
 )
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R ----------------- 
-level_table <- "access"
+tab_helper <- "access"
 source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 6 ----------------- 04-02-make-table-access-overage.R ----------------- 
-level_table <- "overaged"
+tab_helper <- "overaged"
 source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 7 ----------------- 04-03-make-table-barriers.R ----------------- 
 ## IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.
-level_table <- "out_of_school"
+tab_helper <- "out_of_school"
 source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 8 ----------------- 04-04-make-ece-table.R ----------------- 
-level_table = 'ece'
+tab_helper = 'ece'
 source('src/04-02-make-level-table.R')
 
 # 9 ----------------- 04-05-make-level-table.R ----------------- 
 # To repeat according to the number of levels (except ECE) in the country's school system
-level_table = 'level1'
+tab_helper = 'level1'
 source('src/04-02-make-level-table.R')
-level_table = 'level2'
+tab_helper = 'level2'
 source('src/04-02-make-level-table.R')
-level_table = 'level3'
+tab_helper = 'level3'
 source('src/04-02-make-level-table.R')
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)

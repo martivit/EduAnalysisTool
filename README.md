@@ -235,7 +235,7 @@ To repeat according to the number of levels (except ECE) in the country's school
 
 Defined in **04-05-make-level-table.R**.
 ```
-create_level_education_table( level_table = 'level1',
+create_level_education_table( tab_helper = 'level1',
                               loa_file =loa_path,  data_helper_file = data_helper_table, path_ISCED_file = path_ISCED_file,  gender_var = ind_gender, language = language_assessment)
 ```
 
