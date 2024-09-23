@@ -1,4 +1,3 @@
-child_gender_label <- "child_gender_d"
 
 # Read data helper and process it
 data_helper <- readxl::read_excel(data_helper_table, sheet = tab_helper)
@@ -13,7 +12,7 @@ disruptions_results_for_graphs <- disruptions_results %>%
                               " %/% ", 
                               names_sep = "_", 
                               too_few = "align_start") %>%
-  mutate(label_group_var_2 = if_else(is.na(label_group_var_2), child_gender_label, label_group_var_2),
+  mutate(label_group_var_2 = if_else(is.na(label_group_var_2), ind_gender, label_group_var_2),
          label_group_var_value_2 = if_else(is.na(label_group_var_value_2), label_overall, label_group_var_value_2)) %>%
   mutate(main_analysis_variable = case_when(label_analysis_var == data_helper$access_column ~ "Access",
                                             label_analysis_var %in% data_helper$profile_columns ~ "Profile - dummy type",

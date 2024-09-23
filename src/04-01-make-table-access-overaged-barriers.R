@@ -2,25 +2,26 @@
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
 loa <- readxl::read_excel(loa_path, sheet = "Sheet1")
 
-# Prepare loa_access
-loa_access <- loa %>% 
+# Prepare loa_level
+loa_level <- loa %>% 
   mutate(group_var = str_replace_all(group_var, ",", " %/% "),
          group_var = str_squish(group_var)) %>% 
-  filter(access)
+  filter(!!sym(level_table)) 
 
 # Join and filter results
 education_results_table_labelled <- education_results_table_labelled %>% 
-  right_join(unique(loa_access %>% select(analysis_var, group_var, access)))
+  right_join(unique(loa_level %>% select(analysis_var, group_var, !!sym(level_table))))
 
 # Filter for analysis_var_value == "1" and clean up access column
 filtered_education_results_table_labelled <- education_results_table_labelled %>% 
-  filter(analysis_var_value == "1") %>% 
-  select(-access)
+  filter(!!sym(level_table), 
+       analysis_var_value != "0") %>%
+  select(-!!sym(level_table))
 
-saveRDS(filtered_education_results_table_labelled, "output/rds_results/access_disruptions_results.rds")
+saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/",level_table,"_results.rds"))
 
 # Read data helper and process it
-data_helper_t1 <- readxl::read_excel(data_helper_table, sheet = "access")
+data_helper_t1 <- readxl::read_excel(data_helper_table, sheet = level_table)
 data_helper_t1 <- data_helper_t1 %>% as.list() %>% map(na.omit) %>% map(c)
 
 # Create the wider table using external functions
@@ -29,15 +30,8 @@ wider_table <- filtered_education_results_table_labelled %>%
                                      label_female = label_female,
                                      label_male = label_male)
 
-labels_with_ages <- summary_info_school %>%
-  rowwise() %>%
-  mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
-  pull(label)
-
 
 order_appearing <- c( label_overall, labels_with_ages,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
-
-#order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(wider_table$label_group_var_value)) %>% na.omit() %>% unique()
 
 t1 <- wider_table |> 
   create_education_gt_table(data_helper = data_helper_t1,
@@ -45,12 +39,21 @@ t1 <- wider_table |>
 
 
 t1
-create_xlsx_education_table(t1, wb, "access")
+create_xlsx_education_table(t1, wb, level_table)
 
+row_number <- case_when(
+  level_table == "access" ~ 2,
+  level_table == "overaged" ~ 3,
+  level_table == "out_of_school" ~ 4,
+  TRUE ~ NA_real_
+)
+
+
+# Add a hyperlink to the table of content
 writeFormula(wb, "Table_of_content",
-             startRow = 2,
+             startRow = row_number,
              x = makeHyperlinkString(
-               sheet = "access", row = 1, col = 1,
+               sheet = level_table, row = 1, col = 1,
                text = data_helper_t1$title
              ))
 

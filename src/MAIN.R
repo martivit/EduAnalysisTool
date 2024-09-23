@@ -127,6 +127,11 @@ label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire A
 info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
 summary_info_school <- info_country_school_structure$summary_info_school 
 
+labels_with_ages <- summary_info_school %>%
+  rowwise() %>%
+  mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
+  pull(label)
+
 ###################################################################################################
 
 # 1 ----------------- 01-add_education_indicators.R ----------------- 
@@ -154,14 +159,17 @@ addWorksheet(wb, "Table_of_content")
 writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R ----------------- 
-source('src/04-01-make-table-access-disruptions.R')
+level_table <- "access"
+source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 6 ----------------- 04-02-make-table-access-overage.R ----------------- 
-source('src/04-02-make-table-access-overaged.R')
+level_table <- "overaged"
+source('src/04-01-make-table-access-overaged-barriers.R')
 
 # 7 ----------------- 04-03-make-table-barriers.R ----------------- 
 ## IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.
-source('src/04-03-make-table-barriers.R')
+level_table <- "out_of_school"
+source('src/04-01-make-table-access-overaged-barriers.R')
 
 
 # 8 ----------------- 04-04-make-ece-table.R ----------------- 
@@ -178,33 +186,33 @@ level_table = 'level3'
 source('src/04-05-make-level-table.R')
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
-openxlsx::openXL("output/education_results.xlsx")
+# openxlsx::openXL("output/education_results.xlsx")
 
 # 10 ----------------- 05-01-make-level-table.R ----------------- 
-tab_helper <- "access"
-results_filtered <- "output/rds_results/access_disruptions_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "overaged"
-results_filtered <- "output/rds_results/access_overaged_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "out_of_school"
-results_filtered <- "output/rds_results/barriers_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "ece"
-results_filtered <- "output/rds_results/ece_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "level1"
-results_filtered <- "output/rds_results/level1_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "level2"
-results_filtered <- "output/rds_results/level2_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
-
-tab_helper <- "level3"
-results_filtered <- "output/rds_results/level3_results.rds"
-source('src/05-01-make-graphs-and-maps-tables.R')
+# tab_helper <- "access"
+# results_filtered <- "output/rds_results/access_disruptions_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "overaged"
+# results_filtered <- "output/rds_results/access_overaged_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "out_of_school"
+# results_filtered <- "output/rds_results/barriers_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "ece"
+# results_filtered <- "output/rds_results/ece_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "level1"
+# results_filtered <- "output/rds_results/level1_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "level2"
+# results_filtered <- "output/rds_results/level2_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')
+# 
+# tab_helper <- "level3"
+# results_filtered <- "output/rds_results/level3_results.rds"
+# source('src/05-01-make-graphs-and-maps-tables.R')

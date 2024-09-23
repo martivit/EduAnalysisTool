@@ -1,21 +1,8 @@
-# 
-# label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-# label_female <- if (language_assessment == "French") "Filles" else "Girls"
-# label_male <- if (language_assessment == "French") "Garcons" else "Boys"
-# label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire Assigné par Âge" else "Age-Assigned School Cycle"
-
-
 # Read the labeled results table and loa
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
 loa <- readxl::read_excel(loa_path, sheet = "Sheet1")
 
-# Read ISCED info
-info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
-summary_info_school <- info_country_school_structure$summary_info_school    # DataFrame 1
-
 label_level <- extract_label_for_level(summary_info_school, label_level_code = level_table)
-
-
 
 # Prepare the LOA for the specific level
 loa_level <- loa %>%
@@ -63,12 +50,12 @@ x4 <- all_level_table %>%
     label_male = label_male
   )
 
-labels_with_ages <- summary_info_school %>%
-  rowwise() %>%
-  mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
-  pull(label)
+# labels_with_ages <- summary_info_school %>%
+#   rowwise() %>%
+#   mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
+#   pull(label)
 
-order_appearing <- c( label_overall, labels_with_ages,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
+order_appearing <- c( label_overall, label_level,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
 
 t4 <-  x4 %>%
   create_education_gt_table(data_helper = data_helper_t4,order_appearing)

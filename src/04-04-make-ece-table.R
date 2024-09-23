@@ -1,10 +1,3 @@
-# 
-# label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-# label_female <- if (language_assessment == "French") "Filles" else "Girls"
-# label_male <- if (language_assessment == "French") "Garcons" else "Boys"
-
-label_edu_school_cycle <- if (language_assessment == "French") "Cycle Scolaire Assigné par Âge" else "Age-Assigned School Cycle"
-
 # Read the labeled results table and loa
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
 loa <- readxl::read_excel(loa_path, sheet = "Sheet1")
@@ -25,7 +18,7 @@ filtered_education_results_table_labelled <- education_results_table_labelled %>
          str_detect(group_var_value, label_level0)) |> 
   select(-ece)
 
-saveRDS(filtered_education_results_table_labelled, "output/rds_results/ece_results.rds")
+# saveRDS(filtered_education_results_table_labelled, "output/rds_results/ece_results.rds")
 
 # gt_helper 
 data_helper_t3 <- readxl::read_excel(data_helper_table, sheet = "ece")
@@ -51,7 +44,7 @@ x3 <- all_ece |>
   create_education_table_group_x_var(label_overall = label_overall,
                                      label_female = label_female,
                                      label_male = label_male)
-order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(wider_table$label_group_var_value)) %>% na.omit() %>% unique()
+order_appearing <- c( label_overall, labels_with_ages,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
 
 t3 <- x3 |> 
   create_education_gt_table(data_helper = data_helper_t3,order_appearing)
