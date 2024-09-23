@@ -1,8 +1,4 @@
 
-label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Filles" else "Girls"
-label_male <- if (language_assessment == "French") "Garcons" else "Boys"
-
 # Read the labeled results table and loa
 education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
 loa <- readxl::read_excel(loa_path, sheet = "Sheet1")

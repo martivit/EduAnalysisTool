@@ -1,12 +1,6 @@
 # Helpers
-label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
-label_female <- if (language_assessment == "French") "Féminin / femme" else "Female / woman"
-label_male <- if (language_assessment == "French") "Masculin / homme" else "Male / man"
 
 child_gender_label <- "child_gender_d"
-
-info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
-summary_info_school <- info_country_school_structure$summary_info_school 
 
 # Read data helper and process it
 data_helper <- readxl::read_excel(data_helper_table, sheet = tab_helper)
@@ -89,6 +83,8 @@ map2(type1_file_names, type1_plots, ~ggsave(filename = .x,
                            height = 4, 
                            units = "in"))
 
+type1_plots %>% saveRDS(paste0("output/plots/",tab_helper,"/type_1/","type_1_ggplots.rds"))
+
 ## Write plots index
 type1_group_id %>% write.csv(paste0("output/plots/",tab_helper,"/type_1/","type_1_index.csv"))
 
@@ -142,6 +138,9 @@ map2(type2_file_names, type2_plots, ~ggsave(filename = .x,
                                             bg = "white",
                                             height = 4, 
                                             units = "in"))
+
+type2_plots %>% saveRDS(paste0("output/plots/",tab_helper,"/type_2/","type_2_ggplots.rds"))
+
 ## Write plots index
 type2_group_id %>% write.csv(paste0("output/plots/",tab_helper,"/type_2/","type_2_index.csv"))
 
@@ -188,6 +187,8 @@ map2(type3_file_names, type3_plots, ~ggsave(filename = .x,
                                             bg = "white",
                                             height = 4, 
                                             units = "in"))
+
+type1_plots %>% saveRDS(paste0("output/plots/",tab_helper,"/type_3/","type_3_ggplots.rds"))
 
 ## Write plots index
 type3_group_id %>% write.csv(paste0("output/plots/",tab_helper,"/type_3/","type_3_index.csv"))

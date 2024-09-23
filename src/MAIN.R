@@ -2,22 +2,15 @@
 # Load packages -----------------------------------------------------------
 library(impactR.utils)
 library(humind)
-library(humind.data)
 library (presentresults)
 
 # Needed tidyverse packages
-library(dplyr)
 library(readxl)
 library(openxlsx)
 library(writexl)
-library(tidyr)
-library(stringr)
 library(tidyverse)
-library(tibble)
-library(ggplot2)
 library(grid)
 library(gridExtra)
-library(ggtext)
 library(srvyr)
 library(analysistools)
 library(gt)
@@ -27,15 +20,6 @@ source ('src/functions/00_edu_helper.R')
 source ('src/functions/00_edu_function.R')
 source("src/functions/create_education_table_group_x_var.R")
 source("src/functions/create_education_xlsx_table.R")
-
-# source('src/01-add_education_indicators.R')
-# source('src/02-education_analysis.R')
-# source('src/03-education_labeling.R')
-# source('src/04-02-make-table-disruptions.R')
-# source('src/04-03-make-table-barriers.R')
-# source('src/04-04-make-ece-table.R')
-# source('src/04-05-make-level-table.R')
-
 
 ## --------------------------
 #country_assessment = 'HTI'
@@ -118,6 +102,15 @@ add_col1 = 'urbanity_setting'
 add_col2 = 'forcibly_displaced'
 #stratum = 
 
+label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
+label_female <- if (language_assessment == "French") "Filles" else "Girls"
+label_male <- if (language_assessment == "French") "Garcons" else "Boys"
+
+# Read ISCED info
+info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
+summary_info_school <- info_country_school_structure$summary_info_school 
+
+
 ###################################################################################################
 
 # 1 ----------------- 01-add_education_indicators.R ----------------- 
@@ -131,13 +124,13 @@ add_col5 <- NULL
 add_col6 <- NULL
 add_col7 <- NULL
 add_col8 <- NULL
-#source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
-
-# 2 ----------------- 02-education_analysis.R ----------------- 
-#source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
-
-# 3 ----------------- 03-education_labeling.R ----------------- 
-#source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+# source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded.xlsx
+# 
+# # 2 ----------------- 02-education_analysis.R ----------------- 
+# source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop.RDS
+# 
+# # 3 ----------------- 03-education_labeling.R ----------------- 
+# source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables ----------------- 
 wb <- openxlsx::createWorkbook("education_results")
@@ -169,11 +162,15 @@ level_table = 'level3'
 source('src/04-05-make-level-table.R')
 
 openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
-# openxlsx::openXL("output/education_results.xlsx")
+openxlsx::openXL("output/education_results.xlsx")
 
 # 10 ----------------- 05-01-make-level-table.R ----------------- 
 tab_helper <- "access"
 results_filtered <- "output/rds_results/access_disruptions_results.rds"
+source('src/05-01-make-graphs-and-maps-tables.R')
+
+tab_helper <- "overage"
+results_filtered <- "output/rds_results/access_overage_results.rds"
 source('src/05-01-make-graphs-and-maps-tables.R')
 
 tab_helper <- "out_of_school"
