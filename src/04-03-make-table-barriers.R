@@ -28,7 +28,13 @@ x2 <- filtered_education_results_table_labelled %>%
                                      label_female = label_female,
                                      label_male = label_male)
 
-order_appearing <- c(label_overall, "ECE", summary_info_school$name_level, unique(wider_table$label_group_var_value)) %>% na.omit() %>% unique()
+labels_with_ages <- summary_info_school %>%
+  rowwise() %>%
+  mutate(label = extract_label_for_level_ordering(summary_info_school, cur_data())) %>%
+  pull(label)
+
+
+order_appearing <- c( label_overall, labels_with_ages,  unique(wider_table$label_group_var_value) ) %>%na.omit() %>%unique()
 
 t2 <- x2 |> 
   create_education_gt_table(data_helper = data_helper_t2,order_appearing)
