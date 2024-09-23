@@ -121,7 +121,11 @@ data_helper_sheets <- readxl::excel_sheets(data_helper_table)
 data_helper <- data_helper_sheets %>%
   map(~ read_excel(data_helper_table, sheet = .x)) |>
   set_names(data_helper_sheets)
-
+data_helper <- data_helper |>
+  map(~ .x |>
+    as.list() %>%
+    map(na.omit) %>%
+    map(c))
 
 ##################################################################################################
 

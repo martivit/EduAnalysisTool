@@ -28,12 +28,6 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
   ) %>%
   select(-!!sym(tab_helper))
 
-# Process data_helper
-data_helper_as_list <- data_helper[[tab_helper]] %>%
-  as.list() %>%
-  map(na.omit) %>%
-  map(c)
-
 # Separate level table data
 tab_helper_only <- filtered_education_results_table_labelled %>%
   filter(group_var %in% c("edu_school_cycle_d", paste0("edu_school_cycle_d %/% ", "child_gender_d")))
@@ -64,7 +58,7 @@ order_appearing <- c(label_overall, label_level, unique(wider_table$label_group_
   unique()
 
 t4 <- x4 %>%
-  create_education_gt_table(data_helper = data_helper_as_list, order_appearing)
+  create_education_gt_table(data_helper = data_helper[[tab_helper]], order_appearing)
 
 create_xlsx_education_table(t4, wb, tab_helper)
 t4
@@ -76,6 +70,6 @@ writeFormula(wb, "Table_of_content",
   startRow = row_number,
   x = makeHyperlinkString(
     sheet = tab_helper, row = 1, col = 1,
-    text = data_helper_as_list$title
+    text = data_helper[[tab_helper]]$title
   )
 )

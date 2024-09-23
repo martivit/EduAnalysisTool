@@ -1,9 +1,3 @@
-# Process data_helper
-data_helper_as_list <- data_helper[[tab_helper]] %>%
-  as.list() %>%
-  map(na.omit) %>%
-  map(c)
-
 # Read results
 disruptions_results <- readRDS(results_filtered)
 
@@ -20,9 +14,9 @@ disruptions_results_for_graphs <- disruptions_results %>%
     label_group_var_value_2 = if_else(is.na(label_group_var_value_2), label_overall, label_group_var_value_2)
   ) %>%
   mutate(main_analysis_variable = case_when(
-    label_analysis_var == data_helper_as_list$access_column ~ "Access",
-    label_analysis_var %in% data_helper_as_list$profile_columns ~ "Profile - dummy type",
-    label_analysis_var_value %in% data_helper_as_list$profile_columns ~ "Profile - choice type"
+    label_analysis_var == data_helper[[tab_helper]]$access_column ~ "Access",
+    label_analysis_var %in% data_helper[[tab_helper]]$profile_columns ~ "Profile - dummy type",
+    label_analysis_var_value %in% data_helper[[tab_helper]]$profile_columns ~ "Profile - choice type"
   ))
 
 # Turn into factor to control the ordering

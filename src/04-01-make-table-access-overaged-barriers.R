@@ -20,12 +20,6 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
 
 saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/", tab_helper, "_results.rds"))
 
-# Process data_helper
-data_helper_as_list <- data_helper[[tab_helper]] %>%
-  as.list() %>%
-  map(na.omit) %>%
-  map(c)
-
 # Create the wider table using external functions
 wider_table <- filtered_education_results_table_labelled %>%
   create_education_table_group_x_var(
@@ -40,7 +34,7 @@ order_appearing <- c(label_overall, labels_with_ages, unique(wider_table$label_g
 
 t1 <- wider_table |>
   create_education_gt_table(
-    data_helper = data_helper_as_list,
+    data_helper = data_helper[[tab_helper]],
     order_appearing
   )
 
@@ -54,6 +48,6 @@ writeFormula(wb, "Table_of_content",
   startRow = row_number,
   x = makeHyperlinkString(
     sheet = tab_helper, row = 1, col = 1,
-    text = data_helper_as_list$title
+    text = data_helper[[tab_helper]]$title
   )
 )
