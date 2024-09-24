@@ -22,8 +22,6 @@ source("src/functions/create_education_xlsx_table.R")
 ## --------------------------
 country_assessment = 'HTI'
 language_assessment = 'French'
-# country_assessment <- "AFG"
-# language_assessment <- "English"
 
 ## --------------- File paths
 #-- input data
@@ -31,30 +29,19 @@ path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.x
 data_file <- 'input_data/HTI2401-MSNA-DEPARTEMENTS-Clean-dataset.xlsx'
 label_main_sheet <-'Clean Data'
 label_edu_sheet <- 'ind_loop'
-# path_ISCED_file <- "resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"
-# data_file <- "input_data/AFG2403_MSNA_WoAA_2024_clean_data.xlsx"
-# label_main_sheet <- "AFG2403 MSNA WoAA 2024 MODULE 1"
-# label_edu_sheet <- "edu_ind"
 
 kobo_path <- "input_data/HTI_kobo.xlsx"
 label_survey_sheet <-'survey'
 label_choices_sheet <- 'choices'
 kobo_language_label <- "label::french"
-# kobo_path <- "input_data/AFG2403_MSNA_WoAA2024_kobo_tool.xlsx"
-# label_survey_sheet <- "survey"
-# label_choices_sheet <- "choices"
-# kobo_language_label <- "label::English"
 
 #-- input tool
 # please modify the group_var according to your context
 
 loa_path = "input_tool/edu_analysistools_loa.xlsx"
-# loa_path <- "input_tool/edu_analysistools_loa_AFG.xlsx"
-
 
 suffix <- ifelse(language_assessment == "French", "_FR", "_EN")
 data_helper_table <- paste0("input_tool/edu_table_helper", suffix, ".xlsx")
-# data_helper_table <- ("input_tool/edu_table_helper_EN_AFG.xlsx")
 
 labelling_tool_path <- "input_tool/edu_indicator_labelling.xlsx"
 
@@ -67,15 +54,6 @@ ind_age = 'ind_age' # individual age variable
 ind_gender = 'ind_gender' # individual gender variable
 pnta = "pnta"
 dnk = "dnk"
-# weight_col = 'weight'
-# id_col_loop <- "_submission__uuid" # uuid
-# id_col_main <- "_uuid" # uuid
-# survey_start_date <- "start" # column with the survey start
-# school_year_start_month <- 9 # start school year in country
-# ind_age <- "edu_ind_age" # individual age variable
-# ind_gender <- "edu_ind_gender" # individual gender variable
-# pnta <- "pnta"
-# dnk <- "dnk"
 weight_col <- "weights"
 
 # indicators
@@ -86,17 +64,13 @@ displaced <- "edu_disrupted_displaced"
 teacher <- "edu_disrupted_teacher"
 education_level_grade <- "edu_level_grade"
 barrier = "edu_barrier"
-# barrier <- "resn_no_access"
 number_displayed_barrier <- 5
 
 # strata --> check consistency with the group_var column  in the loa
 add_col1 = 'setting'
-add_col2 = 'depl_situation_menage'
 admin1 <- "admin1"
 admin2 <- "admin2"
 admin3 <- "admin3"
-# add_col1 <- "urbanity_setting"
-# add_col2 <- "forcibly_displaced"
 # stratum =
 
 label_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
@@ -134,6 +108,7 @@ main_sheet <- label_main_sheet
 loop_sheet <- label_edu_sheet
 stratum <- NULL
 additional_stratum <- NULL
+add_col2 <- NULL
 add_col3 <- NULL
 add_col4 <- NULL
 add_col5 <- NULL
