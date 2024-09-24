@@ -1,8 +1,8 @@
 # Get correct label level
 if (tab_helper == "ece") {
-  label_level <- extract_label_for_level(summary_info_school, label_level_code = "level0")
+  label_level <- extract_label_for_level(summary_info_school, label_level_code = "level0", language_assessment = language_assessment)
 } else {
-  label_level <- extract_label_for_level(summary_info_school, label_level_code = tab_helper)
+  label_level <- extract_label_for_level(summary_info_school, label_level_code = tab_helper, language_assessment = language_assessment)
 }
 
 # Prepare the LOA for the specific level
