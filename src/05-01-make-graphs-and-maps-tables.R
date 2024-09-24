@@ -158,7 +158,7 @@ type2_group_id %>% write.csv(paste0("output/plots/", tab_helper, "/type_2/", "ty
 
 # Type 3 plots -  - Indicators x dissag x 1 gender
 ## Split by label_group_var_value_1 and label_group_var_value_2
-type3_group_by_results <- disruptions_only |>
+type3_group_by_results <- no_admin_level |>
   group_by(analysis_type, label_information, label_group_var_1, label_group_var_value_2)
 type3_group_id <- type3_group_by_results |>
   group_keys()
