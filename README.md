@@ -12,7 +12,9 @@
    - [Add Education Indicators](#2-Data-preparation)
    - [Indicator analysis](#3-Add-Education-Indicators)
    - [Import Labels](#4-Label-Data)
-   - [Final output: Tables and Graphs](#5-Create-Tables-and-Graphs)
+   - [Final output - I: Tables](#5-Create-Tables)
+   - [Final output - II: Graphs](#5-Create-Graphs)
+
 
 ## Content of the Analysis structure 
 ### Analysis Overview
@@ -101,10 +103,9 @@ source("src/functions/create_education_xlsx_table.R")
 source('src/01-add_education_indicators.R')
 source('src/02-education_analysis.R')
 source('src/03-education_labeling.R')
-source('src/04-02-make-table-disruptions.R')
-source('src/04-03-make-table-barriers.R')
-source('src/04-04-make-ece-table.R')
-source('src/04-05-make-level-table.R')
+source('src/04-01-make-table-access-overaged-barriers.R')
+source('src/04-02-make-level-table.R')
+source('src/05-01-make-graphs-and-maps-tables.R')
 ```
 
 ### 2. Data preparation
@@ -113,15 +114,15 @@ source('src/04-05-make-level-table.R')
 
 Define paths to all input data files, including cleaned datasets, ISCED mappings, and KOBO surveys
 ```
-path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-data_file <- 'input_data/data.xlsx'
-label_main_sheet <-'Clean Data'
-label_edu_sheet <- 'ind_loop'
+path_ISCED_file <- "resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"
+data_file <- "input_data/demo_dataset.xlsx"
+label_main_sheet <- "demo_main"
+label_edu_sheet <- "demo_edu_ind"
 
-kobo_path <- "input_data/kobo.xlsx"
-label_survey_sheet <-'survey'
-label_choices_sheet <- 'choices'
-kobo_language_label <- "label::french"
+kobo_path <- "input_data/AFG2403_MSNA_WoAA2024_kobo_tool.xlsx"
+label_survey_sheet <- "survey"
+label_choices_sheet <- "choices"
+kobo_language_label <- "label::English"
 ```
 #### Input data tools
 
@@ -129,18 +130,20 @@ The education list of analysis is saved here: input_tool/edu_analysistools_loa.x
 
 Please modify the column group_var to reflect the desired disaggregation variable. School-age cycle, edu_school_cycle_d, and gender, ind_gender, are already included.
 ```
-loa_path = "input_tool/edu_analysistools_loa.xlsx" 
-suffix <- ifelse(language_assessment == 'French', "_FR", "_EN")
+loa_path <- "input_tool/edu_analysistools_loa_AFG.xlsx"
 
+suffix <- ifelse(language_assessment == "French", "_FR", "_EN")
 data_helper_table <- paste0("input_tool/edu_table_helper", suffix, ".xlsx")
+data_helper_table <- ("input_tool/edu_table_helper_EN_AFG.xlsx")
+
 labelling_tool_path <- "input_tool/edu_indicator_labelling.xlsx"
 ```
 #### Variables Definition
 
 At the beginning of the Main.R script, specify the variable names according to the context of the analysis (country, data format, etc.)
 ```
-country_assessment = 'HTI'
-language_assessment = 'French'
+country_assessment <- "AFG"
+language_assessment <- "English"
 etc ...
 ```
 ### 3. Add Education Indicators
@@ -165,11 +168,8 @@ The function is defined in **01-add_education_indicators.R**.
 
 It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and additional education functions defined in 00_edu_function.R
 ```
-add_education_indicators(country_assessment = country_assessment, data_file = data_file, path_ISCED_file = path_ISCED_file,
-                        main_sheet = label_main_sheet,loop_sheet = label_edu_sheet,
-                        id_col_loop = id_col_loop, id_col_main = id_col_main,survey_start_date = survey_start_date,school_year_start_month = school_year_start_month,ind_age = ind_age,pnta = pnta,dnk = dnk,
-                        ind_access = ind_access,occupation = occupation,hazards = hazards,displaced = displaced,teacher = teacher,education_level_grade = education_level_grade,barrier = barrier,barrier_other = barrier_other,
-                        admin1 = admin1,admin3 = admin3, add_col1 = add_col1, add_col2 = add_col2)
+source('src/01-add_education_indicators.R')
+
 ```
 The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
 
@@ -182,7 +182,7 @@ It is defined in **02-education_analysis.R**
 It uses analysistools::create_analysis() function from the **impact-initiatives/analysistools** package https://github.com/impact-initiatives/analysistools/blob/main/R/create_analysis.R
 
 ```
-run_education_analysis(loa_path, number_displayed_barrier = number_displayed_barrier)
+source('src/02-education_analysis.R')
 ```
 The output is saved here: *output/grouped_other_education_results_loop.RDS*
 
@@ -195,48 +195,76 @@ This labeling step is crucial for aligning the analysis output with the desired 
 The function is defined here: **03-education_labeling.R**.
 
 ```
-change_label (kobo_path = kobo_path, label_survey_sheet = label_survey_sheet, label_choices_sheet = label_choices_sheet, labeling_path = labelling_tool_path, 
-              language = language_assessment, label_column_kobo = kobo_language_label) 
+source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
 ```
-### 5. Create Tables and Graphs
+The output is saved here: *output/labeled_results_table.RDS  ---- df: education_results_table_labelled*
+
+### 5. Create Tables 
 First create workbook for tables
 ```
+education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+
 wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
 writeData(wb, sheet = "Table_of_content", x = "Table of Content", startCol = 1, startRow = 1)
+
+row_number_lookup <- c(
+  "access" = 2,
+  "overaged" = 3,
+  "out_of_school" = 4,
+  "ece" = 5,
+  "level1" = 6,
+  "level2" = 7,
+  "level3" = 8,
+  "level4" = 9
+)
+
 ```
 
-#### Create **Analysis of Children Accessing Education** table: create_access_education_table()
+#### Create **Analysis of Children Accessing Education** 
 
-Defined in **04-02-make-table-disruptions.R**. It generates a table showing data on disruptions to education (e.g., due to teacher absence, school occupation, hazards).
+It generates a table showing data on disruptions to education (e.g., due to teacher absence, school occupation, hazards).
 ```
-create_access_education_table( loa_file =loa_path,  data_helper_file = data_helper_table, language = language_assessment)
+tab_helper <- "access"
+source("src/04-01-make-table-access-overaged-barriers.R")
 ```
-
-#### Create **Analysis of Children Not Accessing Education, OoS** table: create_out_of_school_education_table()
-
-Defined in **04-03-make-table-barriers.R**. 
+It generates a table showing data on ovaaged learners.
+```
+tab_helper <- "overaged"
+source("src/04-01-make-table-access-overaged-barriers.R")
+```
+#### Create **Analysis of Children Not Accessing Education, OoS** 
 
 IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.  
 ```
-create_out_of_school_education_table( loa_file =loa_path,  data_helper_file = data_helper_table, language = language_assessment)
+tab_helper <- "out_of_school"
+source("src/04-01-make-table-access-overaged-barriers.R")
 ```
 
-#### Create **Early childhood education and early enrolment** table: create_ece_table()
+#### Create **Early childhood education and early enrolment** 
 
-Defined in **04-04-make-ece-table.R**. It generates a table specifically for Early Childhood Education (ECE) data.
+It generates a table specifically for indicators related to children one year before they reach the age to start primary school.
 ```
-create_ece_table (loa_file =loa_path,  data_helper_file = data_helper_table, gender_var = ind_gender, language = language_assessment) 
+tab_helper <- "ece"
+source("src/04-02-make-level-table.R")
 ```
 
-#### Create **School Attendance Profile** table: create_level_education_table()
+#### Create **School Attendance Profile** 
 
 To repeat according to the number of levels (except ECE) in the country's school system
 
-Defined in **04-05-make-level-table.R**.
 ```
-create_level_education_table( tab_helper = 'level1',
-                              loa_file =loa_path,  data_helper_file = data_helper_table, path_ISCED_file = path_ISCED_file,  gender_var = ind_gender, language = language_assessment)
+tab_helper <- "level1"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level2"
+source("src/04-02-make-level-table.R")
+
+tab_helper <- "level3"
+source("src/04-02-make-level-table.R")
+
+openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
+openxlsx::openXL("output/education_results.xlsx")
 ```
 
 #### Final Output and Workbook Creation
@@ -244,3 +272,37 @@ create_level_education_table( tab_helper = 'level1',
 A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
 
 It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
+
+### 6. Create Graphs 
+```
+tab_helper <- "access"
+results_filtered <- "output/rds_results/access_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "overaged"
+results_filtered <- "output/rds_results/overaged_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "out_of_school"
+results_filtered <- "output/rds_results/out_of_school_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "ece"
+results_filtered <- "output/rds_results/ece_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level1"
+results_filtered <- "output/rds_results/level1_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level2"
+results_filtered <- "output/rds_results/level2_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+
+tab_helper <- "level3"
+results_filtered <- "output/rds_results/level3_results.rds"
+source("src/05-01-make-graphs-and-maps-tables.R")
+```
+
+
+
