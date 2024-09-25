@@ -213,7 +213,7 @@ type3_group_id %>% write.csv(paste0("output/plots/", tab_helper, "/type_3/", "ty
 # Tables for maps
 # Removes admin level (should be maps?)
 only_admin_level <- disruptions_results_for_graphs %>%
-  filter(str_detect(group_var, "admin2"))
+  filter(str_detect(group_var, "admin1"))
 
 only_admin_level <- only_admin_level %>%
   unite(
