@@ -22,7 +22,7 @@ loop <- loop |>
   # from 00_edu_function.R
   
   # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
-  add_edu_school_cycle(country_assessment = country_assessment, path_ISCED_file = path_ISCED_file) |>
+  add_edu_school_cycle(country_assessment = country_assessment, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
   
   # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
   # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners

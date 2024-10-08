@@ -2,7 +2,6 @@
 # Read the dataset with indicators and loa
 loop <- read_xlsx("output/loop_edu_recorded.xlsx")
 
-loop$weight <- 1
 filtered_vars <- list()
 
 # Loop over the analysis_var in loa and check if it exists in the column names of loop

@@ -1,6 +1,6 @@
 
 ##----------------------------------------------------------------------------------------------------------
-add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_file, edu_ind_age_corrected = 'edu_ind_age_corrected') {
+add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_file, edu_ind_age_corrected = 'edu_ind_age_corrected', language_assessment) {
   # Read school structure information for the specified country
   info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
   
@@ -39,10 +39,18 @@ add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_
     if (level_info$level_code == "level0") {
       # Special case for ECE (set age to 1 year before primary start)
       ece_age <- primary_start_age - 1
-      name_with_age_range <- paste0("ECE – ", ece_age, " years old")
+      if (language_assessment == "French") {
+        name_with_age_range <- paste0("prescolaire – ", ece_age, " ans")
+      } else {
+        name_with_age_range <- paste0("ECE – ", ece_age, " years old")
+      }
     } else {
       # Dynamically generate the string with the name and age range for other levels
-      name_with_age_range <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+      if (language_assessment == "French") {
+        name_with_age_range <- paste0(name_level, " – ", starting_age, " jusqu'à ", ending_age, " ans")
+      } else {
+        name_with_age_range <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+      }
     }
     
     # Append the condition to the list

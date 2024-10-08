@@ -14,11 +14,11 @@ library(gridExtra)
 library(ggtext)
 
 
-##----------------------------------------------------------------------------------------------------------
-read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
-  file_school_cycle <- path_ISCED_file  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
+## ----------------------------------------------------------------------------------------------------------
+read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
+  file_school_cycle <- path_ISCED_file ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
 
-  #file_school_cycle <- "inst/extdata/edu_ISCED/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
+  # file_school_cycle <- "inst/extdata/edu_ISCED/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
   country <- country_assessment
   df <- readxl::read_excel(file_school_cycle, sheet = "Compiled_Levels_Grades")
 
@@ -26,7 +26,7 @@ read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
   country_input_lower <- tolower(country)
 
   # Check if the country exists in the dataframe
-  if(sum(tolower(df$`country code`) == country_input_lower | tolower(df$country) == country_input_lower) == 0){
+  if (sum(tolower(df$`country code`) == country_input_lower | tolower(df$country) == country_input_lower) == 0) {
     warning(sprintf("The country '%s' does not exist in the dataset.", country_input))
     return(NULL)
   }
@@ -37,9 +37,11 @@ read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
   # DataFrame 1: level code, Learning Level, starting age, duration
   summary_info_school <- country_df %>%
     dplyr::group_by(`level code`, `learning level`) %>%
-    dplyr::summarise(starting_age = min(`theoretical start age`),
-                     duration = dplyr::n(),
-                     .groups = 'drop')
+    dplyr::summarise(
+      starting_age = min(`theoretical start age`),
+      duration = dplyr::n(),
+      .groups = "drop"
+    )
 
   # Adjust for level0 duration if both level0 and level1 exist
   if ("level0" %in% summary_info_school$`level code` && "level1" %in% summary_info_school$`level code`) {
@@ -53,7 +55,7 @@ read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
 
   # DataFrame 2: level code, Learning Level, Year/Grade, Theoretical Start age, limit age
   levels_grades_ages <- country_df %>%
-    dplyr::select(`level code`, `learning level`, `year-grade`, `theoretical start age`,  `name -- for kobo`)
+    dplyr::select(`level code`, `learning level`, `year-grade`, `theoretical start age`, `name -- for kobo`)
 
   levels_grades_ages <- levels_grades_ages %>%
     rename(
@@ -72,7 +74,7 @@ read_ISCED_info <- function(country_assessment = 'BFA', path_ISCED_file) {
 
   return(list(summary_info_school = summary_info_school, levels_grades_ages = levels_grades_ages))
 }
-##------
+## ------
 
 
 
@@ -83,20 +85,22 @@ validate_age_continuity_and_levels <- function(school_level_infos, required_leve
   existing_levels <- unique(all_levels_df$level)
   missing_levels <- setdiff(required_levels, existing_levels)
   if (length(missing_levels) > 0) {
-    stop(sprintf("Missing required educational levels: %s", paste(missing_levels, collapse=", ")), call. = FALSE)
+    stop(sprintf("Missing required educational levels: %s", paste(missing_levels, collapse = ", ")), call. = FALSE)
   }
   # Sorting might be necessary depending on your data
   all_levels_df <- all_levels_df %>% arrange(starting_age)
   # Continue with the continuity check
   for (i in 2:nrow(all_levels_df)) {
-    if (all_levels_df$starting_age[i] != all_levels_df$ending_age[i-1] + 1) {
-      stop(sprintf("Age range discontinuity between levels: %s ends at %d, but %s starts at %d, check the name_level for name_consistency, too",
-                   all_levels_df$level[i-1], all_levels_df$ending_age[i-1],
-                   all_levels_df$level[i], all_levels_df$starting_age[i]), call. = FALSE)
+    if (all_levels_df$starting_age[i] != all_levels_df$ending_age[i - 1] + 1) {
+      stop(sprintf(
+        "Age range discontinuity between levels: %s ends at %d, but %s starts at %d, check the name_level for name_consistency, too",
+        all_levels_df$level[i - 1], all_levels_df$ending_age[i - 1],
+        all_levels_df$level[i], all_levels_df$starting_age[i]
+      ), call. = FALSE)
     }
   }
   return(TRUE)
-}#--------------------------------------------------------------------------------------------------------
+} #--------------------------------------------------------------------------------------------------------
 
 
 
@@ -107,13 +111,13 @@ validate_grade_continuity_within_levels <- function(levels_grades_ages) {
 
   levels_grades_ages <- levels_grades_ages %>%
     arrange(level_code, starting_age) %>%
-    mutate(starting_age = as.numeric(starting_age))  # Ensure starting_age is numeric for comparison.
+    mutate(starting_age = as.numeric(starting_age)) # Ensure starting_age is numeric for comparison.
 
   unique_levels <- unique(levels_grades_ages$level_code)
 
   for (level in unique_levels) {
     if (level == "level0") {
-      next  # Skip level0 as requested.
+      next # Skip level0 as requested.
     }
     grades_in_level <- filter(levels_grades_ages, level_code == level)
     # If there's only one grade in the level, skip the checks.
@@ -125,41 +129,44 @@ validate_grade_continuity_within_levels <- function(levels_grades_ages) {
     for (i in 1:(nrow(grades_in_level) - 1)) {
       for (j in (i + 1):nrow(grades_in_level)) {
         if (grades_in_level$starting_age[i] == grades_in_level$starting_age[j]) {
-          stop(sprintf("Error: Grades '%s' and '%s' within level %s have the same starting age of %d.",
-                       grades_in_level$name_level_grade[i], grades_in_level$name_level_grade[j], level, grades_in_level$starting_age[i]), call. = FALSE)
+          stop(sprintf(
+            "Error: Grades '%s' and '%s' within level %s have the same starting age of %d.",
+            grades_in_level$name_level_grade[i], grades_in_level$name_level_grade[j], level, grades_in_level$starting_age[i]
+          ), call. = FALSE)
         }
       }
     }
 
     # Check for non-consecutive starting ages.
     for (i in 2:nrow(grades_in_level)) {
-      if (grades_in_level$starting_age[i] != grades_in_level$starting_age[i-1] + 1) {
-        stop(sprintf("Continuity error between '%s' and '%s' in level %s: starting ages are not consecutive.",
-                     grades_in_level$name_level_grade[i-1], grades_in_level$name_level_grade[i], level), call. = FALSE)
+      if (grades_in_level$starting_age[i] != grades_in_level$starting_age[i - 1] + 1) {
+        stop(sprintf(
+          "Continuity error between '%s' and '%s' in level %s: starting ages are not consecutive.",
+          grades_in_level$name_level_grade[i - 1], grades_in_level$name_level_grade[i], level
+        ), call. = FALSE)
       }
     }
   }
 
   return(TRUE)
-}#--------------------------------------------------------------------------------------------------------
+} #--------------------------------------------------------------------------------------------------------
 
-##---------------------------- Function to switch label based on the language of assessment
-change_label_based_on_language <- function(df, label_kobo = 'label::English', language_assessment = "English") {
-  
+## ---------------------------- Function to switch label based on the language of assessment
+change_label_based_on_language <- function(df, label_kobo = "label::English", language_assessment = "English") {
   # Select the appropriate label column based on the language of the assessment
   label_column <- if (language_assessment == "French") "label::french" else "label::english"
-  
+
   # Check if the selected label column exists in the dataframe
   if (!label_column %in% colnames(df)) {
     stop(paste("The column", label_column, "is not found in the dataframe."))
   }
-  
+
   # Rename the selected label column to the name specified by 'label_kobo'
   df <- df %>%
     dplyr::rename(!!label_kobo := !!rlang::sym(label_column))
-  
+
   return(df)
-}#--------------------------------------------------------------------------------------------------------
+} #--------------------------------------------------------------------------------------------------------
 
 
 #------------------------------------------------ Function to Ensure consistency between level codes and names
@@ -191,13 +198,13 @@ validate_level_code_name_consistency <- function(school_level_infos) {
   } else {
     message("All level_code values are consistently associated with a single name_level. Validation passed.")
   }
-}#--------------------------------------------------------------------------------------------------------
+} #--------------------------------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------------------------------
 merge_main_info_in_loop <- function(loop,
                                     main,
-                                    id_col_loop = 'uuid', id_col_main = 'uuid',
-                                    admin1 = 'admin1',
+                                    id_col_loop = "uuid", id_col_main = "uuid",
+                                    admin1 = "admin1",
                                     admin2 = NULL,
                                     admin3 = NULL,
                                     stratum = NULL,
@@ -243,66 +250,82 @@ merge_main_info_in_loop <- function(loop,
   }
 
   return(merged_loop)
-}#--------------------------------------------------------------------------------------------------------
+} #--------------------------------------------------------------------------------------------------------
 
 #------------ labeling -----------------------------------------------------------------------------
 # Function to extract label for a level
-extract_label_for_level <- function(summary_info_school, level_info = NULL, label_level_code = NULL) {
+extract_label_for_level <- function(summary_info_school, level_info = NULL, label_level_code = NULL, language_assessment) {
   # If level_code is provided, filter the corresponding row from summary_info_school
   if (!is.null(label_level_code)) {
     level_info <- summary_info_school %>%
       filter(level_code == label_level_code) %>%
-      slice(1)  # Take the first matching row if duplicates exist
+      slice(1) # Take the first matching row if duplicates exist
   }
-  
+
   # Ensure that level_info is not empty or NULL
   if (is.null(level_info) || nrow(level_info) == 0) {
     stop("You must provide a valid level_info or level_code.")
   }
-  
+
   # Extract the starting and ending ages for the level
   starting_age <- level_info$starting_age
   ending_age <- level_info$starting_age + level_info$duration - 1
-  
+
   # Extract the name_level dynamically
   name_level <- level_info$name_level
-  
+
   # Special case for ECE (only if level_code == "level0")
   if (level_info$level_code == "level0") {
     primary_start_age <- summary_info_school %>%
       filter(level_code == "level1") %>%
       pull(starting_age) %>%
-      min()  # Get the minimum starting age for primary
-    
+      min() # Get the minimum starting age for primary
+
     ece_age <- primary_start_age - 1
-    label <- paste0("ECE – ", ece_age, " years old")
+    if (language_assessment == "French") {
+      label <- paste0("prescolaire – ", ece_age, " ans")
+    } else {
+      label <- paste0("ECE – ", ece_age, " years old")
+    }
   } else {
     # Generate the label with the name and age range for other levels
-    label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+    if (language_assessment == "French") {
+      label <- paste0(name_level, " – ", starting_age, " jusqu'à ", ending_age, " ans")
+    } else {
+      label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+    }
   }
-  
+
   return(label)
 }
-extract_label_for_level_ordering <- function(summary_info_school, level_info) {
+extract_label_for_level_ordering <- function(summary_info_school, level_info, language_assessment) {
   starting_age <- level_info$starting_age
   ending_age <- if_else(
-    level_info$level_code == max(summary_info_school$level_code),  # Check if it's the last level
+    level_info$level_code == max(summary_info_school$level_code), # Check if it's the last level
     level_info$starting_age + level_info$duration,
     level_info$starting_age + level_info$duration - 1
   )
   name_level <- level_info$name_level
-  
+
   if (level_info$level_code == "level0") {
     primary_start_age <- summary_info_school %>%
       filter(level_code == "level1") %>%
       pull(starting_age) %>%
       min()
     ece_age <- primary_start_age - 1
-    label <- paste0("ECE – ", ece_age, " years old")
+    if (language_assessment == "French") {
+      label <- paste0("prescolaire – ", ece_age, " ans")
+    } else {
+      label <- paste0("ECE – ", ece_age, " years old")
+    }
   } else {
-    label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+    if (language_assessment == "French") {
+      label <- paste0(name_level, " – ", starting_age, " jusqu'à ", ending_age, " ans")
+    } else {
+      label <- paste0(name_level, " – ", starting_age, " to ", ending_age, " years old")
+    }
   }
-  
+
   return(label)
 }
 #--------------------------------------------------------------------------------------------------------
