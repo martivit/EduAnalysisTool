@@ -235,7 +235,7 @@ source("src/04-01-make-table-access-overaged-barriers.R")
 ```
 #### Create **Analysis of Children Not Accessing Education, OoS** 
 
-IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_indicator_labelling_FR/EN.xlsx.  
+IMPORTANT: open grouped_other_education_results_loop and copy the first (in decreasing order) 5 edu_barrier_d results in the edu_table_helper_FR.xlsx.  
 ```
 tab_helper <- "out_of_school"
 source("src/04-01-make-table-access-overaged-barriers.R")
