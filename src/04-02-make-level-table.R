@@ -6,7 +6,7 @@ if (tab_helper == "ece") {
 }
 
 # Prepare the LOA for the specific level
-loa_level <- loa %>%
+loa_level <- loa_country %>%
   mutate(
     group_var = str_replace_all(group_var, ",", " %/% "),
     group_var = str_squish(group_var)
@@ -44,7 +44,7 @@ tab_helper_other <- filtered_education_results_table_labelled %>%
 # Combine both parts of the level table
 all_tab_helper <- rbind(tab_helper_only, tab_helper_other)
 
-saveRDS(all_tab_helper, paste0("output/rds_results/", tab_helper, "_results.rds"))
+saveRDS(all_tab_helper, paste0("output/rds_results/", tab_helper, "_results_", country_assessment, ".rds"))
 
 x4 <- all_tab_helper %>%
   create_education_table_group_x_var(

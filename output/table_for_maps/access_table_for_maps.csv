@@ -1,11 +1,11 @@
-"","label_group_var_value_1","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Ensemble","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Ensemble","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Ensemble","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés - Binaire %/% Ensemble","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Filles","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Garcons","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Filles","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Garcons","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Filles","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Garcons","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés - Binaire %/% Filles","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés - Binaire %/% Garcons"
-"1","Ouest","5","2","2","2","5","5","2","2","2",NA,"2","2"
-"2","Sud-Est","5","3","2","2","5","5","3","2","2","2","2","2"
-"3","Nord","5","2","2","2","5","5","2","2","2","2","2","2"
-"4","Nord-Est","5","2","2","2","5","5","2","2","2","2","2","2"
-"5","Artibonite","5","3","2","2","5","5","3","2","2","2","2","2"
-"6","Centre","4","2","2","2","4","4","2","2","2","2","2",NA
-"7","Sud","5","3","2","2","5","5","3","2","2","2","2","2"
-"8","Grande'Anse","5","3","3","2","5","5","3","2","3","2","2","2"
-"9","Nord-Ouest","5","3","3","2","5","5","3","3","3","3","2","2"
-"10","Nippes","5","2","2","2","5","5","2","2","2","2","2","2"
+"","label_group_var_value_1","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Ensemble","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Ensemble","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Ensemble","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés %/% Ensemble","% d'enfants d'âge scolaire dont l'éducation a été interrompue par l'occupation de l'école par les forces armées %/% Ensemble","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Filles","% d'enfants en âge scolaire ayant fréquenté l'école ou un programme d'éducation pré-primaire en 2023-2024 %/% Garcons","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Filles","% d'enfants en âge scolaire dont l'éducation a été interrompue en raison de l'absence d'enseignants %/% Garcons","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Filles","% d'enfants en âge scolaire dont l'éducation a été interrompue par des risques naturels %/% Garcons","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés %/% Filles","% d'enfants en âge scolaire dont l'école a été occupée par des déplacés %/% Garcons","% d'enfants d'âge scolaire dont l'éducation a été interrompue par l'occupation de l'école par les forces armées %/% Filles","% d'enfants d'âge scolaire dont l'éducation a été interrompue par l'occupation de l'école par les forces armées %/% Garcons"
+"1","Ouest","5","3","2","2","2","5","5","3","3","2","2","2","2","2","2"
+"2","Sud-Est","5","2","3","2","2","5","5","3","2","3","2","2","2","2","2"
+"3","Nord","5","2","2","2","2","5","5","2","2","2","2","2","2","2",NA
+"4","Nord-Est","5","2","2","2","2","5","5","2","2","2","2","2","2","2",NA
+"5","Artibonite","5","3","2","2","2","5","5","3","2","2","2","2","2","2","2"
+"6","Centre","4","2","2","2","2","4","4","2","2","2","2","2","2","2","2"
+"7","Sud","5","3","2","2",NA,"5","5","3","2","2","2","2","2",NA,NA
+"8","Grande'Anse","5","3","3","2",NA,"5","5","3","2","3","2","2","2",NA,NA
+"9","Nord-Ouest","5","3","3","2","2","5","5","3","3","3","3","2","2","2",NA
+"10","Nippes","5","2","2","2","2","5","5","2","2","2","2","2","2","2","2"

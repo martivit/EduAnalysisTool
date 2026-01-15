@@ -26,9 +26,9 @@ language_assessment = 'French'
 ## --------------- File paths
 #-- input data
 path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-data_file <- 'input_data/HTI2401-MSNA-DEPARTEMENTS-Clean-dataset.xlsx'
-label_main_sheet <-'Clean Data'
-label_edu_sheet <- 'ind_loop'
+data_file <- 'input_data/HTI2401 MSNA DEP dataset for analysis.xlsx'
+label_main_sheet <-'df_hh'
+label_edu_sheet <- 'df_ind'
 
 kobo_path <- "input_data/HTI_kobo.xlsx"
 label_survey_sheet <-'survey'
@@ -106,8 +106,8 @@ data_helper <- data_helper |>
 # 1 ----------------- 01-add_education_indicators.R -----------------
 main_sheet <- label_main_sheet
 loop_sheet <- label_edu_sheet
-stratum <- NULL
-additional_stratum <- NULL
+stratum <- 'stratum_id'
+additional_stratum <- 'cm_income_source'
 add_col2 <- NULL
 add_col3 <- NULL
 add_col4 <- NULL
