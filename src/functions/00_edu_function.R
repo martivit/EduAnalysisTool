@@ -80,6 +80,11 @@ add_edu_level_grade_indicators  <- function(roster,
                                             id_col_loop = 'uuid',
                                             pnta = "pnta",
                                             dnk = "dnk"){
+  if (is.null(education_level_grade)) {
+    warning("education_level_grade is NULL. Returning the roster unchanged.")
+    return(roster)
+  }
+  
   
   ind_access = 'edu_ind_access_d'
   info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
@@ -268,7 +273,9 @@ add_edu_level_grade_indicators  <- function(roster,
     
   
   
-  filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
+  filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2", "level3")]
+  #filtered_levels_overage <- filtered_levels[filtered_levels %in% c("level1", "level2")]
+  
   ## ----- NUM and DEN for: Percentage of school-aged children attending school who are at least 2 years above the intended age for grade: primary/lower secondary
   
   # Loop through each level to set flags for attendance at each level
@@ -280,14 +287,19 @@ add_edu_level_grade_indicators  <- function(roster,
   # Loop through each level to calculate the numerator for overage learners
   for (level in filtered_levels_overage) {
     overage_level_col_name <- paste0('edu_', level, "_overage_learners_d")
-    roster[[overage_level_col_name]] <- ifelse(roster[['level_code']] == level &
-                                                 (roster[[true_age_col]] - roster[['limit_age']]) > 0, 1, 0)
+    
+    roster[[overage_level_col_name]] <- ifelse(
+      roster[['level_code']] == level, 
+      ifelse((roster[[true_age_col]] - roster[['limit_age']]) >= 0, 1, 0), 
+      NA
+    )
   }
   
   roster <- roster %>%
     mutate(across(c(
       edu_level1_overage_learners_d,
       edu_level2_overage_learners_d
+      #edu_level3_overage_learners_d,
     ),
     ~ as.numeric(.)))
   
@@ -398,46 +410,58 @@ add_loop_child_gender_d <- function(
 ##----------------------------------------------------------------------------------------------------------
 add_loop_edu_optional_nonformal_d <- function(
     loop,
-    edu_other_yn = "edu_other_yn",
-    edu_other_type = 'edu_other_type',
+    edu_other_yn = NULL,
+    edu_other_type = NULL,
     yes = "yes",
     no = "no",
     pnta = "pnta",
     dnk = "dnk",
     ind_schooling_age_d = "edu_ind_schooling_age_d"
 ){
+  # Check if at least one of the variables is provided
+  if (is.null(edu_other_yn) && is.null(edu_other_type)) {
+    stop("At least one of 'edu_other_yn' or 'edu_other_type' must be provided.")
+  }
   
-  # Check if the variable is in the data frame
-  if_not_in_stop(loop, edu_other_yn, "loop")
-  if_not_in_stop(loop, edu_other_type, "loop")
+  # Check if 'ind_schooling_age_d' is in the data frame
   if_not_in_stop(loop, ind_schooling_age_d, "loop")
   
-  #------ Recode
-  loop <- dplyr::mutate(
-    loop,
-    edu_other_yn_d = dplyr::case_when(
-      !!rlang::sym(ind_schooling_age_d) == 0 ~  NA_real_,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
-      !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
-      TRUE ~ NA_real_
-    ))
-  
-  # Check if new colnames are in the main dataframe and throw a warning if they are
-  edu_other_type_d <- paste0('edu_other_type', "_d")
-  if (edu_other_type_d %in% colnames(loop)) {
-    rlang::warn(paste0(edu_other_type_d, " already exists in df. It will be replaced."))
+  #------ Process 'edu_other_yn' if not NULL
+  if (!is.null(edu_other_yn)) {
+    if_not_in_stop(loop, edu_other_yn, "loop")
+    
+    # Recode 'edu_other_yn_d' based on conditions
+    loop <- loop %>%
+      dplyr::mutate(
+        edu_other_yn_d = dplyr::case_when(
+          !!rlang::sym(ind_schooling_age_d) == 0 ~ NA_real_,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
+          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
+          TRUE ~ NA_real_
+        )
+      )
   }
-  #------ Rename Columns
   
-  # Rename the columns by appending "_d"
-  loop <- loop %>%
-    dplyr::mutate(
-      !!edu_other_type_d := !!rlang::sym(edu_other_type)
-    )
+  #------ Process 'edu_other_type' if not NULL
+  if (!is.null(edu_other_type)) {
+    if_not_in_stop(loop, edu_other_type, "loop")
+    
+    # Check if new column 'edu_other_type_d' already exists and warn if it will be replaced
+    edu_other_type_d <- "edu_other_type_d"
+    if (edu_other_type_d %in% colnames(loop)) {
+      rlang::warn(paste0(edu_other_type_d, " already exists in df. It will be replaced."))
+    }
+    
+    # Rename 'edu_other_type' column by appending "_d"
+    loop <- loop %>%
+      dplyr::mutate(
+        !!edu_other_type_d := !!rlang::sym(edu_other_type)
+      )
+  }
   
   return(loop)
-}##------
+}
 
 
 

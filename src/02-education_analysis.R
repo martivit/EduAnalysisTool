@@ -1,52 +1,37 @@
 
 # Read the dataset with indicators and loa
-loop <- read_xlsx("output/loop_edu_recorded.xlsx")
+loop <- readxl::read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
 
-filtered_vars <- list()
-
-# Loop over the analysis_var in loa and check if it exists in the column names of loop
-loa_filtered <- loa %>%
-  dplyr::filter({
-    purrr::map_lgl(analysis_var, function(var) {
-      if (var %in% colnames(loop)) {
-        TRUE  # Keep the variable if it exists in loop
-      } else {
-        filtered_vars <<- append(filtered_vars, var)  # Track the filtered variable
-        FALSE  # Filter out the variable if it doesn't exist in loop
-      }
-    })
-  })
-
-
-# Print the filtered variables for debugging
-if (length(filtered_vars) > 0) {
-  message("Filtered out the following analysis_var as they are not present in loop columns:")
-  print(filtered_vars)
-}
-
+## --------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------
 # Add Overall variable to help in data viz
 loop$overall <- "overall"
 
+loop <- loop %>%
+  dplyr::mutate(!!rlang::sym(weight_col) := as.numeric(!!rlang::sym(weight_col))) %>%
+  dplyr::filter(!is.na(!!rlang::sym(weight_col)))
 
-# Convert loop to survey design
+# Convert to survey design, ensuring weight_col is evaluated as the column name
 design_loop <- loop |>
-  as_survey_design(weights = weight_col)
+  as_survey_design(weights = all_of(weight_col))
 
+test_df <-
 results_loop_weigthed <- create_analysis(
   design_loop,
-  loa = loa_filtered,
-  sm_separator =  ".")
+  loa = loa_country,
+  sm_separator =  "_")
 
-results_loop_weigthed$results_table %>%  write.csv('output/analysis_key_output.csv')
+results_loop_weigthed$results_table %>%  write.csv(paste0('output/analysis_key_output', country_assessment,'.csv'))
 results_loop_weigthed %>%
-  saveRDS("output/analysis_key_output.RDS")
+  saveRDS(paste0('output/analysis_key_output', country_assessment,'.RDS'))
 
 
 # group other select ones.
 vars_to_group <- results_loop_weigthed$results_table %>% 
   group_by(analysis_type,analysis_var,group_var, group_var_value) %>% 
   mutate(rank = dplyr::dense_rank(desc(stat)),
-         other_to_group = analysis_var_value == "other" | rank > 5 ) %>%
+         other_to_group = analysis_var_value == "other" | rank > number_displayed_barrier ) %>%
   ungroup() %>%
   filter(group_var == "overall", 
          analysis_var %in% c("edu_barrier_d"),
@@ -101,7 +86,7 @@ if (duplicated_keys > 0) {
   message("There are ", duplicated_keys, " duplicates in analysis keys.")
 }
 
-grouped_other_education_results_loop %>% saveRDS("output/grouped_other_education_results_loop.RDS")
+grouped_other_education_results_loop %>% saveRDS(paste0('output/grouped_other_education_results_loop_', country_assessment,'.RDS'))
 
   
 

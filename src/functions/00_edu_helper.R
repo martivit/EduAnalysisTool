@@ -27,7 +27,7 @@ read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
 
   # Check if the country exists in the dataframe
   if (sum(tolower(df$`country code`) == country_input_lower | tolower(df$country) == country_input_lower) == 0) {
-    warning(sprintf("The country '%s' does not exist in the dataset.", country_input))
+    warning(sprintf("The country '%s' does not exist in the dataset.", country_input_lower))
     return(NULL)
   }
 
@@ -201,56 +201,70 @@ validate_level_code_name_consistency <- function(school_level_infos) {
 } #--------------------------------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------------------------------
-merge_main_info_in_loop <- function(loop,
-                                    main,
-                                    id_col_loop = "uuid", id_col_main = "uuid",
-                                    admin1 = "admin1",
-                                    admin2 = NULL,
-                                    admin3 = NULL,
-                                    stratum = NULL,
-                                    additional_stratum = NULL,
-                                    weight = NULL,
-                                    add_col1 = NULL,
-                                    add_col2 = NULL,
-                                    add_col3 = NULL,
-                                    add_col4 = NULL,
-                                    add_col5 = NULL,
-                                    add_col6 = NULL,
-                                    add_col7 = NULL,
-                                    add_col8 = NULL) {
-  # Create a vector of columns to check and merge from 'main'
-  cols_to_merge <- c(admin1, admin2, admin3, stratum, additional_stratum, weight, add_col1, add_col2, add_col3, add_col4, add_col5, add_col6, add_col7, add_col8)
-
-  # Filter out NULL values
-  cols_to_merge <- cols_to_merge[!is.null(cols_to_merge)]
-
-  # Check if all non-NULL columns exist in 'main'
+merge_main_info_in_loop <- function(
+    loop,
+    main,
+    id_col_loop = "uuid",
+    id_col_main = "uuid",
+    admin1 = "admin1",
+    admin2 = NULL,
+    admin3 = NULL,
+    stratum = NULL,
+    additional_stratum = NULL,
+    weight = NULL,
+    add_cols = NULL,          # character vector of extra columns to bring over
+    ...,                      # or pass unnamed character vectors here
+    include_regex = c("edu_community_modality", "fsl_lcsi_withdew_children") # auto-include patterns
+) {
+  # Collect extra columns from ... and merge with add_cols
+  dots_cols <- list(...)
+  if (length(dots_cols)) {
+    dots_cols <- unlist(dots_cols, use.names = FALSE)
+    if (!is.null(add_cols)) add_cols <- c(add_cols, dots_cols) else add_cols <- dots_cols
+  }
+  
+  # Base columns to merge from 'main'
+  cols_to_merge <- c(
+    admin1, admin2, admin3, stratum, additional_stratum, weight,
+    add_cols
+  )
+  cols_to_merge <- unique(cols_to_merge[!is.null(cols_to_merge)])
+  
+  # Auto-include any columns in 'main' that match the regex patterns
+  if (!is.null(include_regex) && length(include_regex) > 0) {
+    auto_cols <- unlist(lapply(include_regex, function(rx) {
+      grep(rx, colnames(main), value = TRUE)
+    }))
+    cols_to_merge <- unique(c(cols_to_merge, auto_cols))
+  }
+  
+  # Validate presence in 'main'
   missing_cols <- setdiff(cols_to_merge, colnames(main))
   if (length(missing_cols) > 0) {
-    stop(paste("The following columns are missing in 'main':", paste(missing_cols, collapse = ", ")))
+    stop(paste0("The following columns are missing in 'main': ",
+                paste(missing_cols, collapse = ", ")))
   }
-
-  # Remove columns from 'loop' that will be merged from 'main' to avoid duplication
+  
+  # Remove any of those columns already present in 'loop' to avoid duplicates
   existing_cols_in_loop <- intersect(cols_to_merge, colnames(loop))
-
-  # Remove only those columns from 'loop' that actually exist
   if (length(existing_cols_in_loop) > 0) {
-    loop <- loop %>% select(-all_of(existing_cols_in_loop))
+    loop <- dplyr::select(loop, -dplyr::all_of(existing_cols_in_loop))
   }
-
-  # Select necessary columns from 'main' for merging
-  main_selected <- main %>% select(all_of(c(id_col_main, cols_to_merge)))
-
+  
+  # Build the reduced 'main' for the join
+  main_selected <- dplyr::select(main, dplyr::all_of(unique(c(id_col_main, cols_to_merge))))
+  
   # Perform the merge
-  if (id_col_loop == id_col_main) {
-    merged_loop <- loop %>% left_join(main_selected, by = id_col_loop)
+  if (identical(id_col_loop, id_col_main)) {
+    merged_loop <- dplyr::left_join(loop, main_selected, by = id_col_loop)
   } else {
-    join_by <- setNames(id_col_main, id_col_loop)
-    merged_loop <- loop %>% left_join(main_selected, by = join_by)
+    # by = c("<loop id col>" = "<main id col>")
+    merged_loop <- dplyr::left_join(loop, main_selected, by = setNames(id_col_main, id_col_loop))
   }
-
-  return(merged_loop)
-} #--------------------------------------------------------------------------------------------------------
+  
+  merged_loop
+}
+#--------------------------------------------------------------------------------------------------------
 
 #------------ labeling -----------------------------------------------------------------------------
 # Function to extract label for a level

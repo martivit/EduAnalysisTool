@@ -100,6 +100,7 @@ source ('src/functions/00_edu_function.R')
 source("src/functions/create_education_table_group_x_var.R")
 source("src/functions/create_education_xlsx_table.R")
 
+source("src/00-getting-info-country.R")
 source('src/01-add_education_indicators.R')
 source('src/02-education_analysis.R')
 source('src/03-education_labeling.R')
@@ -112,18 +113,15 @@ source('src/05-01-make-graphs-and-maps-tables.R')
 
 ##### Input Data Paths
 
-Define paths to all input data files, including cleaned datasets, ISCED mappings, and KOBO surveys
+Define paths to all input data files: Dataset folder and  ISCED mappings
 ```
-path_ISCED_file <- "resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"
-data_file <- "input_data/demo_dataset.xlsx"
-label_main_sheet <- "demo_main"
-label_edu_sheet <- "demo_edu_ind"
+path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
+data_file <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
+kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
 
-kobo_path <- "input_data/AFG2403_MSNA_WoAA2024_kobo_tool.xlsx"
-label_survey_sheet <- "survey"
-label_choices_sheet <- "choices"
-kobo_language_label <- "label::English"
+
 ```
+The remaining information related to language, Kobo, variables, and indicators must be completed in the metadata_edu.xlsx file (please place it one folder above, [../metadata_edu.xlsx]). An example completed for a few countries is available in example_metadata_edu.xlsx.
 #### Input data tools
 
 The education list of analysis is saved here: input_tool/edu_analysistools_loa.xlsx
