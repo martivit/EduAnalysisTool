@@ -55,7 +55,7 @@ For **5-year-old** children, analysis should focus on the already mentioned acce
 
 For children in the **primary school-age** category (and similarly for older age groups), access and disruption can be analysed along with:
 
--	*Net Attendance Rates*: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
+-	*Net Attendance (adjusted) Rates*: The percentage of school-aged children in primary school, lower secondary, or upper secondary school who are currently attending school.
 
 -	*Over-Age Attendance*: The percentage of school-aged children attending school who are at least two years older than the intended age for their grade, specifically at the primary school level.
 
