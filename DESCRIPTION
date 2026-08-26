@@ -31,11 +31,22 @@ Imports:
     lubridate,
     stats,
     glue,
-    lifecycle
+    lifecycle,
+    impactR.utils,
+    humind,
+    analysistools,
+    presentresults,
+    ggplot2,
+    gt,
+    openxlsx,
+    writexl,
+    tidyverse,
+    grid,
+    gridExtra,
+    ggtext
 Suggests:
     rmarkdown,
     knitr,
-    openxlsx,
     labelled
 VignetteBuilder: knitr 
 LazyData: true
