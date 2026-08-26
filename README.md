@@ -83,13 +83,17 @@ The Main.R script and repository are organized to follow a systematic approach t
 
 ### 1. Install packages and source needed functions and Data Preparation
 
-```
-if(!require(devtools)) install.packages("devtools")
-devtools::install_github("impact-initiatives-hppu/humind")
-devtools::install_github("impact-initiatives/analysistools")
-devtools::install_github("impact-initiatives/presentresults")
+This project uses [renv](https://rstudio.github.io/renv/) to keep everyone on the same package versions, including the GitHub-only packages (`humind`, `analysistools`, `presentresults`, `impactR.utils`) pinned to fixed commits. Open the project in RStudio (or run `setwd()` to the project folder) and run:
 
-library(humind) 
+```
+if (!require(renv)) install.packages("renv")
+renv::restore()
+```
+
+This installs every package the project needs, at the exact versions recorded in `renv.lock`. Once it finishes:
+
+```
+library(humind)
 library(analysistools)
 library(presentresults)
 ```
