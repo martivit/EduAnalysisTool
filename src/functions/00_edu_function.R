@@ -163,11 +163,11 @@ add_edu_level_grade_indicators  <- function(roster,
   # This effectively removes specific educational details when there is no access to education, ensuring that subsequent data analysis on these columns only considers valid, relevant educational data.
   roster <- roster %>%
     mutate(across(c(level_code, name_level, grade), ~ case_when(
-      ind_access == 0 | edu_ind_schooling_age_d == 0 ~ NA_character_,
+      ind_access == 0 | edu_ind_age_schooling == 0 ~ NA_character_,
       TRUE ~ .
     ))) %>%
     mutate(across(c(starting_age, limit_age), ~ case_when(
-      ind_access == 0 | edu_ind_schooling_age_d == 0 ~ NA_real_,
+      ind_access == 0 | edu_ind_age_schooling == 0 ~ NA_real_,
       TRUE ~ .
     )))
   
@@ -186,7 +186,7 @@ add_edu_level_grade_indicators  <- function(roster,
     age_col_name <- paste0('edu_', level, "_age_d")
     
     # Assign values to the dynamic column
-    roster[[age_col_name]] <- ifelse(is.na(roster[[true_age_col]]) | roster$edu_ind_schooling_age_d == 0,
+    roster[[age_col_name]] <- ifelse(is.na(roster[[true_age_col]]) | roster$edu_ind_age_schooling == 0,
                                      NA_integer_,
                                      ifelse(roster[[true_age_col]] >= starting_age & roster[[true_age_col]] <= ending_age, 1, 0))
   }
@@ -194,8 +194,8 @@ add_edu_level_grade_indicators  <- function(roster,
   ## ----- NUM and DEN for:  % of children (one year before the official primary school entry age) who are attending an early childhood education program or primary school
   roster <- roster %>%
     mutate(
-      # Adjust age conditionally, checking for NA in true_age_col or edu_ind_schooling_age_d
-      edu_level1_minus_one_age_d = if_else(is.na(!!sym(true_age_col)) | edu_ind_schooling_age_d == 0,
+      # Adjust age conditionally, checking for NA in true_age_col or edu_ind_age_schooling
+      edu_level1_minus_one_age_d = if_else(is.na(!!sym(true_age_col)) | edu_ind_age_schooling == 0,
                                            NA_integer_,
                                            if_else(!!sym(true_age_col) == (school_level_infos[['level1']]$starting_age - 1), 1, 0)),
       
@@ -308,7 +308,7 @@ add_edu_level_grade_indicators  <- function(roster,
     mutate(across(c(edu_level1_overage_learners_d,
     ),
     ~ case_when(
-      edu_ind_schooling_age_d == 0  ~ NA_real_,
+      edu_ind_age_schooling == 0  ~ NA_real_,
       #. == 0 ~ NA_real_,  # Additional check to set 0 values to NA_real_
       TRUE ~ .
     )
@@ -354,11 +354,11 @@ add_loop_edu_barrier_d <- function(
   }
   
   
-  # Mutate with case_when to handle the condition when edu_ind_schooling_age_d == 0
+  # Mutate with case_when to handle the condition when edu_ind_age_schooling == 0
   df <- df %>%
     dplyr::mutate(
       !!barrier_d := dplyr::case_when(
-        edu_ind_schooling_age_d == 0 ~ NA_character_,  # If edu_ind_schooling_age_d == 0, set to NA_character_
+        edu_ind_age_schooling == 0 ~ NA_character_,  # If edu_ind_age_schooling == 0, set to NA_character_
         TRUE ~ as.character(!!rlang::sym(barrier))  # Otherwise, keep the original character value
       )
     )
@@ -416,15 +416,15 @@ add_loop_edu_optional_nonformal_d <- function(
     no = "no",
     pnta = "pnta",
     dnk = "dnk",
-    ind_schooling_age_d = "edu_ind_schooling_age_d"
+    ind_age_schooling_d = "edu_ind_age_schooling"
 ){
   # Check if at least one of the variables is provided
   if (is.null(edu_other_yn) && is.null(edu_other_type)) {
     stop("At least one of 'edu_other_yn' or 'edu_other_type' must be provided.")
   }
   
-  # Check if 'ind_schooling_age_d' is in the data frame
-  if_not_in_stop(loop, ind_schooling_age_d, "loop")
+  # Check if 'ind_age_schooling_d' is in the data frame
+  if_not_in_stop(loop, ind_age_schooling_d, "loop")
   
   #------ Process 'edu_other_yn' if not NULL
   if (!is.null(edu_other_yn)) {
@@ -434,10 +434,10 @@ add_loop_edu_optional_nonformal_d <- function(
     loop <- loop %>%
       dplyr::mutate(
         edu_other_yn_d = dplyr::case_when(
-          !!rlang::sym(ind_schooling_age_d) == 0 ~ NA_real_,
-          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
-          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
-          !!rlang::sym(ind_schooling_age_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
+          !!rlang::sym(ind_age_schooling_d) == 0 ~ NA_real_,
+          !!rlang::sym(ind_age_schooling_d) == 1 & !!rlang::sym(edu_other_yn) == yes ~ 1,
+          !!rlang::sym(ind_age_schooling_d) == 1 & !!rlang::sym(edu_other_yn) == no ~ 0,
+          !!rlang::sym(ind_age_schooling_d) == 1 & !!rlang::sym(edu_other_yn) %in% c(pnta, dnk) ~ NA_real_,
           TRUE ~ NA_real_
         )
       )
@@ -469,12 +469,12 @@ add_loop_edu_optional_nonformal_d <- function(
 add_loop_edu_optional_community_modality_d <- function(
     loop,
     edu_community_modality = "edu_community_modality" ,
-    ind_schooling_age_d = "edu_ind_schooling_age_d"
+    ind_age_schooling_d = "edu_ind_age_schooling"
 ){
   
   # Check if the variable is in the data frame
   if_not_in_stop(loop, edu_community_modality, "loop")
-  if_not_in_stop(loop, ind_schooling_age_d, "loop")
+  if_not_in_stop(loop, ind_age_schooling_d, "loop")
   
   
   # Check if new colnames are in the main dataframe and throw a warning if they are

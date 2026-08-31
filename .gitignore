@@ -8,3 +8,10 @@
 .quarto
 .Rhistory
 tests/
+
+# Real per-country configuration (contains real dataset filenames/column names);
+# keep only the template (example_metadata_edu.xlsx) tracked in git.
+input_tool/01_metadata/metadata_edu.xlsx
+
+# Real per-country survey datasets; never committed.
+DATA/

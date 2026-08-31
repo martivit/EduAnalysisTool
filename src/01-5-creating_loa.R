@@ -85,5 +85,5 @@ loa_country <- loa_filtered %>%
 
 loa_country <- loa_country %>%
   dplyr::filter(!stringr::str_detect(group_var, "disagg_pop_access"))
-loa_country %>%  write.csv(paste0('input_tool/loa_analysis_', country_assessment,'.csv'))
+loa_country %>%  write.csv(paste0('input_tool/03_loa/loa_analysis_', country_assessment,'.csv'))
 

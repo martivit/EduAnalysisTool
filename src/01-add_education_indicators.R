@@ -43,6 +43,8 @@ if (country_assessment == "ETH") {
 #main <- main %>%
   #mutate(survey_start_date = as_date(ymd_hms(survey_start_date)))
 
+# Rename of the disruption columns to be aligned with the Humind naming convention of add_loop_edu_disrupted_d.R
+# i.e: * *_d: Binary columns for each disruption type (e.g., edu_disrupted_attack_d)
 
 occupation_col <- if (!is.null(list_variables$occupation)) paste0(list_variables$occupation, "_d") else NULL
 hazards_col <- paste0(list_variables$hazards, "_d")
@@ -361,7 +363,7 @@ if (country_assessment == "MMR") {
 #}
 # keep only school-age children
 loop <- loop |>
-  dplyr::filter(edu_ind_schooling_age_d == 1) |>
+  dplyr::filter(edu_ind_age_schooling == 1) |>
   dplyr::mutate(
     young_adult = dplyr::case_when(
       edu_ind_age_corrected %in% c(15,16, 17) ~ "15 - 17 y.o.",
@@ -370,7 +372,7 @@ loop <- loop |>
   )
 
 
-loop <- loop |> filter(edu_ind_schooling_age_d == 1)
+loop <- loop |> filter(edu_ind_age_schooling == 1)
  if (country_assessment == "AFG"){
    loop <- loop |> filter(edu_ind_age_corrected != 5)
  }

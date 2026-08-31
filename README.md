@@ -97,6 +97,30 @@ library(humind)
 library(analysistools)
 library(presentresults)
 ```
+
+##### If you hit a GitHub API rate limit
+
+`renv::restore()` only contacts GitHub for the packages actually recorded with `Source: GitHub` in `renv.lock` (currently `humind`, `analysistools`, `presentresults`, `impactR.utils`, plus their own GitHub-only dependencies `addindicators` and `cleaningtools`) — it does not re-query GitHub for CRAN packages. If you still hit GitHub's unauthenticated rate limit (60 requests/hour per IP), you have two options:
+
+- **Authenticate**: run `usethis::create_github_token()` to create a personal access token, then `gitcreds::gitcreds_set()` to store it. This raises the limit substantially.
+- **Wait it out or switch network**: the limit is per IP and resets hourly; switching wifi/network also gives you a fresh limit.
+
+Avoid `remotes::install_deps()` or `renv::install()` as a workaround — both re-resolve the `Remotes:` field (and re-hit the GitHub API) on every call, even for pure-CRAN packages, and will burn through the rate limit much faster than `renv::restore()` alone.
+
+##### Installing the GitHub-only packages manually
+
+If you need to install just the GitHub-sourced packages by hand (e.g. `renv::restore()` failed partway through and you want to retry only those), install them individually with `remotes::install_github()`, pinned to the same commits recorded in `DESCRIPTION`'s `Remotes:` field:
+
+```r
+if (!require(remotes)) install.packages("remotes")
+
+remotes::install_github("impact-initiatives-hppu/humind@956765719018fdb708f168b45fb45866e1dae4ac")
+remotes::install_github("impact-initiatives/analysistools@d748f320c41eeaa5619be45457414ffb4f53e78a")
+remotes::install_github("impact-initiatives/presentresults@6219392a2983db6c90b5e7cb557db5e052b76fed")
+remotes::install_github("impact-initiatives/impactR.utils@880a57ebb0282e377f888f352c746c9bde412e75")
+```
+
+`humind` and `analysistools` each pull in one further GitHub-only dependency (`addindicators` and `cleaningtools` respectively) automatically — `remotes` resolves and installs those for you as part of the calls above, so you don't need to install them separately. If those pins ever need to move to a newer commit, update both this list and the `Remotes:` field in `DESCRIPTION` together, then run `renv::snapshot()` to update `renv.lock`.
 ##### Additional functions 
 ```
 source ('src/functions/00_edu_helper.R')
@@ -120,34 +144,43 @@ source('src/05-01-make-graphs-and-maps-tables.R')
 Define paths to all input data files: Dataset folder and  ISCED mappings
 ```
 path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-data_file <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
-kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
+data_file <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
+kobo_path <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
 
 
 ```
-The remaining information related to language, Kobo, variables, and indicators must be completed in the metadata_edu.xlsx file (please place it one folder above, [../metadata_edu.xlsx]). An example completed for a few countries is available in example_metadata_edu.xlsx.
+Place the dataset at `DATA/<country_assessment>/<filename>` (the filename comes from `general$dataset` in the metadata file). `DATA/` is gitignored, same as `metadata_edu.xlsx` — real survey data is never committed.
+The remaining information related to language, Kobo, variables, and indicators must be completed in `input_tool/01_metadata/metadata_edu.xlsx` — a real, filled-in copy of `input_tool/01_metadata/example_metadata_edu.xlsx`, which ships in the repo as the template. `metadata_edu.xlsx` itself is gitignored (it can contain real dataset filenames/column names), so create it by copying the example and filling it in; it's never committed. The example also has an `instructions` sheet documenting every column, whether it's required or optional, and a `00L` ("Lemuria") example row with some fields intentionally left blank so you can see what the configuration-validation error message looks like before running against real data.
+
+If `input_tool/01_metadata/metadata_edu.xlsx` is missing, has no row for `country_assessment`, or is missing a required value, `MAIN.R` stops early with a message naming exactly what's missing instead of failing partway through the pipeline.
+
 #### Input data tools
 
-The education list of analysis is saved here: input_tool/edu_analysistools_loa.xlsx
+The education list of analysis defaults to the shared starting kit: input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx. To use a country-specific LOA file instead, place it in input_tool/03_loa/ and set the `loa_file` column (just the filename) for that country's row in the `general` sheet of `input_tool/01_metadata/metadata_edu.xlsx`; leave it blank to keep using the starting kit.
 
 Please modify the column group_var to reflect the desired disaggregation variable. School-age cycle, edu_school_cycle_d, and gender, ind_gender, are already included.
 ```
-loa_path <- "input_tool/edu_analysistools_loa_AFG.xlsx"
+loa_path <- if (!is.null(list_info_general$loa_file)) {
+  paste0('input_tool/03_loa/', list_info_general$loa_file)
+} else {
+  'input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx'
+}
 
 suffix <- ifelse(language_assessment == "French", "_FR", "_EN")
-data_helper_table <- paste0("input_tool/edu_table_helper", suffix, ".xlsx")
-data_helper_table <- ("input_tool/edu_table_helper_EN_AFG.xlsx")
+data_helper_table <- paste0("input_tool/02_edu_table/edu_table_helper", suffix, '_', country_assessment, ".xlsx")
 
 labelling_tool_path <- "input_tool/edu_indicator_labelling.xlsx"
 ```
 #### Variables Definition
 
-At the beginning of the Main.R script, specify the variable names according to the context of the analysis (country, data format, etc.)
+At the beginning of the Main.R script, specify the country code for this analysis; every other variable (including `language_assessment`) is read from `input_tool/01_metadata/metadata_edu.xlsx` for that country:
 ```
 country_assessment <- "AFG"
-language_assessment <- "English"
-etc ...
 ```
+
+#### Known limitations
+
+Some indicator logic in `src/01-add_education_indicators.R` (survey-date fixes, a few country-specific column names, extra disaggregation columns) is still hardcoded per country rather than driven by `input_tool/01_metadata/metadata_edu.xlsx`. This is a candidate for a future config-driven refactor; for now, adding a new country there may still require a small code change in that file.
 ### 3. Add Education Indicators
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
