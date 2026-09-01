@@ -68,15 +68,26 @@ if (country_assessment == "MMR") {
     mutate(across(all_of(columns_to_convert), ~ as.numeric(.)))
 }
 #--------------------------------------------------------------------------------------------------------
+# Safeguard: pipeline variables holding column-name strings, checked after every
+# add_* step below in case a renamed "_orig" column needs to be tracked instead of
+# the (now-overwritten) original name. See preserve_overwritten_columns() /
+# propagate_col_renames() in src/functions/00_edu_helper.R.
+pipeline_col_vars <- c(
+  "id_col_loop", "id_col_main", "survey_start_date", "ind_age", "ind_gender",
+  "ind_access", "teacher", "hazards", "displaced", "occupation",
+  "education_level_grade", "barrier", "weight_col", "nonformal", "nonformal_type",
+  "wsg_seeing", "wsg_hearing", "wsg_walking", "wsg_remembering", "wsg_selfcare", "wsg_communicating"
+)
+
 # Apply transformations to loop dataset
 loop <- loop |>
   # Education from Humind
-  add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date, 
+  safe_add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date,
                                  school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = schooling_start_age) |>
-  add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
-  add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
-  
-  
+  safe_add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
+  safe_add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
+
+
 loop <- loop %>%
     dplyr::rename(
       edu_disrupted_hazards_d = !!rlang::sym(hazards_col),
@@ -93,27 +104,27 @@ if (!is.null(occupation_col)) {
 # from 00_edu_function.R
 loop <- loop |>
   # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
-  add_edu_school_cycle(country_assessment = country_code, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
+  safe_add_edu_school_cycle(country_assessment = country_code, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
 
 # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
 # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
-  add_edu_level_grade_indicators(country_assessment = country_code, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk)
+  safe_add_edu_level_grade_indicators(country_assessment = country_code, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk)
 
 #harmonized variable to use the loa_edu
 loop <- loop |>
-  add_loop_edu_barrier_d(barrier = barrier)|>
-  add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
+  safe_add_loop_edu_barrier_d(barrier = barrier)|>
+  safe_add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
 
 # OPTIONAL, non-core indicators, remove if not present in the MSNA
 #add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
 
 if (!is.null(nonformal) && !is.na(nonformal)) {
     loop <- loop |>
-      add_loop_edu_optional_nonformal_d(
-        edu_other_yn = nonformal, 
-        edu_other_type = nonformal_type, 
-        pnta = pnta, 
-        dnk = dnk, 
+      safe_add_loop_edu_optional_nonformal_d(
+        edu_other_yn = nonformal,
+        edu_other_type = nonformal_type,
+        pnta = pnta,
+        dnk = dnk,
         yes = yes,
         no = no
       )
@@ -131,9 +142,9 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
     !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
     !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
   loop <- loop |>
-    add_loop_wgq_ss (ind_age = 'edu_ind_age_corrected', vision = wsg_seeing, hearing = wsg_hearing,
-                     mobility = wsg_walking, cognition = wsg_remembering, self_care = wsg_selfcare, communication = wsg_communicating, 
-                     no_difficulty = no_difficulty, some_difficulty = some_difficulty, lot_of_difficulty = lot_of_difficulty, cannot_do = cannot_do, 
+    safe_add_loop_wgq_ss (ind_age = 'edu_ind_age_corrected', vision = wsg_seeing, hearing = wsg_hearing,
+                     mobility = wsg_walking, cognition = wsg_remembering, self_care = wsg_selfcare, communication = wsg_communicating,
+                     no_difficulty = no_difficulty, some_difficulty = some_difficulty, lot_of_difficulty = lot_of_difficulty, cannot_do = cannot_do,
                      undefined = c(dnk, pnta, 'refused_to_answer'))
 }
 

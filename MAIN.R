@@ -20,6 +20,13 @@ source("src/functions/create_education_table_group_x_var.R")
 source("src/functions/create_education_xlsx_table.R")
 source("src/functions/helpers_x-crisis.R")
 
+# Temporary workaround for a humind column-overwrite issue; see the file's own
+# header for what it does and how to remove it once humind ships a fix. Sourced
+# conditionally so deleting the file (as part of that cleanup) needs no other change here.
+if (file.exists("src/functions/00_safe_add_functions.R")) {
+  source("src/functions/00_safe_add_functions.R")
+}
+
 ## --------------------------
 country_assessment = 'CAR'
 

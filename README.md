@@ -181,6 +181,19 @@ country_assessment <- "AFG"
 #### Known limitations
 
 Some indicator logic in `src/01-add_education_indicators.R` (survey-date fixes, a few country-specific column names, extra disaggregation columns) is still hardcoded per country rather than driven by `input_tool/01_metadata/metadata_edu.xlsx`. This is a candidate for a future config-driven refactor; for now, adding a new country there may still require a small code change in that file.
+
+##### Temporary workaround: `safe_add_*` column-overwrite protection
+
+Several `humind` functions (`add_loop_edu_ind_age_corrected()`, `add_loop_edu_access_d()`, `add_loop_edu_disrupted_d()`, `add_loop_wgq_ss()`) and a couple of this project's own local functions (`add_edu_school_cycle()`, `add_edu_level_grade_indicators()`, `add_loop_edu_barrier_d()`, `add_loop_child_gender_d()`, `add_loop_edu_optional_nonformal_d()`) silently overwrite any pre-existing column that happens to share a name with one of their outputs — e.g. a raw survey column called `edu_ind_age_schooling` gets silently replaced by `add_loop_edu_ind_age_corrected()`'s output column of the same name, with the original values lost.
+
+Until this is fixed upstream in `humind`, `src/01-add_education_indicators.R` calls `safe_add_*` wrapper versions of these functions (e.g. `safe_add_loop_edu_ind_age_corrected()` instead of `add_loop_edu_ind_age_corrected()`). Each wrapper has the exact same call signature as the function it wraps; it compares the data before and after the call and, if any pre-existing column was overwritten, preserves the original values under an `_orig` suffix (e.g. `edu_ind_age_schooling_orig`) and updates any pipeline variable that referenced the old column name. The wrapper functions and this protection logic live entirely in `src/functions/00_safe_add_functions.R`, which is sourced conditionally from `MAIN.R` (only if the file exists) so that removing it doesn't require touching `MAIN.R`.
+
+**To remove this workaround once `humind` ships a fix for the underlying issue:**
+1. Delete `src/functions/00_safe_add_functions.R`.
+2. In `src/01-add_education_indicators.R`, find-and-replace `safe_add_` with `add_`.
+
+No other files need to change — `MAIN.R`'s `source()` call for that file is already conditional on the file existing, and `src/functions/00_edu_helper.R` was never modified by this workaround.
+
 ### 3. Add Education Indicators
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
