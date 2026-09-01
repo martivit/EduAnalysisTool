@@ -189,7 +189,7 @@ row_number_lookup <- c(
   "non_formal" = 10, 
   "wgq" = 11
 )
-loa_country <- read.csv(paste0('input_tool/loa_analysis_', country_assessment,'.csv'))
+loa_country <- read.csv(paste0('input_tool/03_loa/loa_analysis_', country_assessment,'.csv'))
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R -----------------
 # To repeat according to the number of tabs in the data_helper
