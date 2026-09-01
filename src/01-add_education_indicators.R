@@ -72,7 +72,7 @@ if (country_assessment == "MMR") {
 loop <- loop |>
   # Education from Humind
   add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date, 
-                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = 5) |>
+                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = schooling_start_age) |>
   add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
   add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
   

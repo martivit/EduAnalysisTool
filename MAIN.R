@@ -90,6 +90,7 @@ dnk = list_variables$dnk
 yes = list_variables$yes
 no = list_variables$no
 weight_col <- list_variables$weight_col
+schooling_start_age <- if (!is.null(list_variables$schooling_start_age)) list_variables$schooling_start_age else 5 # optional metadata field; defaults to 5 if blank
 
 #------------- indicators
 ind_access <- list_variables$ind_access
