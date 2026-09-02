@@ -15,11 +15,13 @@
 ## ----------------------------------------------------------------------------------------------------------
 # Compares `before_df` and `after_df` (the same object, captured immediately
 # before and after a single add_* call). Any column present in both whose
-# values differ gets its pre-call value copied onto `after_df` under a
-# "<col>_orig" name, with a warning naming what was preserved. Newly created
-# columns (not present in `before_df`) are left untouched. Returns
-# `after_df`; the old -> new rename map is attached as its "renamed_cols"
-# attribute for propagate_col_renames() to use.
+# values differ is split in two: the pre-call value stays in that column's
+# original position under a "<col>_orig" name, and the newly computed value
+# moves to a fresh column under the original name, appended at the end (i.e.
+# where a genuinely new output column would land), with a warning naming
+# what was preserved. Newly created columns (not present in `before_df`) are
+# left untouched. Returns `after_df`; the old -> new rename map is attached
+# as its "renamed_cols" attribute for propagate_col_renames() to use.
 #
 # This compares before/after (rather than requiring a hardcoded list of each
 # step's output columns) because some steps, like add_edu_level_grade_indicators(),
@@ -43,7 +45,12 @@ preserve_overwritten_columns <- function(before_df, after_df, step_label) {
   }
 
   for (i in seq_along(changed)) {
-    after_df[[renamed_names[i]]] <- before_df[[changed[i]]]
+    col <- changed[i]
+    orig_name <- renamed_names[i]
+    new_values <- after_df[[col]]          # newly computed values, sitting in the original column's position
+    after_df[[col]] <- before_df[[col]]    # restore old values in place, still under the old name
+    names(after_df)[names(after_df) == col] <- orig_name  # rename in place -> "_orig", position preserved
+    after_df[[col]] <- new_values          # append the new column under its real name, at the end
   }
   warning(sprintf(
     "'%s' overwrote existing column(s) %s. Original value(s) preserved as %s.",
