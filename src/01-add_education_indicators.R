@@ -9,12 +9,12 @@ loop <- readxl::read_xlsx(data_file,
                   na = c("NA", "#N/A", "", " ", "N/A"),
                   sheet = loop_sheet, guess_max = 10000)
 
-#survey_start_date = 'today'
+#survey_start_date = "today"
 
 #check if start is NULL
 if (is.null(survey_start_date) || is.na(survey_start_date)) {
   main$start <- as.POSIXct("2024-06-01 11:54:54.574")
-  survey_start_date = 'start'
+  survey_start_date = "start"
 }
 if (country_assessment == "MOZ") {
   main[[survey_start_date]] <- substr(main[[survey_start_date]], 1, 10)
@@ -116,7 +116,7 @@ loop <- loop |>
   safe_add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
 
 # OPTIONAL, non-core indicators, remove if not present in the MSNA
-#add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
+#add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = "edu_non_formal_type",yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
 
 if (!is.null(nonformal) && !is.na(nonformal)) {
     loop <- loop |>
@@ -142,10 +142,10 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
     !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
     !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
   loop <- loop |>
-    safe_add_loop_wgq_ss (ind_age = 'edu_ind_age_corrected', vision = wsg_seeing, hearing = wsg_hearing,
+    safe_add_loop_wgq_ss (ind_age = "edu_ind_age_corrected", vision = wsg_seeing, hearing = wsg_hearing,
                      mobility = wsg_walking, cognition = wsg_remembering, self_care = wsg_selfcare, communication = wsg_communicating,
                      no_difficulty = no_difficulty, some_difficulty = some_difficulty, lot_of_difficulty = lot_of_difficulty, cannot_do = cannot_do,
-                     undefined = c(dnk, pnta, 'refused_to_answer'))
+                     undefined = c(dnk, pnta, "refused_to_answer"))
 }
 
 if (country_assessment == "MMR") {
@@ -209,7 +209,7 @@ if (country_assessment == "CAR") {
 if (country_assessment == "AFG") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
-    "children_schooling_type"
+    "child_school_type"
     
   )}
 if (country_assessment == "MOZ") {
@@ -220,35 +220,35 @@ if (country_assessment == "MOZ") {
   )}
 if (country_assessment == "MMR") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_community_modality'
+  add_cols_tot <- c("edu_community_modality"
                     
   )}
 if (country_assessment == "SOM") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_program_type'
+  add_cols_tot <- c("edu_program_type"
                     
   )}
 if (country_assessment == "SDN") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('schl_learnin_enviro'
+  add_cols_tot <- c("schl_learnin_enviro"
                     
   )}
 if (country_assessment == "SYR") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_access_syr', "edu_acceptable_conditions", "edu_barrier_syr", 
+  add_cols_tot <- c("edu_access_syr", "edu_acceptable_conditions", "edu_barrier_syr", 
                     "edu_ind_not_enrolled", "edu_ind_not_enrolled", "edu_other_type_syr",
                     "edu_other_yn_syr"
                     
   )}
 if (country_assessment == "LBN") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_disrupted_financial', 'formal_school_type', 
-                    'edu_access_past', 'edu_enrolment_past'
+  add_cols_tot <- c("edu_disrupted_financial", "formal_school_type", 
+                    "edu_access_past", "edu_enrolment_past"
 
   )}
 if (country_assessment == "BFA") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('e_incident_trajet', 'e_incident_ecol', "e_abandon"
+  add_cols_tot <- c("e_incident_trajet", "e_incident_ecol", "e_abandon"
   )}
 
 #modality_column <- "edu_community_modality"  # already set above
@@ -394,7 +394,7 @@ loop_edu_recorded <- loop
 
 #--------------------------------------------------------------------------------------------------------
 # Save the final output to an Excel file
-loop |> write.xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop |> write.xlsx(paste0("output/loop_edu_recorded_",country_assessment,".xlsx"))
   
 
 

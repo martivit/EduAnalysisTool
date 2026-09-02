@@ -52,15 +52,15 @@ require_input_file <- function(path, field_description) {
 }
 
 #-- input data
-path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
+path_ISCED_file <- "resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"
 require_input_file(path_ISCED_file, "ISCED mapping file, path hardcoded in MAIN.R")
 
-data_file <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
+data_file <- paste0("DATA/",country_assessment, "/",list_info_general$dataset)
 require_input_file(data_file, "general$dataset in input_tool/01_metadata/metadata_edu.xlsx, combined with DATA/<country_assessment>/")
 label_main_sheet <- list_info_general$label_main_sheet
 label_edu_sheet  <- list_info_general$label_edu_sheet
 
-kobo_path <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
+kobo_path <- paste0("DATA/",country_assessment, "/",list_info_general$dataset)
 label_survey_sheet  <-  list_info_general$label_survey_sheet
 label_choices_sheet <-  list_info_general$label_choices_sheet
 kobo_language_label <-  list_info_general$kobo_language_label
@@ -69,12 +69,12 @@ kobo_language_label <-  list_info_general$kobo_language_label
 # please modify the group_var according to your context
 
 loa_path <- if (!is.null(list_info_general$loa_file)) {
-  paste0('input_tool/03_loa/', list_info_general$loa_file)
+  paste0("input_tool/03_loa/", list_info_general$loa_file)
 } else {
   warning("general$loa_file is blank for country_assessment = '", country_assessment, "' in input_tool/01_metadata/metadata_edu.xlsx; ",
           "falling back to the shared example LOA (input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx). ",
           "Set a country-specific loa_file if this isn't intended.")
-  'input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx'
+  "input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx"
 }
 require_input_file(loa_path, "general$loa_file in input_tool/01_metadata/metadata_edu.xlsx (blank falls back to the starting-kit LOA)")
 
@@ -160,15 +160,15 @@ data_helper <- data_helper |>
 main_sheet <- label_main_sheet ## Used in 01-add_education_indicators.R
 loop_sheet <- label_edu_sheet ## Used in 01-add_education_indicators.R
 
-source('src/01-add_education_indicators.R') ## OUTPUT: output/loop_edu_recorded_<country_assessment>.xlsx
+source("src/01-add_education_indicators.R") ## OUTPUT: output/loop_edu_recorded_<country_assessment>.xlsx
 
-source('src/01-5-creating_loa.R') ## OUTPUT: input_tool/loa_analysis_<country_assessment>.csv
+source("src/01-5-creating_loa.R") ## OUTPUT: input_tool/loa_analysis_<country_assessment>.csv
 
 # 2 ----------------- 02-education_analysis.R -----------------
-source('src/02-education_analysis.R') ## OUTPUT: output/grouped_other_education_results_loop_<country_assessment>.RDS
+source("src/02-education_analysis.R") ## OUTPUT: output/grouped_other_education_results_loop_<country_assessment>.RDS
 
 # 3 ----------------- 03-education_labeling.R -----------------
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
+source("src/03-education_labeling.R")  ## OUTPUT: output/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables -----------------
 education_results_table_labelled <- readRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
@@ -189,7 +189,7 @@ row_number_lookup <- c(
   "non_formal" = 10, 
   "wgq" = 11
 )
-loa_country <- read.csv(paste0('input_tool/03_loa/loa_analysis_', country_assessment,'.csv'))
+loa_country <- read.csv(paste0("input_tool/03_loa/loa_analysis_", country_assessment,".csv"))
 
 # 5 ----------------- 04-01-make-table-access-disruptions.R -----------------
 # To repeat according to the number of tabs in the data_helper

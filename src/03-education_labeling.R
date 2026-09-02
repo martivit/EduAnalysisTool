@@ -1,4 +1,4 @@
-education_results_loop <- readRDS(paste0('output/grouped_other_education_results_loop_', country_assessment,'.RDS'))
+education_results_loop <- readRDS(paste0("output/grouped_other_education_results_loop_", country_assessment,".RDS"))
 label_column_kobo_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
 
 kobo_survey <- readxl::read_excel(kobo_path, sheet = label_survey_sheet)
@@ -12,7 +12,7 @@ kobo_choices <- kobo_choices %>%
   filter(if_any(everything(), ~ !is.na(.)),
          !is.na(name)) 
 
-update_survey <- readxl::read_excel(labelling_tool_path, sheet = "update_survey") 
+update_survey <- readxl::read_excel(labelling_tool_path, sheet = country_assessment) 
 matching_type <- kobo_survey %>%
   dplyr::filter(name == barrier) %>%
   dplyr::pull(type)  # Extract the 'type' column value for the matching row
@@ -117,5 +117,5 @@ education_results_table_labelled <- add_label_columns_to_results_table(
 
 nrow(education_results_table_labelled ) == nrow(education_results_loop)
 education_results_table_labelled %>% saveRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
-education_results_table_labelled %>% write.csv(paste0('output/labeled_results_table_', country_assessment,'_orig.csv'))
+education_results_table_labelled %>% write.csv(paste0("output/labeled_results_table_", country_assessment,".csv"))
 
