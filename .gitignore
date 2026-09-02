@@ -13,5 +13,41 @@ tests/
 # keep only the template (example_metadata_edu.xlsx) tracked in git.
 input_tool/01_metadata/metadata_edu.xlsx
 
+# Real per-country outputs
+output/*AFG.*
+output/*BFA.*
+output/*CAR.*
+output/*CAF.*
+output/*DRC.*
+output/*COD.*
+output/*ETH.*
+output/*HTI1.*
+output/*HTI2.*
+output/*KEN1.*
+output/*MLI.*
+output/*MMR.*
+output/*MOZ.*
+output/*NER.*
+output/*SOM.*
+output/*SSD.*
+output/*SYR.*
+output/*UGA.*
+output/*UKR.*
+output/*SDN.*
+output/*LBN.*
+output/*OPT.*
+output/*PSE.*
+
+# Real outputs folders
+output/plots
+output/rds_results
+output/table_for_maps
+output/manually_moved
+
+
 # Real per-country survey datasets; never committed.
 DATA/
+
+
+# Working files to
+resources/UNESCO ISCED Mappings_MSNAcountries_consolidated_new.xlsx

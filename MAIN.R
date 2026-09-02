@@ -28,7 +28,7 @@ if (file.exists("src/functions/00_safe_add_functions.R")) {
 }
 
 ## --------------------------
-country_assessment = 'CAR'
+country_assessment = '00L' # Add here the 3 leter country code that will be the same in all the files and referecnes
 
 strata_var_names <- c("admin1", "admin2", "admin3", "stratum", "additional_stratum", 
                       "add_col1", "add_col2", "add_col3", "add_col4", 

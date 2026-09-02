@@ -92,6 +92,7 @@ review_kobo_labels_results <- review_kobo_labels(updated_survey,
                                                  results_table = education_results_loop, 
                                                  label_column = kobo_language_label)
 
+
 type_debug <- updated_survey %>% 
   mutate(row_id = row_number()) %>% 
   tidyr::separate_wider_delim(
@@ -99,7 +100,8 @@ type_debug <- updated_survey %>%
     delim = " ",
     names = c("q_type", "list_name"),
     too_many = "debug",   # <— this is the important part
-    too_few  = "debug"
+    too_few  = "debug"#,
+    # names_repair = "universal" #TODO: Add a way of renaming duplicated columns names when the analysis is already run by the country and have columns coming from Humind "_d"
   )
 
 
@@ -112,9 +114,8 @@ education_results_table_labelled <- add_label_columns_to_results_table(
   education_results_loop,
   label_dictionary
 )
+
 nrow(education_results_table_labelled ) == nrow(education_results_loop)
 education_results_table_labelled %>% saveRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
-
-
-  
+education_results_table_labelled %>% write.csv(paste0('output/labeled_results_table_', country_assessment,'_orig.csv'))
 

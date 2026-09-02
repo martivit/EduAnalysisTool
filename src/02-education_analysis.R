@@ -16,7 +16,7 @@ loop <- loop %>%
 design_loop <- loop |>
   as_survey_design(weights = all_of(weight_col))
 
-test_df <-
+
 results_loop_weigthed <- create_analysis(
   design_loop,
   loa = loa_country,

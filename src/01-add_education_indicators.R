@@ -384,7 +384,8 @@ loop <- loop |>
 
 
 loop <- loop |> filter(edu_ind_age_schooling == 1)
- if (country_assessment == "AFG"){
+
+if (country_assessment == "AFG"){
    loop <- loop |> filter(edu_ind_age_corrected != 5)
  }
 

@@ -20,7 +20,7 @@ read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
 
   # file_school_cycle <- "inst/extdata/edu_ISCED/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
   country <- country_assessment
-  df <- readxl::read_excel(file_school_cycle, sheet = "Compiled_Levels_Grades")
+  df <- readxl::read_excel(file_school_cycle, sheet = "Compiled_Levels_Grades")#, col_types = c("text","text","text","text","text","text","numeric","text","text") ) 
 
   # Convert the country input and dataframe columns to lowercase for case-insensitive comparison
   country_input_lower <- tolower(country)
@@ -45,8 +45,8 @@ read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
 
   # Adjust for level0 duration if both level0 and level1 exist
   if ("level0" %in% summary_info_school$`level code` && "level1" %in% summary_info_school$`level code`) {
-    starting_age_level0 <- summary_info_school$starting_age[summary_info_school$`level code` == "level0"]
-    starting_age_level1 <- summary_info_school$starting_age[summary_info_school$`level code` == "level1"]
+    starting_age_level0 <- summary_info_school$starting_age[summary_info_school$`level code` == "level0"] |> as.integer()
+    starting_age_level1 <- summary_info_school$starting_age[summary_info_school$`level code` == "level1"] |> as.integer()
     duration_level0 <- starting_age_level1 - starting_age_level0
 
     summary_info_school <- summary_info_school %>%
