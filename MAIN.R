@@ -28,11 +28,13 @@ if (file.exists("src/functions/00_safe_add_functions.R")) {
 }
 
 ## --------------------------
-country_assessment = '00L' # Add here the 3 leter country code that will be the same in all the files and referecnes
+country_assessment = 'AFG' # Add here the 3 leter country code that will be the same in all the files and referecnes
 
-strata_var_names <- c("admin1", "admin2", "admin3", "stratum", "additional_stratum", 
-                      "add_col1", "add_col2", "add_col3", "add_col4", 
-                      "add_col5", "add_col6", "add_col7", "add_col8")
+# Disaggregation levels are read from the strata_variables sheet's
+# strata_lvl_1..strata_lvl_15 columns for country_assessment (see
+# src/00-getting-info-country.R). Only strata_lvl_1 is mandatory; the rest
+# may be left blank (get_strata_variables()/mget() already drop unset levels).
+strata_var_names <- paste0("strata_lvl_", 1:15)
 
 ##---------------- READING INFO AND VARIABLES FROM  matadata.xlsx
 source("src/00-getting-info-country.R")
@@ -107,7 +109,7 @@ displaced <- list_variables$displaced
 teacher <- list_variables$teacher
 education_level_grade <- list_variables$education_level_grade
 barrier = list_variables$barrier
-number_displayed_barrier <- 5
+number_displayed_barrier <- 15
 # non formal
 nonformal <-list_variables$nonformal
 nonformal_type <-list_variables$nonformal_type

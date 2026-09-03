@@ -93,7 +93,8 @@ check_required_fields <- function(list_info_general, list_variables, list_strata
     "yes", "no", "pnta", "dnk", "weight_col", "ind_age", "ind_gender", "ind_access",
     "teacher", "hazards", "displaced", "education_level_grade", "barrier"
   )
-  required_strata <- c("admin1", "admin2", "admin3", "stratum", "additional_stratum")
+  # Only the first disaggregation level is mandatory; strata_lvl_2..15 are optional.
+  required_strata <- c("strata_lvl_1")
 
   missing <- character(0)
   for (field in required_general) {

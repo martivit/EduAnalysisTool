@@ -2805,11 +2805,11 @@
     },
     "humind": {
       "Package": "humind",
-      "Version": "2026.2.0",
+      "Version": "2026.3.0",
       "Source": "GitHub",
       "Title": "Compose MSNA Indicators",
-      "Authors@R": "c( person(\"Quentin\", \"VILLOTTA\", , \"quentin.villotta@impact-initiatives.org\", role = c(\"aut\", \"cre\")), person(\"Iyed\", \"GHEDAMSI\", , \"iyed.ghedamsi@impact-initiatives.org\", role = c(\"aut\", \"ctb\")), person(\"Mario\", \"DASILVA\", , \"mario.fidalgo@impact-initiatives.org\", role = c(\"aut\", \"ctb\")), person(\"Laith\", \"Abu-Nawwas\", , \"laith.abu-nawwas@impact-initiatives.org\", role = \"ctb\"), person(\"Sunhee\", \"Moraes\", , \"sunhee.moraes@impact-initiatives.org\", role = \"ctb\"), person(\"Raphael\", \"Bacot\", , \"raphael.bacot@impact-initiatives.org\", role = \"ctb\") )",
-      "Description": "This packages provides functions to compose usual humanitarian composite indicators related to IMPACT Multi-Sector Needs Assessments (MSNAs) such as food sec indicators (rCSI, LCSI, HHS, FCS), Washington Group Short Set of questions, JMP ladders, as well as specific indicators related to the MSNI framework.",
+      "Authors@R": "c( person(\"Quentin\", \"VILLOTTA\", , \"quentin.villotta@impact-initiatives.org\", role = c(\"aut\", \"cre\")), person(\"Guillaume\", \"Noblet\", role = \"aut\"), person(\"Iyed\", \"GHEDAMSI\", , \"iyed.ghedamsi@impact-initiatives.org\", role = \"aut\"), person(\"Mario\", \"Fidalgo\", , \"mario.fidalgo@impact-initiatives.org\", role = \"aut\"), person(\"Laith\", \"Abu-Nawwas\", role = \"ctb\"), person(\"Sunhee\", \"Moraes\", role = \"ctb\"), person(\"Raphael\", \"Bacot\", role = \"ctb\"), person(\"IMPACT Initiatives\", role = \"cph\") )",
+      "Description": "Compose usual humanitarian composite indicators related to IMPACT Multi-Sector Needs Assessments (MSNAs) such as food sec indicators (rCSI, LCSI, HHS, FCS), Washington Group Short Set of questions, JMP ladders, as well as specific indicators related to the MSNI framework.",
       "License": "MIT + file LICENSE",
       "Depends": [
         "R (>= 4.1.0)"
@@ -2823,32 +2823,30 @@
         "rlang (>= 0.4.11)",
         "stats",
         "tidyr",
-        "impactR.utils",
         "Hmisc",
         "stringr",
         "cli",
         "checkmate"
       ],
-      "URL": "https://impact-initiatives-hppu.github.io/humind, https://github.com/impact-initiatives-hppu/humind",
+      "URL": "https://impact-initiatives-hppu.github.io/humind/, https://github.com/impact-initiatives-hppu/humind",
       "BugReports": "https://github.com/impact-initiatives-hppu/humind/issues",
-      "Remotes": "impact-initiatives/impactR.utils",
       "Suggests": [
         "rmarkdown",
         "roxygen2",
-        "testthat (>= 3.0.0)"
+        "testthat (>= 3.0.0)",
+        "tibble"
       ],
       "Config/Needs/website": "rmarkdown",
       "Config/testthat/edition": "3",
-      "Config/roxygen2/version": "8.0.0",
+      "Config/roxygen2/version": "8.1.0",
+      "Author": "Quentin VILLOTTA [aut, cre], Guillaume Noblet [aut], Iyed GHEDAMSI [aut], Mario Fidalgo [aut], Laith Abu-Nawwas [ctb], Sunhee Moraes [ctb], Raphael Bacot [ctb], IMPACT Initiatives [cph]",
+      "Maintainer": "Quentin VILLOTTA <quentin.villotta@impact-initiatives.org>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "humind",
       "RemoteUsername": "impact-initiatives-hppu",
-      "RemoteRef": "956765719018fdb708f168b45fb45866e1dae4ac",
-      "RemoteSha": "956765719018fdb708f168b45fb45866e1dae4ac",
-      "NeedsCompilation": "no",
-      "Author": "Quentin VILLOTTA [aut, cre], Iyed GHEDAMSI [aut, ctb], Mario DASILVA [aut, ctb], Laith Abu-Nawwas [ctb], Sunhee Moraes [ctb], Raphael Bacot [ctb]",
-      "Maintainer": "Quentin VILLOTTA <quentin.villotta@impact-initiatives.org>"
+      "RemoteRepo": "humind",
+      "RemoteRef": "v2026.3.0",
+      "RemoteSha": "6f18099aa862d654337cce2dee3eb70cce3ca6fd"
     },
     "ids": {
       "Package": "ids",
