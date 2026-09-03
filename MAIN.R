@@ -67,6 +67,13 @@ label_survey_sheet  <-  list_info_general$label_survey_sheet
 label_choices_sheet <-  list_info_general$label_choices_sheet
 kobo_language_label <-  list_info_general$kobo_language_label
 
+# Optional pcode columns (admin1/2/3), merged into loop alongside the strata
+# levels in 01-add_education_indicators.R. NULL (and simply not merged) if left
+# blank in metadata_edu.xlsx.
+adm1_pcode_col <- list_info_general$adm1_pcode_colum
+adm2_pcode_col <- list_info_general$adm2_pcode_colum
+adm3_pcode_col <- list_info_general$adm3_pcode_colum
+
 #-- input tool
 # please modify the group_var according to your context
 
@@ -100,6 +107,7 @@ yes = list_variables$yes
 no = list_variables$no
 weight_col <- list_variables$weight_col
 schooling_start_age <- if (!is.null(list_variables$schooling_start_age)) list_variables$schooling_start_age else 5 # optional metadata field; defaults to 5 if blank
+schooling_end_age <- if (!is.null(list_variables$schooling_end_age)) list_variables$schooling_end_age else 17 # optional metadata field; defaults to 17 if blank
 
 #------------- indicators
 ind_access <- list_variables$ind_access
@@ -109,7 +117,7 @@ displaced <- list_variables$displaced
 teacher <- list_variables$teacher
 education_level_grade <- list_variables$education_level_grade
 barrier = list_variables$barrier
-number_displayed_barrier <- 15
+number_displayed_barrier <- if (!is.null(list_variables$number_displayed_barrier)) list_variables$number_displayed_barrier else 15 # optional metadata field; defaults to 15 if blank
 # non formal
 nonformal <-list_variables$nonformal
 nonformal_type <-list_variables$nonformal_type

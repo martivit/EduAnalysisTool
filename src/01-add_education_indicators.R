@@ -16,6 +16,7 @@ if (is.null(survey_start_date) || is.na(survey_start_date)) {
   main$start <- as.POSIXct("2024-06-01 11:54:54.574")
   survey_start_date = "start"
 }
+
 if (country_assessment == "MOZ") {
   main[[survey_start_date]] <- substr(main[[survey_start_date]], 1, 10)
   replacement_date <- "2025-08-20"
@@ -28,6 +29,7 @@ if (country_assessment == "MOZ") {
   # fill them
   main[[survey_start_date]][invalid] <- replacement_date
 }
+
 if (country_assessment == "ETH") {
   main[[survey_start_date]] <- substr(main[[survey_start_date]], 1, 10)
   replacement_date <- "2024-07-20"
@@ -83,7 +85,8 @@ pipeline_col_vars <- c(
 loop <- loop |>
   # Education from Humind
   safe_add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date,
-                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = schooling_start_age) |>
+                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = schooling_start_age,
+                                 schooling_end_age = schooling_end_age) |>
   safe_add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
   safe_add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
 
@@ -157,12 +160,14 @@ if (country_assessment == "MMR") {
       disagg_pop_access = NA_character_
     )
 }
+
 if (country_assessment == "AFG") {
   loop <- loop %>%
     mutate(
       coping_barrier = NA_character_
     )
 }
+
 #--------------------------------------------------------------------------------------------------------
 # Merge main info into loop dataset
 # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
@@ -172,6 +177,7 @@ check_and_set_merge_column <- function(loop, main_col) {
   
 
 add_cols_tot = c()
+
 if (country_assessment == "UKR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
@@ -198,41 +204,49 @@ if (country_assessment == "UKR") {
 
   )
 }
+
 if (country_assessment == "DRC") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
     "edu_disrupted_attack_afc")}
+
 if (country_assessment == "CAR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
     "edu_barrier_2nd_reason")}
+
 if (country_assessment == "AFG") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
     "child_school_type"
     
   )}
+
 if (country_assessment == "MOZ") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_ind_has_impairment",
     "barrier_impairament"
     
   )}
+
 if (country_assessment == "MMR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_community_modality"
                     
   )}
+
 if (country_assessment == "SOM") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_program_type"
                     
   )}
+
 if (country_assessment == "SDN") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("schl_learnin_enviro"
                     
   )}
+
 if (country_assessment == "SYR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_access_syr", "edu_acceptable_conditions", "edu_barrier_syr", 
@@ -240,12 +254,14 @@ if (country_assessment == "SYR") {
                     "edu_other_yn_syr"
                     
   )}
+
 if (country_assessment == "LBN") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_disrupted_financial", "formal_school_type", 
                     "edu_access_past", "edu_enrolment_past"
 
   )}
+
 if (country_assessment == "BFA") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("e_incident_trajet", "e_incident_ecol", "e_abandon"
@@ -263,9 +279,14 @@ barrier_multiple_bfa <- "e_educ_non_formel_type"  # already set above
 
 
 
-# gather your legacy add_col1...add_col9
-candidates <- c(add_col1, add_col2, add_col3, add_col4,
-                add_col5, add_col6, add_col7, add_col8, add_col9)
+# gather every populated strata_lvl_1...strata_lvl_15 column for this country
+# (replaces the old admin1/admin2/admin3/stratum/additional_stratum/add_col1-9
+# globals, none of which get() assigned anymore now that strata levels are
+# read generically from the strata_variables sheet - see MAIN.R/00-getting-info-country.R)
+candidates <- mget(strata_var_names, envir = .GlobalEnv, ifnotfound = NA) |>
+  purrr::discard(is.null) |>
+  purrr::discard(is.na) |>
+  unlist(use.names = FALSE)
 
 # 1) combine BOTH sources (drop NULLs + dedupe)
 wish <- unique(c(Filter(Negate(is.null), candidates), add_cols_tot))
@@ -277,6 +298,7 @@ modality_cols <- names(main)[
 if (length(modality_cols)) {
   wish <- unique(c(wish, modality_cols))
 }
+
 if (country_assessment == "SSD") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_ssd, "([_/\\.].*|$)"), names(loop))
@@ -285,6 +307,7 @@ if (country_assessment == "SSD") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "UKR") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_ukr, "([_/\\.].*|$)"), names(loop))
@@ -293,6 +316,7 @@ if (country_assessment == "UKR") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "ETH") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_eth, "([_/\\.].*|$)"), names(loop))
@@ -301,6 +325,7 @@ if (country_assessment == "ETH") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "SYR") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_syr, "([_/\\.].*|$)"), names(loop))
@@ -309,6 +334,7 @@ if (country_assessment == "SYR") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "SDN") {
   barrier2_sm_cols <- names(main)[
     grepl(paste0("^", concern_multiple_sdn, "([_/\\.].*|$)"), names(loop))
@@ -317,6 +343,7 @@ if (country_assessment == "SDN") {
     wish <- unique(c(wish, barrier2_sm_cols))
   }
 }
+
 if (country_assessment == "SDN") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_sdn, "([_/\\.].*|$)"), names(loop))
@@ -325,6 +352,7 @@ if (country_assessment == "SDN") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "BFA") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_bfa, "([_/\\.].*|$)"), names(loop))
@@ -337,13 +365,23 @@ if (country_assessment == "BFA") {
 # 2) only merge columns that are NOT already in loop
 #    (this guarantees we won’t drop/replace existing loop columns)
 add_cols <- setdiff(wish, colnames(loop))
+
 #add_cols <- wish
+
 # 3) call the merge (disable regex auto-includes to avoid re-merging existing cols)
+# All strata levels are already folded into add_cols via `candidates` above;
+# adm1/2/3_pcode_col (from metadata_edu.xlsx general$adm1_pcode_colum etc., set
+# in MAIN.R) are merged separately here. merge_main_info_in_loop() de-duplicates
+# by column name, so a pcode column that happens to be the same underlying
+# column as a strata level is only merged once, not flagged as a conflict.
 loop <- merge_main_info_in_loop(
-  loop = loop, main = main,
-  id_col_loop = id_col_loop, id_col_main = id_col_main,
-  admin1 = admin1, admin2 = admin2, admin3 = admin3,
-  stratum = stratum, additional_stratum = additional_stratum,
+  loop = loop,
+  main = main,
+  id_col_loop = id_col_loop,
+  id_col_main = id_col_main,
+  adm1_pcode_col = adm1_pcode_col,
+  adm2_pcode_col = adm2_pcode_col,
+  adm3_pcode_col = adm3_pcode_col,
   weight = weight_col,
   add_cols = add_cols,
   include_regex = character(0)   # important if you want to avoid re-merging matches already in loop
@@ -373,6 +411,7 @@ if (country_assessment == "MMR") {
     #)
 #}
 # keep only school-age children
+
 loop <- loop |>
   dplyr::filter(edu_ind_age_schooling == 1) |>
   dplyr::mutate(
@@ -382,8 +421,6 @@ loop <- loop |>
     )
   )
 
-
-loop <- loop |> filter(edu_ind_age_schooling == 1)
 
 if (country_assessment == "AFG"){
    loop <- loop |> filter(edu_ind_age_corrected != 5)

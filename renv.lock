@@ -516,7 +516,7 @@
       "License": "MIT + file LICENSE",
       "URL": "https://impact-initiatives.github.io/addindicators/",
       "Depends": [
-        "R (>= 4.1.0)"
+        "R (>= 2.10)"
       ],
       "Imports": [
         "dplyr",
@@ -533,15 +533,14 @@
       "Encoding": "UTF-8",
       "LazyData": "true",
       "RoxygenNote": "7.3.2",
+      "Author": "Mehedi Khan [aut, cre] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [aut] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
+      "Maintainer": "Mehedi Khan <mh.khan@reach-initiative.org>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "addindicators",
       "RemoteUsername": "impact-initiatives",
       "RemoteRef": "HEAD",
-      "RemoteSha": "7b59b6bd0f4c220dd6fe826f45de3e4fb5b58c41",
-      "NeedsCompilation": "no",
-      "Author": "Mehedi Khan [aut, cre] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [aut] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
-      "Maintainer": "Mehedi Khan <mh.khan@reach-initiative.org>"
+      "RemoteSha": "7b59b6bd0f4c220dd6fe826f45de3e4fb5b58c41"
     },
     "analysistools": {
       "Package": "analysistools",
@@ -573,22 +572,21 @@
         "testthat (>= 3.0.0)",
         "tibble"
       ],
-      "Remotes": "impact-initiatives/addindicators, impact-initiatives/cleaningtools",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
       "LazyData": "true",
       "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.3.2",
       "URL": "https://impact-initiatives.github.io/analysistools/",
+      "Author": "Yann Say [aut, cre] (ORCID: <https://orcid.org/0000-0002-7390-4209>), Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>)",
+      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>",
       "RemoteType": "github",
+      "Remotes": "impact-initiatives/addindicators, impact-initiatives/cleaningtools",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "analysistools",
       "RemoteUsername": "impact-initiatives",
       "RemoteRef": "d748f320c41eeaa5619be45457414ffb4f53e78a",
-      "RemoteSha": "d748f320c41eeaa5619be45457414ffb4f53e78a",
-      "NeedsCompilation": "no",
-      "Author": "Yann Say [aut, cre] (ORCID: <https://orcid.org/0000-0002-7390-4209>), Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>)",
-      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>"
+      "RemoteSha": "d748f320c41eeaa5619be45457414ffb4f53e78a"
     },
     "askpass": {
       "Package": "askpass",
@@ -1160,7 +1158,7 @@
       "License": "MIT + file LICENSE",
       "URL": "https://impact-initiatives.github.io/cleaningtools/",
       "Depends": [
-        "R (>= 4.1.0)"
+        "R (>= 4.0)"
       ],
       "Imports": [
         "assertthat",
@@ -1195,15 +1193,14 @@
       "LazyData": "true",
       "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.3.2",
+      "Author": "Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [cre, aut] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
+      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "cleaningtools",
       "RemoteUsername": "impact-initiatives",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "f917e607115cb9da255d09039965a06bae1736e5",
-      "NeedsCompilation": "no",
-      "Author": "Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [cre, aut] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
-      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>"
+      "RemoteRepo": "cleaningtools",
+      "RemoteRef": "master",
+      "RemoteSha": "f917e607115cb9da255d09039965a06bae1736e5"
     },
     "cli": {
       "Package": "cli",
@@ -2898,22 +2895,22 @@
         "tidyr"
       ],
       "Depends": [
-        "R (>= 4.1.0)"
+        "R (>= 2.10)"
       ],
+      "LazyData": "true",
       "Suggests": [
         "labelled",
         "roxygen2"
       ],
       "License": "MIT + file LICENSE",
+      "Author": "Guillaume Noblet [aut, cre]",
+      "Maintainer": "Guillaume Noblet <gnoblet@zaclys.net>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "impactR.utils",
       "RemoteUsername": "impact-initiatives",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "880a57ebb0282e377f888f352c746c9bde412e75",
-      "NeedsCompilation": "no",
-      "Author": "Guillaume Noblet [aut, cre]",
-      "Maintainer": "Guillaume Noblet <gnoblet@zaclys.net>"
+      "RemoteRepo": "impactR.utils",
+      "RemoteRef": "main",
+      "RemoteSha": "880a57ebb0282e377f888f352c746c9bde412e75"
     },
     "isoband": {
       "Package": "isoband",
@@ -3828,22 +3825,21 @@
         "tidyr",
         "tidyselect"
       ],
-      "Remotes": "impact-initiatives/analysistools",
       "Depends": [
         "R (>= 4.3.0)"
       ],
       "LazyData": "true",
       "URL": "https://impact-initiatives.github.io/presentresults/",
       "VignetteBuilder": "knitr",
+      "Author": "Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [aut, cre] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
+      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>",
       "RemoteType": "github",
+      "Remotes": "impact-initiatives/analysistools",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "presentresults",
       "RemoteUsername": "impact-initiatives",
       "RemoteRef": "6219392a2983db6c90b5e7cb557db5e052b76fed",
-      "RemoteSha": "6219392a2983db6c90b5e7cb557db5e052b76fed",
-      "NeedsCompilation": "no",
-      "Author": "Mehedi Khan [aut] (ORCID: <https://orcid.org/0000-0002-4276-4485>), Yann Say [aut, cre] (ORCID: <https://orcid.org/0000-0002-7390-4209>)",
-      "Maintainer": "Yann Say <yann.say@impact-initiatives.org>"
+      "RemoteSha": "6219392a2983db6c90b5e7cb557db5e052b76fed"
     },
     "prettyunits": {
       "Package": "prettyunits",
