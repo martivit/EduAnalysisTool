@@ -28,11 +28,13 @@ if (file.exists("src/functions/00_safe_add_functions.R")) {
 }
 
 ## --------------------------
-country_assessment = '00L' # Add here the 3 leter country code that will be the same in all the files and referecnes
+country_assessment = 'AFG' # Add here the 3 leter country code that will be the same in all the files and referecnes
 
-strata_var_names <- c("admin1", "admin2", "admin3", "stratum", "additional_stratum", 
-                      "add_col1", "add_col2", "add_col3", "add_col4", 
-                      "add_col5", "add_col6", "add_col7", "add_col8")
+# Disaggregation levels are read from the strata_variables sheet's
+# strata_lvl_1..strata_lvl_15 columns for country_assessment (see
+# src/00-getting-info-country.R). Only strata_lvl_1 is mandatory; the rest
+# may be left blank (get_strata_variables()/mget() already drop unset levels).
+strata_var_names <- paste0("strata_lvl_", 1:15)
 
 ##---------------- READING INFO AND VARIABLES FROM  matadata.xlsx
 source("src/00-getting-info-country.R")
@@ -64,6 +66,13 @@ kobo_path <- paste0("DATA/",country_assessment, "/",list_info_general$dataset)
 label_survey_sheet  <-  list_info_general$label_survey_sheet
 label_choices_sheet <-  list_info_general$label_choices_sheet
 kobo_language_label <-  list_info_general$kobo_language_label
+
+# Optional pcode columns (admin1/2/3), merged into loop alongside the strata
+# levels in 01-add_education_indicators.R. NULL (and simply not merged) if left
+# blank in metadata_edu.xlsx.
+adm1_pcode_col <- list_info_general$adm1_pcode_colum
+adm2_pcode_col <- list_info_general$adm2_pcode_colum
+adm3_pcode_col <- list_info_general$adm3_pcode_colum
 
 #-- input tool
 # please modify the group_var according to your context
@@ -98,6 +107,7 @@ yes = list_variables$yes
 no = list_variables$no
 weight_col <- list_variables$weight_col
 schooling_start_age <- if (!is.null(list_variables$schooling_start_age)) list_variables$schooling_start_age else 5 # optional metadata field; defaults to 5 if blank
+schooling_end_age <- if (!is.null(list_variables$schooling_end_age)) list_variables$schooling_end_age else 17 # optional metadata field; defaults to 17 if blank
 
 #------------- indicators
 ind_access <- list_variables$ind_access
@@ -107,7 +117,7 @@ displaced <- list_variables$displaced
 teacher <- list_variables$teacher
 education_level_grade <- list_variables$education_level_grade
 barrier = list_variables$barrier
-number_displayed_barrier <- 5
+number_displayed_barrier <- if (!is.null(list_variables$number_displayed_barrier)) list_variables$number_displayed_barrier else 5
 # non formal
 nonformal <-list_variables$nonformal
 nonformal_type <-list_variables$nonformal_type
