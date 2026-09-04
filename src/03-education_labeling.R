@@ -1,4 +1,4 @@
-education_results_loop <- readRDS(paste0('output/grouped_other_education_results_loop_', country_assessment,'.RDS'))
+education_results_loop <- readRDS(paste0(output_dir, "/grouped_other_education_results_loop_", country_assessment,".RDS"))
 label_column_kobo_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
 
 kobo_survey <- readxl::read_excel(kobo_path, sheet = label_survey_sheet)
@@ -12,7 +12,7 @@ kobo_choices <- kobo_choices %>%
   filter(if_any(everything(), ~ !is.na(.)),
          !is.na(name)) 
 
-update_survey <- readxl::read_excel(labelling_tool_path, sheet = "update_survey") 
+update_survey <- readxl::read_excel(labelling_tool_path, sheet = country_assessment) 
 matching_type <- kobo_survey %>%
   dplyr::filter(name == barrier) %>%
   dplyr::pull(type)  # Extract the 'type' column value for the matching row
@@ -92,6 +92,7 @@ review_kobo_labels_results <- review_kobo_labels(updated_survey,
                                                  results_table = education_results_loop, 
                                                  label_column = kobo_language_label)
 
+
 type_debug <- updated_survey %>% 
   mutate(row_id = row_number()) %>% 
   tidyr::separate_wider_delim(
@@ -99,7 +100,8 @@ type_debug <- updated_survey %>%
     delim = " ",
     names = c("q_type", "list_name"),
     too_many = "debug",   # <— this is the important part
-    too_few  = "debug"
+    too_few  = "debug"#,
+    # names_repair = "universal" #TODO: Add a way of renaming duplicated columns names when the analysis is already run by the country and have columns coming from Humind "_d"
   )
 
 
@@ -111,10 +113,15 @@ label_dictionary <- create_label_dictionary(updated_survey,
 education_results_table_labelled <- add_label_columns_to_results_table(
   education_results_loop,
   label_dictionary
-)
+  ) |> rowid_to_column() |> rename(id = rowid)
+
 nrow(education_results_table_labelled ) == nrow(education_results_loop)
-education_results_table_labelled %>% saveRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
 
+education_results_table_labelled %>% saveRDS(paste0(output_dir, "/labeled_results_table_",country_assessment,".RDS"))
 
-  
+# education_results_table_labelled %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_full.csv"))
+
+education_results_table_labelled_filtered = education_results_table_labelled %>% select("id","label_analysis_var", "label_analysis_type", "label_analysis_var_value", "group_var", "group_var_value", "stat", "n", "n_total", "stat_low", "stat_upp", "label_group_var_value", "analysis_var") |> dplyr::filter(!(label_analysis_var_value %in% c("0", "NA"))) |> mutate (label_analysis_var_value = replace_values(label_analysis_var_value, "1" ~"YES"))
+
+education_results_table_labelled_filtered %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_reduced.csv"))
 

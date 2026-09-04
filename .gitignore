@@ -8,3 +8,19 @@
 .quarto
 .Rhistory
 tests/
+
+# Real per-country configuration (contains real dataset filenames/column names);
+# keep only the template (example_metadata_edu.xlsx) tracked in git.
+input_tool/01_metadata/metadata_edu.xlsx
+
+# Real outputs: everything (per-country results under output/<country_assessment>/,
+# plus output/manually_moved) lives in subfolders of output/, all ignored here.
+output/*/
+
+
+# Real per-country survey datasets; never committed, but folder structure kept
+DATA/**/*.*
+DATA/zz-comparison/*
+
+# Working files to delete
+resources/UNESCO ISCED Mappings_MSNAcountries_consolidated_new.xlsx

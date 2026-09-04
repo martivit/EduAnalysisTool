@@ -9,13 +9,14 @@ loop <- readxl::read_xlsx(data_file,
                   na = c("NA", "#N/A", "", " ", "N/A"),
                   sheet = loop_sheet, guess_max = 10000)
 
-#survey_start_date = 'today'
+#survey_start_date = "today"
 
 #check if start is NULL
 if (is.null(survey_start_date) || is.na(survey_start_date)) {
   main$start <- as.POSIXct("2024-06-01 11:54:54.574")
-  survey_start_date = 'start'
+  survey_start_date = "start"
 }
+
 if (country_assessment == "MOZ") {
   main[[survey_start_date]] <- substr(main[[survey_start_date]], 1, 10)
   replacement_date <- "2025-08-20"
@@ -28,6 +29,7 @@ if (country_assessment == "MOZ") {
   # fill them
   main[[survey_start_date]][invalid] <- replacement_date
 }
+
 if (country_assessment == "ETH") {
   main[[survey_start_date]] <- substr(main[[survey_start_date]], 1, 10)
   replacement_date <- "2024-07-20"
@@ -43,6 +45,8 @@ if (country_assessment == "ETH") {
 #main <- main %>%
   #mutate(survey_start_date = as_date(ymd_hms(survey_start_date)))
 
+# Rename of the disruption columns to be aligned with the Humind naming convention of add_loop_edu_disrupted_d.R
+# i.e: * *_d: Binary columns for each disruption type (e.g., edu_disrupted_attack_d)
 
 occupation_col <- if (!is.null(list_variables$occupation)) paste0(list_variables$occupation, "_d") else NULL
 hazards_col <- paste0(list_variables$hazards, "_d")
@@ -66,15 +70,27 @@ if (country_assessment == "MMR") {
     mutate(across(all_of(columns_to_convert), ~ as.numeric(.)))
 }
 #--------------------------------------------------------------------------------------------------------
+# Safeguard: pipeline variables holding column-name strings, checked after every
+# add_* step below in case a renamed "_orig" column needs to be tracked instead of
+# the (now-overwritten) original name. See preserve_overwritten_columns() /
+# propagate_col_renames() in src/functions/00_edu_helper.R.
+pipeline_col_vars <- c(
+  "id_col_loop", "id_col_main", "survey_start_date", "ind_age", "ind_gender",
+  "ind_access", "teacher", "hazards", "displaced", "occupation",
+  "education_level_grade", "barrier", "weight_col", "nonformal", "nonformal_type",
+  "wsg_seeing", "wsg_hearing", "wsg_walking", "wsg_remembering", "wsg_selfcare", "wsg_communicating"
+)
+
 # Apply transformations to loop dataset
 loop <- loop |>
   # Education from Humind
-  add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date, 
-                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = 5) |>
-  add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
-  add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
-  
-  
+  safe_add_loop_edu_ind_age_corrected(main = main, id_col_loop = id_col_loop, id_col_main = id_col_main, survey_start_date = survey_start_date,
+                                 school_year_start_month = school_year_start_month, ind_age = ind_age, schooling_start_age = schooling_start_age,
+                                 schooling_end_age = schooling_end_age) |>
+  safe_add_loop_edu_access_d(ind_access = ind_access,  pnta = pnta, dnk = dnk, yes= yes,no =no) |>
+  safe_add_loop_edu_disrupted_d(attack  = occupation, hazards = hazards, displaced = displaced, teacher = teacher, levels = c(yes, no, dnk, pnta))
+
+
 loop <- loop %>%
     dplyr::rename(
       edu_disrupted_hazards_d = !!rlang::sym(hazards_col),
@@ -91,27 +107,27 @@ if (!is.null(occupation_col)) {
 # from 00_edu_function.R
 loop <- loop |>
   # Add a column edu_school_cycle with ECE, primary (1 or 2 cycles) and secondary
-  add_edu_school_cycle(country_assessment = country_code, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
+  safe_add_edu_school_cycle(country_assessment = country_code, path_ISCED_file = path_ISCED_file, language_assessment =language_assessment) |>
 
 # IMPORTANT: THE INDICATOR MUST COMPLAY WITH THE MSNA GUIDANCE AND LOGIC --> data/edu_ISCED/UNESCO ISCED Mappings_MSNAcountries_consolidated
 # Add columns to use for calculation of the composite indicators: Net attendance, early-enrollment, overage learners
-  add_edu_level_grade_indicators(country_assessment = country_code, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk)
+  safe_add_edu_level_grade_indicators(country_assessment = country_code, path_ISCED_file = path_ISCED_file, education_level_grade = education_level_grade, id_col_loop = id_col_loop, pnta = pnta, dnk = dnk)
 
 #harmonized variable to use the loa_edu
 loop <- loop |>
-  add_loop_edu_barrier_d(barrier = barrier)|>
-  add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
+  safe_add_loop_edu_barrier_d(barrier = barrier)|>
+  safe_add_loop_child_gender_d (ind_gender = ind_gender, language_assessment = language_assessment)
 
 # OPTIONAL, non-core indicators, remove if not present in the MSNA
-#add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = 'edu_non_formal_type',yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
+#add_loop_edu_optional_nonformal_d(edu_other_yn = "edu_other_yn",edu_other_type = "edu_non_formal_type",yes = "yes",no = "no",pnta = "pnta",dnk = "dnk" )|>
 
 if (!is.null(nonformal) && !is.na(nonformal)) {
     loop <- loop |>
-      add_loop_edu_optional_nonformal_d(
-        edu_other_yn = nonformal, 
-        edu_other_type = nonformal_type, 
-        pnta = pnta, 
-        dnk = dnk, 
+      safe_add_loop_edu_optional_nonformal_d(
+        edu_other_yn = nonformal,
+        edu_other_type = nonformal_type,
+        pnta = pnta,
+        dnk = dnk,
         yes = yes,
         no = no
       )
@@ -129,10 +145,10 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
     !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
     !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
   loop <- loop |>
-    add_loop_wgq_ss (ind_age = 'edu_ind_age_corrected', vision = wsg_seeing, hearing = wsg_hearing,
-                     mobility = wsg_walking, cognition = wsg_remembering, self_care = wsg_selfcare, communication = wsg_communicating, 
-                     no_difficulty = no_difficulty, some_difficulty = some_difficulty, lot_of_difficulty = lot_of_difficulty, cannot_do = cannot_do, 
-                     undefined = c(dnk, pnta, 'refused_to_answer'))
+    safe_add_loop_wgq_ss (ind_age = "edu_ind_age_corrected", vision = wsg_seeing, hearing = wsg_hearing,
+                     mobility = wsg_walking, cognition = wsg_remembering, self_care = wsg_selfcare, communication = wsg_communicating,
+                     no_difficulty = no_difficulty, some_difficulty = some_difficulty, lot_of_difficulty = lot_of_difficulty, cannot_do = cannot_do,
+                     undefined = c(dnk, pnta, "refused_to_answer"))
 }
 
 if (country_assessment == "MMR") {
@@ -144,12 +160,14 @@ if (country_assessment == "MMR") {
       disagg_pop_access = NA_character_
     )
 }
+
 if (country_assessment == "AFG") {
   loop <- loop %>%
     mutate(
       coping_barrier = NA_character_
     )
 }
+
 #--------------------------------------------------------------------------------------------------------
 # Merge main info into loop dataset
 # add strata inf from the main dataframe, IMPORTAN: weight and the main strata
@@ -159,6 +177,7 @@ check_and_set_merge_column <- function(loop, main_col) {
   
 
 add_cols_tot = c()
+
 if (country_assessment == "UKR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
@@ -185,57 +204,67 @@ if (country_assessment == "UKR") {
 
   )
 }
+
 if (country_assessment == "DRC") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
     "edu_disrupted_attack_afc")}
+
 if (country_assessment == "CAR") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
     "edu_barrier_2nd_reason")}
+
 if (country_assessment == "AFG") {
   # everything you want to pull from 'main'
   add_cols_tot <- c(
-    "children_schooling_type"
+    "child_school_type"
     
   )}
+
 if (country_assessment == "MOZ") {
   # everything you want to pull from 'main'
   add_cols_tot <- c("edu_ind_has_impairment",
     "barrier_impairament"
     
   )}
+
 if (country_assessment == "MMR") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_community_modality'
+  add_cols_tot <- c("edu_community_modality"
                     
   )}
+
 if (country_assessment == "SOM") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_program_type'
+  add_cols_tot <- c("edu_program_type"
                     
   )}
+
 if (country_assessment == "SDN") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('schl_learnin_enviro'
+  add_cols_tot <- c("schl_learnin_enviro"
                     
   )}
+
 if (country_assessment == "SYR") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_access_syr', "edu_acceptable_conditions", "edu_barrier_syr", 
+  add_cols_tot <- c("edu_access_syr", "edu_acceptable_conditions", "edu_barrier_syr", 
                     "edu_ind_not_enrolled", "edu_ind_not_enrolled", "edu_other_type_syr",
                     "edu_other_yn_syr"
                     
   )}
+
 if (country_assessment == "LBN") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('edu_disrupted_financial', 'formal_school_type', 
-                    'edu_access_past', 'edu_enrolment_past'
+  add_cols_tot <- c("edu_disrupted_financial", "formal_school_type", 
+                    "edu_access_past", "edu_enrolment_past"
 
   )}
+
 if (country_assessment == "BFA") {
   # everything you want to pull from 'main'
-  add_cols_tot <- c('e_incident_trajet', 'e_incident_ecol', "e_abandon"
+  add_cols_tot <- c("e_incident_trajet", "e_incident_ecol", "e_abandon"
   )}
 
 #modality_column <- "edu_community_modality"  # already set above
@@ -250,9 +279,14 @@ barrier_multiple_bfa <- "e_educ_non_formel_type"  # already set above
 
 
 
-# gather your legacy add_col1...add_col9
-candidates <- c(add_col1, add_col2, add_col3, add_col4,
-                add_col5, add_col6, add_col7, add_col8, add_col9)
+# gather every populated strata_lvl_1...strata_lvl_15 column for this country
+# (replaces the old admin1/admin2/admin3/stratum/additional_stratum/add_col1-9
+# globals, none of which get() assigned anymore now that strata levels are
+# read generically from the strata_variables sheet - see MAIN.R/00-getting-info-country.R)
+candidates <- mget(strata_var_names, envir = .GlobalEnv, ifnotfound = NA) |>
+  purrr::discard(is.null) |>
+  purrr::discard(is.na) |>
+  unlist(use.names = FALSE)
 
 # 1) combine BOTH sources (drop NULLs + dedupe)
 wish <- unique(c(Filter(Negate(is.null), candidates), add_cols_tot))
@@ -264,6 +298,7 @@ modality_cols <- names(main)[
 if (length(modality_cols)) {
   wish <- unique(c(wish, modality_cols))
 }
+
 if (country_assessment == "SSD") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_ssd, "([_/\\.].*|$)"), names(loop))
@@ -272,6 +307,7 @@ if (country_assessment == "SSD") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "UKR") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_ukr, "([_/\\.].*|$)"), names(loop))
@@ -280,6 +316,7 @@ if (country_assessment == "UKR") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "ETH") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_eth, "([_/\\.].*|$)"), names(loop))
@@ -288,6 +325,7 @@ if (country_assessment == "ETH") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "SYR") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_syr, "([_/\\.].*|$)"), names(loop))
@@ -296,6 +334,7 @@ if (country_assessment == "SYR") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "SDN") {
   barrier2_sm_cols <- names(main)[
     grepl(paste0("^", concern_multiple_sdn, "([_/\\.].*|$)"), names(loop))
@@ -304,6 +343,7 @@ if (country_assessment == "SDN") {
     wish <- unique(c(wish, barrier2_sm_cols))
   }
 }
+
 if (country_assessment == "SDN") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_sdn, "([_/\\.].*|$)"), names(loop))
@@ -312,6 +352,7 @@ if (country_assessment == "SDN") {
     wish <- unique(c(wish, barrier_sm_cols))
   }
 }
+
 if (country_assessment == "BFA") {
   barrier_sm_cols <- names(main)[
     grepl(paste0("^", barrier_multiple_bfa, "([_/\\.].*|$)"), names(loop))
@@ -324,13 +365,23 @@ if (country_assessment == "BFA") {
 # 2) only merge columns that are NOT already in loop
 #    (this guarantees we won’t drop/replace existing loop columns)
 add_cols <- setdiff(wish, colnames(loop))
+
 #add_cols <- wish
+
 # 3) call the merge (disable regex auto-includes to avoid re-merging existing cols)
+# All strata levels are already folded into add_cols via `candidates` above;
+# adm1/2/3_pcode_col (from metadata_edu.xlsx general$adm1_pcode_colum etc., set
+# in MAIN.R) are merged separately here. merge_main_info_in_loop() de-duplicates
+# by column name, so a pcode column that happens to be the same underlying
+# column as a strata level is only merged once, not flagged as a conflict.
 loop <- merge_main_info_in_loop(
-  loop = loop, main = main,
-  id_col_loop = id_col_loop, id_col_main = id_col_main,
-  admin1 = admin1, admin2 = admin2, admin3 = admin3,
-  stratum = stratum, additional_stratum = additional_stratum,
+  loop = loop,
+  main = main,
+  id_col_loop = id_col_loop,
+  id_col_main = id_col_main,
+  adm1_pcode_col = adm1_pcode_col,
+  adm2_pcode_col = adm2_pcode_col,
+  adm3_pcode_col = adm3_pcode_col,
   weight = weight_col,
   add_cols = add_cols,
   include_regex = character(0)   # important if you want to avoid re-merging matches already in loop
@@ -360,8 +411,9 @@ if (country_assessment == "MMR") {
     #)
 #}
 # keep only school-age children
+
 loop <- loop |>
-  dplyr::filter(edu_ind_schooling_age_d == 1) |>
+  dplyr::filter(edu_ind_age_schooling == 1) |>
   dplyr::mutate(
     young_adult = dplyr::case_when(
       edu_ind_age_corrected %in% c(15,16, 17) ~ "15 - 17 y.o.",
@@ -370,8 +422,7 @@ loop <- loop |>
   )
 
 
-loop <- loop |> filter(edu_ind_schooling_age_d == 1)
- if (country_assessment == "AFG"){
+if (country_assessment == "AFG"){
    loop <- loop |> filter(edu_ind_age_corrected != 5)
  }
 
@@ -380,7 +431,7 @@ loop_edu_recorded <- loop
 
 #--------------------------------------------------------------------------------------------------------
 # Save the final output to an Excel file
-loop |> write.xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop |> write.xlsx(paste0(output_dir, "/loop_edu_recorded_",country_assessment,".xlsx"))
   
 
 

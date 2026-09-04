@@ -1,6 +1,6 @@
 
 # Read the dataset with indicators and loa
-loop <- readxl::read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop <- readxl::read_xlsx(paste0(output_dir, "/loop_edu_recorded_",country_assessment,".xlsx"))
 
 ## --------------------------------------------------------------------------------------
 ## --------------------------------------------------------------------------------------
@@ -16,15 +16,14 @@ loop <- loop %>%
 design_loop <- loop |>
   as_survey_design(weights = all_of(weight_col))
 
-test_df <-
+
 results_loop_weigthed <- create_analysis(
   design_loop,
   loa = loa_country,
   sm_separator =  "_")
 
-results_loop_weigthed$results_table %>%  write.csv(paste0('output/analysis_key_output', country_assessment,'.csv'))
-results_loop_weigthed %>%
-  saveRDS(paste0('output/analysis_key_output', country_assessment,'.RDS'))
+results_loop_weigthed$results_table %>%  write.csv(paste0(output_dir, "/analysis_key_output", country_assessment,".csv"))
+results_loop_weigthed %>% saveRDS(paste0(output_dir, "/analysis_key_output", country_assessment,".RDS"))
 
 
 # group other select ones.
@@ -86,7 +85,7 @@ if (duplicated_keys > 0) {
   message("There are ", duplicated_keys, " duplicates in analysis keys.")
 }
 
-grouped_other_education_results_loop %>% saveRDS(paste0('output/grouped_other_education_results_loop_', country_assessment,'.RDS'))
+grouped_other_education_results_loop %>% saveRDS(paste0(output_dir, "/grouped_other_education_results_loop_", country_assessment,".RDS"))
 
   
 

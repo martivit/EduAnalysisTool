@@ -31,13 +31,29 @@ Imports:
     lubridate,
     stats,
     glue,
-    lifecycle
+    lifecycle,
+    impactR.utils,
+    humind,
+    analysistools,
+    presentresults,
+    ggplot2,
+    gt,
+    openxlsx,
+    writexl,
+    tidyverse,
+    grid,
+    gridExtra,
+    ggtext
 Suggests:
     rmarkdown,
     knitr,
-    openxlsx,
     labelled
-VignetteBuilder: knitr 
+Remotes:
+    impact-initiatives-hppu/humind@v2026.3.0,
+    impact-initiatives/analysistools@d748f320c41eeaa5619be45457414ffb4f53e78a,
+    impact-initiatives/presentresults@6219392a2983db6c90b5e7cb557db5e052b76fed,
+    impact-initiatives/impactR.utils@880a57ebb0282e377f888f352c746c9bde412e75
+VignetteBuilder: knitr
 LazyData: true
 License: GPL (>= 3)
 

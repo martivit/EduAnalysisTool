@@ -81,18 +81,48 @@ This repository is designed to process and analyze educational data from various
 
 The Main.R script and repository are organized to follow a systematic approach to process and analyze educational data. The structure is divided into several steps, each corresponding to specific functions or scripts that move the data from clean input to final analysis and output.
 
+All outputs for a run are written under `output/<country_assessment>/` (e.g. `output/AFG/`), with the `rds_results`, `plots_<country_assessment>`, and `table_for_maps` subfolders created automatically at the start of `MAIN.R` if they don't already exist — nothing to set up by hand.
+
 ### 1. Install packages and source needed functions and Data Preparation
 
-```
-if(!require(devtools)) install.packages("devtools")
-devtools::install_github("impact-initiatives-hppu/humind")
-devtools::install_github("impact-initiatives/analysistools")
-devtools::install_github("impact-initiatives/presentresults")
+This project uses [renv](https://rstudio.github.io/renv/) to keep everyone on the same package versions, including the GitHub-only packages (`humind`, `analysistools`, `presentresults`, `impactR.utils`) pinned to fixed commits. Open the project in RStudio (or run `setwd()` to the project folder) and run:
 
-library(humind) 
+```
+if (!require(renv)) install.packages("renv")
+renv::restore()
+```
+
+This installs every package the project needs, at the exact versions recorded in `renv.lock`. Once it finishes:
+
+```
+library(humind)
 library(analysistools)
 library(presentresults)
 ```
+
+##### If you hit a GitHub API rate limit
+
+`renv::restore()` only contacts GitHub for the packages actually recorded with `Source: GitHub` in `renv.lock` (currently `humind`, `analysistools`, `presentresults`, `impactR.utils`, plus their own GitHub-only dependencies `addindicators` and `cleaningtools`) — it does not re-query GitHub for CRAN packages. If you still hit GitHub's unauthenticated rate limit (60 requests/hour per IP), you have two options:
+
+- **Authenticate**: run `usethis::create_github_token()` to create a personal access token, then `gitcreds::gitcreds_set()` to store it. This raises the limit substantially.
+- **Wait it out or switch network**: the limit is per IP and resets hourly; switching wifi/network also gives you a fresh limit.
+
+Avoid `remotes::install_deps()` or `renv::install()` as a workaround — both re-resolve the `Remotes:` field (and re-hit the GitHub API) on every call, even for pure-CRAN packages, and will burn through the rate limit much faster than `renv::restore()` alone.
+
+##### Installing the GitHub-only packages manually
+
+If you need to install just the GitHub-sourced packages by hand (e.g. `renv::restore()` failed partway through and you want to retry only those), install them individually with `remotes::install_github()`, pinned to the same commits recorded in `DESCRIPTION`'s `Remotes:` field:
+
+```r
+if (!require(remotes)) install.packages("remotes")
+
+remotes::install_github("impact-initiatives-hppu/humind@v2026.3.0")
+remotes::install_github("impact-initiatives/analysistools@d748f320c41eeaa5619be45457414ffb4f53e78a")
+remotes::install_github("impact-initiatives/presentresults@6219392a2983db6c90b5e7cb557db5e052b76fed")
+remotes::install_github("impact-initiatives/impactR.utils@880a57ebb0282e377f888f352c746c9bde412e75")
+```
+
+`humind` and `analysistools` each pull in one further GitHub-only dependency (`addindicators` and `cleaningtools` respectively) automatically — `remotes` resolves and installs those for you as part of the calls above, so you don't need to install them separately. If those pins ever need to move to a newer commit, update both this list and the `Remotes:` field in `DESCRIPTION` together, then run `renv::snapshot()` to update `renv.lock`.
 ##### Additional functions 
 ```
 source ('src/functions/00_edu_helper.R')
@@ -116,34 +146,56 @@ source('src/05-01-make-graphs-and-maps-tables.R')
 Define paths to all input data files: Dataset folder and  ISCED mappings
 ```
 path_ISCED_file <- 'resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx'
-data_file <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
-kobo_path <- paste0('../DATA/',country_assessment, '/',list_info_general$dataset)
+data_file <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
+kobo_path <- paste0('DATA/',country_assessment, '/',list_info_general$dataset)
 
 
 ```
-The remaining information related to language, Kobo, variables, and indicators must be completed in the metadata_edu.xlsx file (please place it one folder above, [../metadata_edu.xlsx]). An example completed for a few countries is available in example_metadata_edu.xlsx.
+Place the dataset at `DATA/<country_assessment>/<filename>` (the filename comes from `general$dataset` in the metadata file). `DATA/` is gitignored, same as `metadata_edu.xlsx` — real survey data is never committed.
+The remaining information related to language, Kobo, variables, and indicators must be completed in `input_tool/01_metadata/metadata_edu.xlsx` — a real, filled-in copy of `input_tool/01_metadata/example_metadata_edu.xlsx`, which ships in the repo as the template. `metadata_edu.xlsx` itself is gitignored (it can contain real dataset filenames/column names), so create it by copying the example and filling it in; it's never committed. The example also has an `instructions` sheet documenting every column, whether it's required or optional, and a `00L` ("Lemuria") example row with some fields intentionally left blank so you can see what the configuration-validation error message looks like before running against real data.
+
+If `input_tool/01_metadata/metadata_edu.xlsx` is missing, has no row for `country_assessment`, or is missing a required value, `MAIN.R` stops early with a message naming exactly what's missing instead of failing partway through the pipeline.
+
 #### Input data tools
 
-The education list of analysis is saved here: input_tool/edu_analysistools_loa.xlsx
+The education list of analysis defaults to the shared starting kit: input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx. To use a country-specific LOA file instead, place it in input_tool/03_loa/ and set the `loa_file` column (just the filename) for that country's row in the `general` sheet of `input_tool/01_metadata/metadata_edu.xlsx`; leave it blank to keep using the starting kit.
 
 Please modify the column group_var to reflect the desired disaggregation variable. School-age cycle, edu_school_cycle_d, and gender, ind_gender, are already included.
 ```
-loa_path <- "input_tool/edu_analysistools_loa_AFG.xlsx"
+loa_path <- if (!is.null(list_info_general$loa_file)) {
+  paste0('input_tool/03_loa/', list_info_general$loa_file)
+} else {
+  'input_tool/03_loa/edu_analysistools_loa_starting_kit.xlsx'
+}
 
 suffix <- ifelse(language_assessment == "French", "_FR", "_EN")
-data_helper_table <- paste0("input_tool/edu_table_helper", suffix, ".xlsx")
-data_helper_table <- ("input_tool/edu_table_helper_EN_AFG.xlsx")
+data_helper_table <- paste0("input_tool/02_edu_table/edu_table_helper", suffix, '_', country_assessment, ".xlsx")
 
 labelling_tool_path <- "input_tool/edu_indicator_labelling.xlsx"
 ```
 #### Variables Definition
 
-At the beginning of the Main.R script, specify the variable names according to the context of the analysis (country, data format, etc.)
+At the beginning of the Main.R script, specify the country code for this analysis; every other variable (including `language_assessment`) is read from `input_tool/01_metadata/metadata_edu.xlsx` for that country:
 ```
 country_assessment <- "AFG"
-language_assessment <- "English"
-etc ...
 ```
+
+#### Known limitations
+
+Some indicator logic in `src/01-add_education_indicators.R` (survey-date fixes, a few country-specific column names, extra disaggregation columns) is still hardcoded per country rather than driven by `input_tool/01_metadata/metadata_edu.xlsx`. This is a candidate for a future config-driven refactor; for now, adding a new country there may still require a small code change in that file.
+
+##### Temporary workaround: `safe_add_*` column-overwrite protection
+
+Several `humind` functions (`add_loop_edu_ind_age_corrected()`, `add_loop_edu_access_d()`, `add_loop_edu_disrupted_d()`, `add_loop_wgq_ss()`) and a couple of this project's own local functions (`add_edu_school_cycle()`, `add_edu_level_grade_indicators()`, `add_loop_edu_barrier_d()`, `add_loop_child_gender_d()`, `add_loop_edu_optional_nonformal_d()`) silently overwrite any pre-existing column that happens to share a name with one of their outputs — e.g. a raw survey column called `edu_ind_age_schooling` gets silently replaced by `add_loop_edu_ind_age_corrected()`'s output column of the same name, with the original values lost.
+
+Until this is fixed upstream in `humind`, `src/01-add_education_indicators.R` calls `safe_add_*` wrapper versions of these functions (e.g. `safe_add_loop_edu_ind_age_corrected()` instead of `add_loop_edu_ind_age_corrected()`). Each wrapper has the exact same call signature as the function it wraps; it compares the data before and after the call and, if any pre-existing column was overwritten, preserves the original values under an `_orig` suffix (e.g. `edu_ind_age_schooling_orig`) and updates any pipeline variable that referenced the old column name. The wrapper functions and this protection logic live entirely in `src/functions/00_safe_add_functions.R`, which is sourced conditionally from `MAIN.R` (only if the file exists) so that removing it doesn't require touching `MAIN.R`.
+
+**To remove this workaround once `humind` ships a fix for the underlying issue:**
+1. Delete `src/functions/00_safe_add_functions.R`.
+2. In `src/01-add_education_indicators.R`, find-and-replace `safe_add_` with `add_`.
+
+No other files need to change — `MAIN.R`'s `source()` call for that file is already conditional on the file existing, and `src/functions/00_edu_helper.R` was never modified by this workaround.
+
 ### 3. Add Education Indicators
 The function processes the cleaned data by adding relevant education indicators. It adds the following indicators and information:
 
@@ -169,7 +221,7 @@ It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and a
 source('src/01-add_education_indicators.R')
 
 ```
-The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
+The processed dataset with the recorded education indicators is saved in the *output/&lt;country_assessment&gt;/loop_edu_recorded_&lt;country_assessment&gt;.xlsx* file. It serves as the foundation for the further steps.
 
 ### 3. Run Education Analysis
 
@@ -182,7 +234,7 @@ It uses analysistools::create_analysis() function from the **impact-initiatives/
 ```
 source('src/02-education_analysis.R')
 ```
-The output is saved here: *output/grouped_other_education_results_loop.RDS*
+The output is saved here: *output/&lt;country_assessment&gt;/grouped_other_education_results_loop_&lt;country_assessment&gt;.RDS*
 
 ### 4. Label Data
 
@@ -193,14 +245,16 @@ This labeling step is crucial for aligning the analysis output with the desired 
 The function is defined here: **03-education_labeling.R**.
 
 ```
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+source('src/03-education_labeling.R')  ## OUTPUT: output/<country_assessment>/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
 ```
-The output is saved here: *output/labeled_results_table.RDS  ---- df: education_results_table_labelled*
+The output is saved here: *output/&lt;country_assessment&gt;/labeled_results_table_&lt;country_assessment&gt;.RDS  ---- df: education_results_table_labelled*
+
+> **Note:** On this branch, the scripts backing steps 5 and 6 below (`src/04-01-make-table-access-overaged-barriers.R`, `src/04-02-make-level-table.R`, `src/05-01-make-graphs-and-maps-tables.R`) have been removed — they were untested against the current config-validation/strata changes. The documentation below is kept as-is in case you want to pull those scripts from an earlier version of the branch and try them against this branch's output; they have not been updated to match anything past step 4.
 
 ### 5. Create Tables 
 First create workbook for tables
 ```
-education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+education_results_table_labelled <- readRDS(paste0(output_dir, "/labeled_results_table_", country_assessment, ".RDS"))
 
 wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
@@ -214,7 +268,9 @@ row_number_lookup <- c(
   "level1" = 6,
   "level2" = 7,
   "level3" = 8,
-  "level4" = 9
+  "level4" = 9,
+  "non_formal" = 10,
+  "wgq" = 11
 )
 
 ```
@@ -261,44 +317,49 @@ source("src/04-02-make-level-table.R")
 tab_helper <- "level3"
 source("src/04-02-make-level-table.R")
 
-openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
-openxlsx::openXL("output/education_results.xlsx")
+tab_helper <- "non_formal"
+source("src/04-01-make-table-access-overaged-barriers.R")
+
+openxlsx::saveWorkbook(wb, paste0(output_dir, "/education_results_", country_assessment, ".xlsx"), overwrite = T)
+openxlsx::openXL(paste0(output_dir, "/education_results_", country_assessment, ".xlsx"))
 ```
 
 #### Final Output and Workbook Creation
 
-A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
+A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/&lt;country_assessment&gt;/education_results_&lt;country_assessment&gt;.xlsx**.
 
 It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
+
+> **Note:** as above, `src/05-01-make-graphs-and-maps-tables.R` has been removed from this branch and is untested against the current changes; documentation kept for reference only.
 
 ### 6. Create Graphs 
 ```
 tab_helper <- "access"
-results_filtered <- "output/rds_results/access_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/access_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "overaged"
-results_filtered <- "output/rds_results/overaged_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/overaged_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "out_of_school"
-results_filtered <- "output/rds_results/out_of_school_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/out_of_school_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "ece"
-results_filtered <- "output/rds_results/ece_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/ece_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level1"
-results_filtered <- "output/rds_results/level1_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level1_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level2"
-results_filtered <- "output/rds_results/level2_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level2_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level3"
-results_filtered <- "output/rds_results/level3_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level3_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 ```
 

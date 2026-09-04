@@ -159,7 +159,7 @@ Merge the loop with the main script to retrieve weight and strata information, s
 Filter for School-Age Children
 
 ```
-loop <- loop |> filter(edu_ind_schooling_age_d == 1)
+loop <- loop |> filter(edu_ind_age_schooling == 1)
 ```
 
 ##### Export recorded loop dataframe to excel

@@ -1,6 +1,6 @@
 
 # Read the dataset with indicators and loa
-loop <- readxl::read_xlsx(paste0('output/loop_edu_recorded_',country_assessment,'.xlsx'))
+loop <- readxl::read_xlsx(paste0(output_dir, "/loop_edu_recorded_",country_assessment,".xlsx"))
 
 ## ----------------------   CREATING THE LOA   ----------------------------------------------
 filtered_vars <- list()
@@ -52,8 +52,8 @@ if (!is.null(wsg_seeing) && !is.na(wsg_seeing) &&
     !is.null(wsg_selfcare) && !is.na(wsg_selfcare) &&
     !is.null(wsg_communicating) && !is.na(wsg_communicating)) {
   
-  #strata_wsg <- c('wgq_dis_3', 'wgq_dis_2', 'disagg_pop_wgq_dis_3', 'disagg_pop_wgq_dis_2') ## for MMR
-  strata_wsg <- c('wgq_dis_3', 'wgq_dis_2')
+  #strata_wsg <- c("wgq_dis_3", "wgq_dis_2", "disagg_pop_wgq_dis_3", "disagg_pop_wgq_dis_2") ## for MMR
+  strata_wsg <- c("wgq_dis_3", "wgq_dis_2")
   
   model_stratum_rows_limited <- model_stratum_rows %>%
     dplyr::filter(!stringr::str_detect(analysis_var, "wgq"))
@@ -85,5 +85,5 @@ loa_country <- loa_filtered %>%
 
 loa_country <- loa_country %>%
   dplyr::filter(!stringr::str_detect(group_var, "disagg_pop_access"))
-loa_country %>%  write.csv(paste0('input_tool/loa_analysis_', country_assessment,'.csv'))
+loa_country %>%  write.csv(paste0("input_tool/03_loa/loa_analysis_", country_assessment,".csv"))
 
