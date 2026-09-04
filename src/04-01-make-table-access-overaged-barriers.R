@@ -34,7 +34,7 @@ filtered_education_results_table_labelled <- filtered_education_results_table_la
 #filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%
   #filter(!str_detect(group_var_value, regex("other|pnta", ignore_case = TRUE)))
 
-saveRDS(filtered_education_results_table_labelled, paste0("output/rds_results/", tab_helper, "_results_", country_assessment, ".rds"))
+saveRDS(filtered_education_results_table_labelled, paste0(output_dir, "/rds_results/", tab_helper, "_results_", country_assessment, ".rds"))
 
 #filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>% slice(1:3121)
 #filtered_education_results_table_labelled <- filtered_education_results_table_labelled %>%

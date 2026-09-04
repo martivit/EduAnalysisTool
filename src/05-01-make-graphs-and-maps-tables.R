@@ -109,7 +109,7 @@ type1_plots <- type1_group_results %>%
         ))
 
 ## Create a naming vector to save the plots
-type1_file_names <- paste0("output/plots_",country_assessment,"/", tab_helper, "/type_1/", 1:length(type1_plots), "type_1_plot.png")
+type1_file_names <- paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_1/", 1:length(type1_plots), "type_1_plot.png")
 
 ## Save the plots
 map2(type1_file_names, type1_plots, ~ ggsave(
@@ -122,7 +122,7 @@ map2(type1_file_names, type1_plots, ~ ggsave(
 ))
 
 ## Write plots index
-type1_group_id %>% write.csv(paste0("output/plots_",country_assessment,"/", tab_helper, "/type_1/", "type_1_index.csv"))
+type1_group_id %>% write.csv(paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_1/", "type_1_index.csv"))
 
 # Type 2 plots - Profile per gender
 ## Split by label_group_var_value_1 and label_group_var_value_2
@@ -172,7 +172,7 @@ type2_plots <- type2_group_results |>
           axis.text.x = element_blank()
         ))
 ## Create a naming vector to save the plots
-type2_file_names <- paste0("output/plots_",country_assessment,"/", tab_helper, "/type_2/", 1:length(type2_plots), "type_2_plot.png")
+type2_file_names <- paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_2/", 1:length(type2_plots), "type_2_plot.png")
 
 ## Save the plots
 map2(type2_file_names, type2_plots, ~ ggsave(
@@ -184,7 +184,7 @@ map2(type2_file_names, type2_plots, ~ ggsave(
   units = "in"
 ))
 ## Write plots index
-type2_group_id %>% write.csv(paste0("output/plots_",country_assessment,"/", tab_helper, "/type_2/", "type_2_index.csv"))
+type2_group_id %>% write.csv(paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_2/", "type_2_index.csv"))
 
 # Type 3 plots -  - Indicators x dissag x 1 gender
 ## Split by label_group_var_value_1 and label_group_var_value_2
@@ -225,7 +225,7 @@ type3_plots <- type3_group_results |>
         theme_impact() +
         theme_barplot())
 ## Create a naming vector to save the plots
-type3_file_names <- paste0("output/plots_",country_assessment,"/", tab_helper, "/type_3/", 1:length(type3_plots), "type_3_plot.png")
+type3_file_names <- paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_3/", 1:length(type3_plots), "type_3_plot.png")
 
 ## Save the plots
 map2(type3_file_names, type3_plots, ~ ggsave(
@@ -238,7 +238,7 @@ map2(type3_file_names, type3_plots, ~ ggsave(
 ))
 
 ## Write plots index
-type3_group_id %>% write.csv(paste0("output/plots_",country_assessment,"/", tab_helper, "/type_3/", "type_3_index.csv"))
+type3_group_id %>% write.csv(paste0(output_dir, "/plots_",country_assessment,"/", tab_helper, "/type_3/", "type_3_index.csv"))
 
 # Tables for maps
 # Removes admin level (should be maps?)
@@ -259,4 +259,4 @@ disruptions_table_for_maps <- only_admin_level %>%
     analysis_var_column = "map_analysis_var"
   )
 disruptions_table_for_maps %>%
-  write.csv(paste0("output/table_for_maps/", tab_helper, "_table_for_maps", country_assessment, ".csv"))
+  write.csv(paste0(output_dir, "/table_for_maps/", tab_helper, "_table_for_maps", country_assessment, ".csv"))

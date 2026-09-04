@@ -1,4 +1,4 @@
-education_results_loop <- readRDS(paste0("output/grouped_other_education_results_loop_", country_assessment,".RDS"))
+education_results_loop <- readRDS(paste0(output_dir, "/grouped_other_education_results_loop_", country_assessment,".RDS"))
 label_column_kobo_overall <- if (language_assessment == "French") "Ensemble" else "Overall"
 
 kobo_survey <- readxl::read_excel(kobo_path, sheet = label_survey_sheet)
@@ -117,11 +117,11 @@ education_results_table_labelled <- add_label_columns_to_results_table(
 
 nrow(education_results_table_labelled ) == nrow(education_results_loop)
 
-education_results_table_labelled %>% saveRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
+education_results_table_labelled %>% saveRDS(paste0(output_dir, "/labeled_results_table_",country_assessment,".RDS"))
 
-education_results_table_labelled %>% write.csv(paste0("output/labeled_results_table_", country_assessment,"_full.csv"))
+education_results_table_labelled %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_full.csv"))
 
 education_results_table_labelled_filtered = education_results_table_labelled %>% select("rowid","label_analysis_var", "label_analysis_type", "label_analysis_var_value", "group_var", "group_var_value", "stat", "n", "n_total", "stat_low", "stat_upp", "label_group_var_value", "analysis_var") |> dplyr::filter(label_analysis_var_value %notin% c("0", "NA")) |> mutate (label_analysis_var_value = replace_values(label_analysis_var_value, "1" ~"YES"))
 
-education_results_table_labelled_filtered %>% write.csv(paste0("output/labeled_results_table_", country_assessment,"_reduced.csv"))
+education_results_table_labelled_filtered %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_reduced.csv"))
 

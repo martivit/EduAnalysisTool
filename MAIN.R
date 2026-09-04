@@ -166,22 +166,30 @@ data_helper <- data_helper |>
 
 ##################################################################################################
 
+# All outputs for this run are written under output/<country_assessment>/, created here so
+# every downstream write below (and the matching reads that follow it) can assume it exists.
+output_dir <- paste0("output/", country_assessment)
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(paste0(output_dir, "/rds_results"), recursive = TRUE, showWarnings = FALSE)
+dir.create(paste0(output_dir, "/plots_", country_assessment), recursive = TRUE, showWarnings = FALSE)
+dir.create(paste0(output_dir, "/table_for_maps"), recursive = TRUE, showWarnings = FALSE)
+
 # 1 ----------------- 01-add_education_indicators.R -----------------
 main_sheet <- label_main_sheet ## Used in 01-add_education_indicators.R
 loop_sheet <- label_edu_sheet ## Used in 01-add_education_indicators.R
 
-source("src/01-add_education_indicators.R") ## OUTPUT: output/loop_edu_recorded_<country_assessment>.xlsx
+source("src/01-add_education_indicators.R") ## OUTPUT: output/<country_assessment>/loop_edu_recorded_<country_assessment>.xlsx
 
 source("src/01-5-creating_loa.R") ## OUTPUT: input_tool/loa_analysis_<country_assessment>.csv
 
 # 2 ----------------- 02-education_analysis.R -----------------
-source("src/02-education_analysis.R") ## OUTPUT: output/grouped_other_education_results_loop_<country_assessment>.RDS
+source("src/02-education_analysis.R") ## OUTPUT: output/<country_assessment>/grouped_other_education_results_loop_<country_assessment>.RDS
 
 # 3 ----------------- 03-education_labeling.R -----------------
-source("src/03-education_labeling.R")  ## OUTPUT: output/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
+source("src/03-education_labeling.R")  ## OUTPUT: output/<country_assessment>/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
 
 # 4 ----------------- create workbook for tables -----------------
-education_results_table_labelled <- readRDS(paste0("output/labeled_results_table_",country_assessment,".RDS"))
+education_results_table_labelled <- readRDS(paste0(output_dir, "/labeled_results_table_",country_assessment,".RDS"))
 
 wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
@@ -232,36 +240,36 @@ source("src/04-01-make-table-access-overaged-barriers.R")
 
 
 
-openxlsx::saveWorkbook(wb, paste0("output/education_results_",country_assessment, ".xlsx"), overwrite = T)
-openxlsx::openXL(paste0("output/education_results_",country_assessment,".xlsx"))
+openxlsx::saveWorkbook(wb, paste0(output_dir, "/education_results_",country_assessment, ".xlsx"), overwrite = T)
+openxlsx::openXL(paste0(output_dir, "/education_results_",country_assessment,".xlsx"))
 
 # 6 ----------------- 05-01-make-level-table.R -----------------
 # To repeat according to the number of tabs in the data_helper
 tab_helper <- "access"
-results_filtered <- paste0("output/rds_results/access_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/access_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "overaged"
-results_filtered <- paste0("output/rds_results/overaged_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/overaged_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "out_of_school"
-results_filtered <- paste0("output/rds_results/out_of_school_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/out_of_school_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "ece"
-results_filtered <- paste0("output/rds_results/ece_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/ece_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level1"
-results_filtered <- paste0("output/rds_results/level1_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/level1_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level2"
-results_filtered <- paste0("output/rds_results/level2_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/level2_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level3"
-results_filtered <- paste0("output/rds_results/level3_results_", country_assessment, ".rds")
+results_filtered <- paste0(output_dir, "/rds_results/level3_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 

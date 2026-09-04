@@ -1,6 +1,6 @@
 
 # Read the dataset with indicators and loa
-loop <- readxl::read_xlsx(paste0("output/loop_edu_recorded_",country_assessment,".xlsx"))
+loop <- readxl::read_xlsx(paste0(output_dir, "/loop_edu_recorded_",country_assessment,".xlsx"))
 
 ## ----------------------   CREATING THE LOA   ----------------------------------------------
 filtered_vars <- list()

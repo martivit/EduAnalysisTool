@@ -431,7 +431,7 @@ loop_edu_recorded <- loop
 
 #--------------------------------------------------------------------------------------------------------
 # Save the final output to an Excel file
-loop |> write.xlsx(paste0("output/loop_edu_recorded_",country_assessment,".xlsx"))
+loop |> write.xlsx(paste0(output_dir, "/loop_edu_recorded_",country_assessment,".xlsx"))
   
 
 
