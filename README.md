@@ -81,6 +81,8 @@ This repository is designed to process and analyze educational data from various
 
 The Main.R script and repository are organized to follow a systematic approach to process and analyze educational data. The structure is divided into several steps, each corresponding to specific functions or scripts that move the data from clean input to final analysis and output.
 
+All outputs for a run are written under `output/<country_assessment>/` (e.g. `output/AFG/`), with the `rds_results`, `plots_<country_assessment>`, and `table_for_maps` subfolders created automatically at the start of `MAIN.R` if they don't already exist — nothing to set up by hand.
+
 ### 1. Install packages and source needed functions and Data Preparation
 
 This project uses [renv](https://rstudio.github.io/renv/) to keep everyone on the same package versions, including the GitHub-only packages (`humind`, `analysistools`, `presentresults`, `impactR.utils`) pinned to fixed commits. Open the project in RStudio (or run `setwd()` to the project folder) and run:
@@ -114,7 +116,7 @@ If you need to install just the GitHub-sourced packages by hand (e.g. `renv::res
 ```r
 if (!require(remotes)) install.packages("remotes")
 
-remotes::install_github("impact-initiatives-hppu/humind@956765719018fdb708f168b45fb45866e1dae4ac")
+remotes::install_github("impact-initiatives-hppu/humind@v2026.3.0")
 remotes::install_github("impact-initiatives/analysistools@d748f320c41eeaa5619be45457414ffb4f53e78a")
 remotes::install_github("impact-initiatives/presentresults@6219392a2983db6c90b5e7cb557db5e052b76fed")
 remotes::install_github("impact-initiatives/impactR.utils@880a57ebb0282e377f888f352c746c9bde412e75")
@@ -219,7 +221,7 @@ It uses Humind package (https://github.com/impact-initiatives-hppu/humind) and a
 source('src/01-add_education_indicators.R')
 
 ```
-The processed dataset with the recorded education indicators is saved in the *output/loop_edu_recorded.xlsx* file. It serves as the foundation for the further steps.
+The processed dataset with the recorded education indicators is saved in the *output/&lt;country_assessment&gt;/loop_edu_recorded_&lt;country_assessment&gt;.xlsx* file. It serves as the foundation for the further steps.
 
 ### 3. Run Education Analysis
 
@@ -232,7 +234,7 @@ It uses analysistools::create_analysis() function from the **impact-initiatives/
 ```
 source('src/02-education_analysis.R')
 ```
-The output is saved here: *output/grouped_other_education_results_loop.RDS*
+The output is saved here: *output/&lt;country_assessment&gt;/grouped_other_education_results_loop_&lt;country_assessment&gt;.RDS*
 
 ### 4. Label Data
 
@@ -243,14 +245,14 @@ This labeling step is crucial for aligning the analysis output with the desired 
 The function is defined here: **03-education_labeling.R**.
 
 ```
-source('src/03-education_labeling.R')  ## OUTPUT: output/labeled_results_table.RDS  ---- df: education_results_table_labelled
+source('src/03-education_labeling.R')  ## OUTPUT: output/<country_assessment>/labeled_results_table_<country_assessment>.RDS  ---- df: education_results_table_labelled
 ```
-The output is saved here: *output/labeled_results_table.RDS  ---- df: education_results_table_labelled*
+The output is saved here: *output/&lt;country_assessment&gt;/labeled_results_table_&lt;country_assessment&gt;.RDS  ---- df: education_results_table_labelled*
 
 ### 5. Create Tables 
 First create workbook for tables
 ```
-education_results_table_labelled <- readRDS("output/labeled_results_table.RDS")
+education_results_table_labelled <- readRDS(paste0(output_dir, "/labeled_results_table_", country_assessment, ".RDS"))
 
 wb <- openxlsx::createWorkbook("education_results")
 addWorksheet(wb, "Table_of_content")
@@ -264,7 +266,9 @@ row_number_lookup <- c(
   "level1" = 6,
   "level2" = 7,
   "level3" = 8,
-  "level4" = 9
+  "level4" = 9,
+  "non_formal" = 10,
+  "wgq" = 11
 )
 
 ```
@@ -311,44 +315,47 @@ source("src/04-02-make-level-table.R")
 tab_helper <- "level3"
 source("src/04-02-make-level-table.R")
 
-openxlsx::saveWorkbook(wb, "output/education_results.xlsx", overwrite = T)
-openxlsx::openXL("output/education_results.xlsx")
+tab_helper <- "non_formal"
+source("src/04-01-make-table-access-overaged-barriers.R")
+
+openxlsx::saveWorkbook(wb, paste0(output_dir, "/education_results_", country_assessment, ".xlsx"), overwrite = T)
+openxlsx::openXL(paste0(output_dir, "/education_results_", country_assessment, ".xlsx"))
 ```
 
 #### Final Output and Workbook Creation
 
-A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/education_results.xlsx**.
+A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/&lt;country_assessment&gt;/education_results_&lt;country_assessment&gt;.xlsx**.
 
 It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
 
 ### 6. Create Graphs 
 ```
 tab_helper <- "access"
-results_filtered <- "output/rds_results/access_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/access_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "overaged"
-results_filtered <- "output/rds_results/overaged_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/overaged_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "out_of_school"
-results_filtered <- "output/rds_results/out_of_school_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/out_of_school_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "ece"
-results_filtered <- "output/rds_results/ece_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/ece_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level1"
-results_filtered <- "output/rds_results/level1_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level1_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level2"
-results_filtered <- "output/rds_results/level2_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level2_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 
 tab_helper <- "level3"
-results_filtered <- "output/rds_results/level3_results.rds"
+results_filtered <- paste0(output_dir, "/rds_results/level3_results_", country_assessment, ".rds")
 source("src/05-01-make-graphs-and-maps-tables.R")
 ```
 
