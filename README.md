@@ -249,6 +249,8 @@ source('src/03-education_labeling.R')  ## OUTPUT: output/<country_assessment>/la
 ```
 The output is saved here: *output/&lt;country_assessment&gt;/labeled_results_table_&lt;country_assessment&gt;.RDS  ---- df: education_results_table_labelled*
 
+> **Note:** On this branch, the scripts backing steps 5 and 6 below (`src/04-01-make-table-access-overaged-barriers.R`, `src/04-02-make-level-table.R`, `src/05-01-make-graphs-and-maps-tables.R`) have been removed — they were untested against the current config-validation/strata changes. The documentation below is kept as-is in case you want to pull those scripts from an earlier version of the branch and try them against this branch's output; they have not been updated to match anything past step 4.
+
 ### 5. Create Tables 
 First create workbook for tables
 ```
@@ -327,6 +329,8 @@ openxlsx::openXL(paste0(output_dir, "/education_results_", country_assessment, "
 A workbook is created using openxlsx, which consolidates all the tables and analysis results into one Excel file. It can be found here: **output/&lt;country_assessment&gt;/education_results_&lt;country_assessment&gt;.xlsx**.
 
 It includes a Table of Contents: a summary sheet that hyperlinks to each table in the workbook is created for easy navigation.
+
+> **Note:** as above, `src/05-01-make-graphs-and-maps-tables.R` has been removed from this branch and is untested against the current changes; documentation kept for reference only.
 
 ### 6. Create Graphs 
 ```
