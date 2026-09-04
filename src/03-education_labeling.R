@@ -119,7 +119,7 @@ nrow(education_results_table_labelled ) == nrow(education_results_loop)
 
 education_results_table_labelled %>% saveRDS(paste0(output_dir, "/labeled_results_table_",country_assessment,".RDS"))
 
-education_results_table_labelled %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_full.csv"))
+# education_results_table_labelled %>% write.csv(paste0(output_dir, "/labeled_results_table_", country_assessment,"_full.csv"))
 
 education_results_table_labelled_filtered = education_results_table_labelled %>% select("id","label_analysis_var", "label_analysis_type", "label_analysis_var_value", "group_var", "group_var_value", "stat", "n", "n_total", "stat_low", "stat_upp", "label_group_var_value", "analysis_var") |> dplyr::filter(!(label_analysis_var_value %in% c("0", "NA"))) |> mutate (label_analysis_var_value = replace_values(label_analysis_var_value, "1" ~"YES"))
 
