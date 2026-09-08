@@ -1,6 +1,6 @@
 
 ##----------------------------------------------------------------------------------------------------------
-add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_file, edu_ind_age_corrected = 'edu_ind_age_corrected', language_assessment) {
+add_edu_school_cycle <- function(roster, country_assessment = '00L', path_ISCED_file, edu_ind_age_corrected = 'edu_ind_age_corrected', language_assessment) {
   # Read school structure information for the specified country
   info_country_school_structure <- read_ISCED_info(country_assessment, path_ISCED_file)
   
@@ -73,7 +73,7 @@ add_edu_school_cycle <- function(roster, country_assessment = 'BFA', path_ISCED_
 
 ##----------------------------------------------------------------------------------------------------------
 add_edu_level_grade_indicators  <- function(roster,
-                                            country_assessment = 'BFA',
+                                            country_assessment = '00L',
                                             path_ISCED_file,
                                             education_level_grade = 'education_level_grade',
                                             edu_ind_age_corrected= 'edu_ind_age_corrected',
