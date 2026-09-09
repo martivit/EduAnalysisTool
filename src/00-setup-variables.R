@@ -129,3 +129,6 @@ data_helper <- data_helper |>
     as.list() %>%
     map(na.omit) %>%
     map(c))
+
+main_sheet <- label_main_sheet ## Used in 01-add_education_indicators.R
+loop_sheet <- label_edu_sheet ## Used in 01-add_education_indicators.R

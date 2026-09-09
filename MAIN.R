@@ -16,9 +16,6 @@ library(gt)
 
 source("src/functions/00_edu_helper.R")
 source("src/functions/00_edu_function.R")
-source("src/functions/create_education_table_group_x_var.R")
-source("src/functions/create_education_xlsx_table.R")
-source("src/functions/helpers_x-crisis.R")
 
 # Temporary workaround for a humind column-overwrite issue; see the file's own
 # header for what it does and how to remove it once humind ships a fix. Sourced
@@ -28,7 +25,7 @@ if (file.exists("src/functions/00_safe_add_functions.R")) {
 }
 
 ## --------------------------
-country_assessment = 'AFG' # Add here the 3 leter country code that will be the same in all the files and referecnes
+country_assessment = '00L' # Add here the 3 leter country code that will be the same in all the files and referecnes
 
 ##---------------- READING INFO AND VARIABLES FROM  matadata.xlsx
 source("src/00-getting-info-country.R")
@@ -49,9 +46,6 @@ dir.create(paste0(output_dir, "/plots_", country_assessment), recursive = TRUE, 
 dir.create(paste0(output_dir, "/table_for_maps"), recursive = TRUE, showWarnings = FALSE)
 
 # 1 ----------------- 01-add_education_indicators.R -----------------
-main_sheet <- label_main_sheet ## Used in 01-add_education_indicators.R
-loop_sheet <- label_edu_sheet ## Used in 01-add_education_indicators.R
-
 source("src/01-add_education_indicators.R") ## OUTPUT: output/<country_assessment>/loop_edu_recorded_<country_assessment>.xlsx
 
 source("src/01-5-creating_loa.R") ## OUTPUT: input_tool/03_loa/loa_analysis_<country_assessment>.csv
