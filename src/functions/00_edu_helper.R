@@ -15,7 +15,7 @@ library(ggtext)
 
 
 ## ----------------------------------------------------------------------------------------------------------
-read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
+read_ISCED_info <- function(country_assessment = "00L", path_ISCED_file) {
   file_school_cycle <- path_ISCED_file ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
 
   # file_school_cycle <- "inst/extdata/edu_ISCED/resources/UNESCO ISCED Mappings_MSNAcountries_consolidated.xlsx"  ## has to be same of: https://acted.sharepoint.com/:x:/r/sites/IMPACT-Humanitarian_Planning_Prioritization/Shared%20Documents/07.%20Other%20sectoral%20resources%20for%20MSNA/01.%20Education/UNESCO%20ISCED%20Mappings_MSNAcountries_consolidated.xlsx?d=w4925184aeff547aa9687d9ce0e00dd70&csf=1&web=1&e=bFlcvr
@@ -32,7 +32,8 @@ read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
   }
 
   # Filter data for the specified country by code or name, case-insensitive
-  country_df <- dplyr::filter(df, tolower(`country code`) == country_input_lower | tolower(country) == country_input_lower)
+  country_df <- dplyr::filter(df, tolower(`country code`) == country_input_lower | tolower(country) == country_input_lower) %>%
+    mutate_at(c("theoretical start age"), as.integer)
 
   # DataFrame 1: level code, Learning Level, starting age, duration
   summary_info_school <- country_df %>%
@@ -64,7 +65,7 @@ read_ISCED_info <- function(country_assessment = "BFA", path_ISCED_file) {
       starting_age = `theoretical start age`,
       name_level_grade = `name -- for kobo`,
       grade = `year-grade`
-    )
+    ) 
 
   summary_info_school <- summary_info_school %>%
     rename(

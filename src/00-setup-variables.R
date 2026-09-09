@@ -37,8 +37,8 @@ kobo_language_label <-  list_info_general$kobo_language_label
 # levels in 01-add_education_indicators.R. NULL (and simply not merged) if left
 # blank in metadata_edu.xlsx.
 adm1_pcode_col <- list_info_general$adm1_pcode_colum
-adm2_pcode_col <- list_info_general$adm2_pcode_colum
-adm3_pcode_col <- list_info_general$adm3_pcode_colum
+adm2_pcode_col <- if (!is.null(list_info_general$adm2_pcode_colum)) list_info_general$adm2_pcode_colum else NULL
+adm3_pcode_col <- if (!is.null(list_info_general$adm3_pcode_colum)) list_info_general$adm3_pcode_colum else NULL
 
 #-- input tool
 # please modify the group_var according to your context

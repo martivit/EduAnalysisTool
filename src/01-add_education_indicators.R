@@ -205,10 +205,11 @@ if (country_assessment == "UKR") {
   )
 }
 
-if (country_assessment == "DRC") {
-  # everything you want to pull from 'main'
-  add_cols_tot <- c(
-    "edu_disrupted_attack_afc")}
+## Commented out the column needed in 2025. leaving the code here until move out to a external file
+# if (country_assessment == "DRC") {
+#   # everything you want to pull from 'main'
+#   add_cols_tot <- c(
+#     "edu_disrupted_attack_afc")}
 
 if (country_assessment == "CAR") {
   # everything you want to pull from 'main'

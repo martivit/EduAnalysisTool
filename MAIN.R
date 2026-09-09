@@ -25,7 +25,7 @@ if (file.exists("src/functions/00_safe_add_functions.R")) {
 }
 
 ## --------------------------
-country_assessment = 'AFG' # Add here the 3 leter country code that will be the same in all the files and referecnes
+country_assessment = '00L' # Add here the 3 leter country code that will be the same in all the files and referecnes
 
 ##---------------- READING INFO AND VARIABLES FROM  matadata.xlsx
 source("src/00-getting-info-country.R")
